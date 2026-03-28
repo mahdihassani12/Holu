@@ -310,22 +310,6 @@ if (isset($_POST['flag_request'])) {
 				$sub_category_access_point_array = rtrim($sub_category_access_point_array, ",");
 			}
 
-			$logistic_cash_access_point_array = "";
-			$logistic_cash_accessibility_sq = $db->prepare("SELECT access_point FROM `accessibilities` WHERE system_users_id=:data_id 
-				AND is_accessed='1' 
-				AND access_point 
-				LIKE 'logistic_cash_accessibility/%'");
-			$logistic_cash_accessibility_sqx = $logistic_cash_accessibility_sq->execute([
-				'data_id' => $data_id
-			]);
-
-			if ($logistic_cash_accessibility_sq->rowCount() > 0) {
-				while ($logistic_cash_accessibility_row = $logistic_cash_accessibility_sq->fetch()) {
-					$logistic_cash_access_point_array .= '"' . $logistic_cash_accessibility_row['access_point'] . '",';
-				}
-				$logistic_cash_access_point_array = rtrim($logistic_cash_access_point_array, ",");
-			}
-
 			?>
 
 			<div class="modal-header">
@@ -378,12 +362,6 @@ if (isset($_POST['flag_request'])) {
 								<span class="d-none d-sm-inline-block">Sub Category Accessibility</span>
 							</a>
 						</li>
-						<li class="nav-item">
-							<a href="#logistic_cash_accessibility" data-toggle="tab" aria-expanded="false" class="nav-link">
-								<span class="d-inline-block d-sm-none"><i class="far fa-user"></i></span>
-								<span class="d-none d-sm-inline-block">Logistic Cash Accessibility</span>
-							</a>
-						</li>
 					</ul>
 
 					<div class="tab-content">
@@ -415,17 +393,6 @@ if (isset($_POST['flag_request'])) {
 								<label class="control-label col-md-2 col-sm-2 col-xs-8"></label>
 								<div class="col-md-12 col-sm-12 col-xs-12">
 									<div class="col-md-12 col-sm-12 col-xs-12" style="border: 2px dashed #00b8a5; padding-left: 20px; padding-top: 3%; padding-bottom: 3%; font-weight:bold;" id="sub_category_accessibility_container">
-
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="tab-pane fade show" id="logistic_cash_accessibility">
-							<div class="item form-group">
-								<label class="control-label col-md-2 col-sm-2 col-xs-8"></label>
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<div class="col-md-12 col-sm-12 col-xs-12" style="border: 2px dashed #00b8a5; padding-left: 20px; padding-top: 3%; padding-bottom: 3%; font-weight:bold;" id="logistic_cash_accessibility_container">
 
 									</div>
 								</div>
@@ -541,39 +508,6 @@ if (isset($_POST['flag_request'])) {
 					}
 				});
 
-				var accessibility_access_logistic_cashes = <?php echo print_access_logistic_cashes(); ?>;
-
-				var logistic_cash_tree = new Tree('#logistic_cash_accessibility_container', {
-					data: [{
-						id: 'logistic_cash_accessibility',
-						text: 'Logistic Cash Accessibility',
-						children: accessibility_access_logistic_cashes
-					}],
-					closeDepth: 0,
-					loaded: function() {
-						this.values = [<?php echo $logistic_cash_access_point_array; ?>];
-					},
-					onChange: function() {
-						var access_points = this.values;
-						$.ajax({
-							url: "controller_user.php",
-							method: "POST",
-							data: {
-								data_id: data_id,
-								flag_request: flag_request,
-								flag_operation: flag_operation,
-								access_points: access_points,
-								access_path: "logistic_cash_accessibility/"
-							},
-							beforeSend:function(){
-
-							},
-							success: function(data) {
-
-							}
-						});
-					}
-				});
 			</script>
 			<?php
 
