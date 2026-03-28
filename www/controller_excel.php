@@ -363,7 +363,8 @@
         incomes.qb_markup AS transaction_qb_markup,
         incomes.sib_markup AS transaction_sib_markup,
         incomes.ad_markup AS transaction_ad_markup,
-        incomes.additional_informations AS transaction_additional_informations
+        incomes.additional_informations AS transaction_additional_informations,
+        '' AS transaction_approve_description
         FROM `incomes`
         WHERE incomes.deleted='0' 
         AND incomes.province IN ($accessed_provinces) 
@@ -386,7 +387,8 @@
         expenses.qb_markup AS transaction_qb_markup,
         expenses.sib_markup AS transaction_sib_markup,
         expenses.ad_markup AS transaction_ad_markup,
-        expenses.additional_informations AS transaction_additional_informations
+        expenses.additional_informations AS transaction_additional_informations,
+        '' AS transaction_approve_description
         FROM `expenses`
         WHERE expenses.deleted='0' 
         AND expenses.province IN ($accessed_provinces) 
@@ -409,7 +411,8 @@
         exchanges.qb_markup AS transaction_qb_markup,
         exchanges.sib_markup AS transaction_sib_markup,
         exchanges.ad_markup AS transaction_ad_markup,
-        '' AS transaction_additional_informations
+        '' AS transaction_additional_informations,
+        '' AS transaction_approve_description
         FROM `exchanges`
         WHERE exchanges.deleted='0' 
         AND exchanges.province IN ($accessed_provinces) 
@@ -432,7 +435,8 @@
         purchases.qb_markup AS transaction_qb_markup,
         purchases.sib_markup AS transaction_sib_markup,
         purchases.ad_markup AS transaction_ad_markup,
-        '' AS transaction_additional_informations
+        '' AS transaction_additional_informations,
+        '' AS transaction_approve_description
         FROM `purchases`
         WHERE purchases.deleted='0' 
         AND purchases.is_approved='1'
@@ -458,7 +462,8 @@
         transfers.qb_markup AS transaction_qb_markup,
         transfers.sib_markup AS transaction_sib_markup,
         transfers.ad_markup AS transaction_ad_markup,
-        '' AS transaction_additional_informations
+        '' AS transaction_additional_informations,
+        transfers.approve_description AS transaction_approve_description
         FROM `transfers`
         WHERE transfers.deleted='0' 
         AND transfers.is_approved='1'
@@ -501,12 +506,16 @@
 
             
 
-            $ai = json_decode($transaction_row['transaction_additional_informations']);
             $additional_informations = '';
-            if(count($ai)>0){
-              foreach ($ai as $key => $value) {
-                $additional_informations .= 
-                  $key.': '.$value;
+            if($transaction_row['transaction_type']=='Transfer'){
+              $additional_informations = $transaction_row['transaction_approve_description'];
+            }else{
+              $ai = json_decode($transaction_row['transaction_additional_informations']);
+              if(!empty($ai)){
+                foreach ($ai as $key => $value) {
+                  $additional_informations .= 
+                    $key.': '.$value;
+                }
               }
             }
 
