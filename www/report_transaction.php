@@ -488,7 +488,8 @@
     incomes.qb_markup AS transaction_qb_markup,
     incomes.sib_markup AS transaction_sib_markup,
     incomes.ad_markup AS transaction_ad_markup,
-    incomes.additional_informations AS transaction_additional_informations
+    incomes.additional_informations AS transaction_additional_informations,
+    '' AS transaction_approve_description
     FROM `incomes`
     WHERE incomes.deleted='0' 
     AND incomes.province IN ($accessed_provinces) 
@@ -511,7 +512,8 @@
     expenses.qb_markup AS transaction_qb_markup,
     expenses.sib_markup AS transaction_sib_markup,
     expenses.ad_markup AS transaction_ad_markup,
-    expenses.additional_informations AS transaction_additional_informations
+    expenses.additional_informations AS transaction_additional_informations,
+    '' AS transaction_approve_description
     FROM `expenses`
     WHERE expenses.deleted='0' 
     AND expenses.province IN ($accessed_provinces) 
@@ -534,7 +536,8 @@
     exchanges.qb_markup AS transaction_qb_markup,
     exchanges.sib_markup AS transaction_sib_markup,
     exchanges.ad_markup AS transaction_ad_markup,
-    '' AS transaction_additional_informations
+    '' AS transaction_additional_informations,
+    '' AS transaction_approve_description
     FROM `exchanges`
     WHERE exchanges.deleted='0' 
     AND exchanges.province IN ($accessed_provinces) 
@@ -557,7 +560,8 @@
     purchases.qb_markup AS transaction_qb_markup,
     purchases.sib_markup AS transaction_sib_markup,
     purchases.ad_markup AS transaction_ad_markup,
-    '' AS transaction_additional_informations
+    '' AS transaction_additional_informations,
+    '' AS transaction_approve_description
     FROM `purchases`
     WHERE purchases.deleted='0' 
     AND purchases.is_approved='1'
@@ -583,7 +587,8 @@
     CONCAT(transfers.qb_markup, ',', transfers.rqb_markup) AS transaction_qb_markup,
     transfers.sib_markup AS transaction_sib_markup,
     transfers.ad_markup AS transaction_ad_markup,
-    '' AS transaction_additional_informations
+    '' AS transaction_additional_informations,
+    transfers.approve_description AS transaction_approve_description
     FROM `transfers`
     WHERE transfers.deleted='0' 
     AND transfers.is_approved='1'
@@ -1197,7 +1202,17 @@
                             <td><?php echo $transaction_row['transaction_date']; ?></td>
                             <td><?php echo $transaction_row['transaction_province']; ?></td>
                             <td class="text-center" id="check_number_container<?php echo $transaction_row['transaction_type'].$transaction_row['transaction_id']; ?>"><?php echo $check_number_container; ?></td>
-                            <td class="text-center"><?php echo print_ai_labels(json_decode($transaction_row['transaction_additional_informations'])); ?></td>
+                            <td class="text-center">
+                              <?php
+                              if($transaction_type=='Transfer'){
+                                echo print_ai_labels([
+                                  'Approve Description' => $transaction_row['transaction_approve_description']
+                                ]);
+                              }else{
+                                echo print_ai_labels(json_decode($transaction_row['transaction_additional_informations']));
+                              }
+                              ?>
+                            </td>
                             <td class="text-center" id="markups<?php echo $transaction_type.$transaction_row['transaction_id']; ?>">
                               <?php echo get_markups(
                                 'system_accessibility/report/report_transaction/', 
