@@ -1249,62 +1249,18 @@
 
                   <div class="alert alert-success text-center">
                     Income: <span class="badge badge-success">
-                      <?php echo number_format($total_income_row['total_income_afn'], 2); ?> AFN</span>
-                       - <span class="badge badge-success">
-                        <?php echo number_format($total_income_row['total_income_usd'], 2); ?> USD</span> - <span class="badge badge-success">
-                          <?php echo number_format($total_income_row['total_income_irt'], 2); ?> IRT</span>
-                  </div>
-
-                  <div class="alert alert-danger text-center">Expense: <span class="badge badge-danger"><?php echo number_format($total_expense_row['total_expense_afn'], 2); ?> AFN</span> - <span class="badge badge-danger"><?php echo number_format($total_expense_row['total_expense_usd'], 2); ?> USD</span> - <span class="badge badge-danger"><?php echo number_format($total_expense_row['total_expense_irt'], 2); ?> IRT</span>
-                  </div>
-
-                  <div class="alert alert-warning text-center">Exchange: <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_afn'], 2); ?> AFN to <?php echo number_format($total_exchange_row['total_to_usd'], 2); ?> USD</span> - <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_usd'], 2); ?> USD to <?php echo number_format($total_exchange_row['total_to_afn'], 2); ?> AFN</span> - <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_afn2'], 2); ?> AFN to <?php echo number_format($total_exchange_row['total_to_irt'], 2); ?> IRT</span> - <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_irt'], 2); ?> IRT to <?php echo number_format($total_exchange_row['total_to_afn2'], 2); ?> AFN</span>
-                  </div>
-
-                  <!-- <div class="alert alert-danger text-center">
-                      Purchase: 
-                    <span class="badge badge-danger">
-                        <?php //echo number_format($total_purchase_row['total_purchase_afn'], 2); ?> AFN
-                    </span>
-                    - 
-                    <span class="badge badge-danger">
-                        <?php //echo number_format($total_purchase_row['total_purchase_usd'], 2); ?> USD
-                    </span> -
-                    <span class="badge badge-danger">
-                        <?php //echo number_format($total_purchase_row['total_purchase_irt'], 2); ?> IRT
-                    </span>
-                  </div>
-
-                  <div class="alert alert-warning text-center">
-                      Transfer In: 
-                      <span class="badge badge-warning">
-                        <?php //echo number_format($total_transfer_row['total_transfer_in_afn'], 2); ?> 
-                        AFN
-                      </span> 
+                      <?php echo number_format($total_income_row['total_income_afn'] ?? 0, 2); ?> AFN</span>
                       - 
-                      <span class="badge badge-warning">
-                        <?php //echo number_format($total_transfer_row['total_transfer_in_usd'], 2); ?> USD
-                      </span> - 
-                      <span class="badge badge-warning">
-                        <?php //echo number_format($total_transfer_row['total_transfer_in_irt'], 2); ?> IRT
-                      </span>
-                      <br/>
-                      Transfer Out: 
-                      <span class="badge badge-warning">
-                        <?php //echo number_format($total_transfer_row['total_transfer_out_afn'], 2); ?> 
-                        AFN
-                      </span> 
-                      - 
-                      <span class="badge badge-warning">
-                        <?php //echo number_format($total_transfer_row['total_transfer_out_usd'], 2); ?> 
-                         USD
-                      </span> 
-                      - 
-                      <span class="badge badge-warning">
-                        <?php //echo number_format($total_transfer_row['total_transfer_out_irt'], 2); ?> 
-                        IRT
-                      </span>
-                  </div> -->
+                      <span class="badge badge-success">
+                      <?php echo number_format($total_income_row['total_income_usd'] ?? 0, 2); ?> USD</span> - <span class="badge badge-success">
+                      <?php echo number_format($total_income_row['total_income_irt'] ?? 0, 2); ?> IRT</span>
+                  </div>
+
+                  <div class="alert alert-danger text-center">Expense: <span class="badge badge-danger"><?php echo number_format($total_expense_row['total_expense_afn'] ?? 0, 2); ?> AFN</span> - <span class="badge badge-danger"><?php echo number_format($total_expense_row['total_expense_usd'] ?? 0, 2); ?> USD</span> - <span class="badge badge-danger"><?php echo number_format($total_expense_row['total_expense_irt'] ?? 0, 2); ?> IRT</span>
+                  </div>
+
+                  <div class="alert alert-warning text-center">Exchange: <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_afn'] ?? 0, 2); ?> AFN to <?php echo number_format($total_exchange_row['total_to_usd'] ?? 0, 2); ?> USD</span> - <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_usd'] ?? 0, 2); ?> USD to <?php echo number_format($total_exchange_row['total_to_afn'] ?? 0, 2); ?> AFN</span> - <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_afn2'] ?? 0, 2); ?> AFN to <?php echo number_format($total_exchange_row['total_to_irt'] ?? 0, 2); ?> IRT</span> - <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_irt'] ?? 0, 2); ?> IRT to <?php echo number_format($total_exchange_row['total_to_afn2'] ?? 0, 2); ?> AFN</span>
+                  </div>
 
                   <div class="alert alert-info text-center">Total: <span class="badge badge-info">
                       <?php echo number_format($total_afn, 2); ?> AFN</span> - 
