@@ -326,7 +326,8 @@ if (isset($_POST['flag_request'])) {
 				<form class="form-horizontal parsley-form" 
 					  role="form" 
 					  action="controller_user.php" 
-					  method="POST">
+					  method="POST"
+					  id="set_accessibility_form">
 
 					<input type="hidden" 
 							name="flag_request" 
@@ -400,6 +401,22 @@ if (isset($_POST['flag_request'])) {
 						</div>
 
 					</div>
+
+					<div class="form-group row mt-3">
+						<label class="col-sm-1 col-form-label" for="submit"></label>
+						<div class="col-sm-11">
+							<button type="button" 
+									id="save_accessibility" 
+									name="save_accessibility" 
+									class="btn btn-success waves-effect waves-light mr-1">
+									<i class="fa fa-save"></i> Save
+							</button>
+							<button type="reset" 
+									class="btn btn-secondary waves-effect waves-light" data-dismiss="modal">
+									<i class="fa fa-times-circle"></i> Close
+							</button>
+						</div>
+					</div>
 				</form>
 			</div>
 
@@ -420,26 +437,7 @@ if (isset($_POST['flag_request'])) {
 					loaded: function() {
 						this.values = [<?php echo $access_point_array; ?>];
 					},
-					onChange: function() {
-						var access_points = this.values;
-						jQuery.ajax({
-							url: "controller_user.php",
-							method: "POST",
-							data: {
-								data_id: data_id,
-								flag_request: flag_request,
-								flag_operation: flag_operation,
-								access_points: access_points,
-								access_path: "system_accessibility/"
-							},
-							beforeSend:function(){
-								
-							},
-							success: function(data) {
-
-							}
-						});
-					}
+					onChange: function() {}
 				});
 
 				var accessibility_access_provinces = 
@@ -455,26 +453,7 @@ if (isset($_POST['flag_request'])) {
 					loaded: function() {
 						this.values = [<?php echo $province_access_point_array; ?>];
 					},
-					onChange: function() {
-						var access_points = this.values;
-						jQuery.ajax({
-							url: "controller_user.php",
-							method: "POST",
-							data: {
-								data_id: data_id,
-								flag_request: flag_request,
-								flag_operation: flag_operation,
-								access_points: access_points,
-								access_path: "province_accessibility/"
-							},
-							beforeSend:function(){
-								
-							},
-							success: function(data) {
-
-							}
-						});
-					}
+					onChange: function() {}
 				});
 
 				var accessibility_access_sub_categories = <?php echo print_access_sub_categories(); ?>;
@@ -489,23 +468,37 @@ if (isset($_POST['flag_request'])) {
 					loaded: function() {
 						this.values = [<?php echo $sub_category_access_point_array; ?>];
 					},
-					onChange: function() {
-						var access_points = this.values;
-						$.ajax({
-							url: "controller_user.php",
-							method: "POST",
-							data: {
-								data_id: data_id,
-								flag_request: flag_request,
-								flag_operation: flag_operation,
-								access_points: access_points,
-								access_path: "sub_category_accessibility/"
-							},
-							success: function(data) {
+					onChange: function() {}
+				});
 
+				$("#save_accessibility").on("click", function() {
+					var button = $(this);
+					button.prop("disabled", true);
+
+					$.ajax({
+						url: "controller_user.php",
+						method: "POST",
+						data: {
+							data_id: data_id,
+							flag_request: flag_request,
+							flag_operation: flag_operation,
+							system_access_points: customer_info_tree.values,
+							province_access_points: province_tree.values,
+							sub_category_access_points: sub_category_tree.values
+						},
+						success: function(data) {
+							if ($.trim(data) === "1") {
+								window.location.href = "_logout.php";
+							} else {
+								button.prop("disabled", false);
+								alert("Could not save accessibility. Please try again.");
 							}
-						});
-					}
+						},
+						error: function() {
+							button.prop("disabled", false);
+							alert("Could not save accessibility. Please try again.");
+						}
+					});
 				});
 
 			</script>
@@ -684,22 +677,31 @@ if (isset($_POST['flag_request'])) {
 			case "set_accessibilty":
 
 				$data_id = holu_escape(holu_decode($_POST['data_id']));
-				$access_path = holu_escape($_POST['access_path']);
-				var_dump($data_id);
-				$accessibility_uq = $db->prepare("UPDATE `accessibilities` SET is_accessed='0' WHERE system_users_id=:data_id AND access_point LIKE :access_path");
-
-				$accessibility_sqx = $accessibility_uq->execute([
-					'data_id' => $data_id,
-					'access_path' => $access_path . '%'
-				]);
-
 				$flag = 1;
-				if (isset($_POST['access_points'])) {
-					$access_points = $_POST['access_points'];
+				$accessibility_groups = [
+					'system_accessibility/' => isset($_POST['system_access_points']) ? $_POST['system_access_points'] : [],
+					'province_accessibility/' => isset($_POST['province_access_points']) ? $_POST['province_access_points'] : [],
+					'sub_category_accessibility/' => isset($_POST['sub_category_access_points']) ? $_POST['sub_category_access_points'] : []
+				];
+
+				foreach ($accessibility_groups as $access_path => $access_points) {
+					$accessibility_uq = $db->prepare("UPDATE `accessibilities` SET is_accessed='0' WHERE system_users_id=:data_id AND access_point LIKE :access_path");
+					$accessibility_uqx = $accessibility_uq->execute([
+						'data_id' => $data_id,
+						'access_path' => $access_path . '%'
+					]);
+
+					if (!$accessibility_uqx) {
+						$flag++;
+						continue;
+					}
+
+					if (!is_array($access_points)) {
+						$access_points = [];
+					}
 
 					foreach ($access_points as $access_point) {
 						$access_point = holu_escape($access_point);
-						var_dump($access_point);
 						$accessibility_sq = $db->prepare("SELECT id FROM `accessibilities` WHERE access_point=:access_point AND system_users_id=:data_id LIMIT 1");
 
 						$accessibility_sqx = $accessibility_sq->execute([
