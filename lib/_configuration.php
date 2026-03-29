@@ -1303,20 +1303,11 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	}
 
 	function get_all_province_option($province){
-		global $holu_provinces;
-		global $db;
-		global $holu_users_id;
-		$province_options = "";
-		if($province=="0"){
-			foreach ($holu_provinces as $holu_province) {
-				$province_options .= '<option value="'.$holu_province.'">'.$holu_province.'</option>';
-			}
-		}else{
-			foreach ($holu_provinces as $holu_province) {
-				$province_options .= '<option '.(($holu_province==$province)?'selected':'').' value="'.$holu_province.'">'.$holu_province.'</option>';
-			}
-		}
-		return $province_options;
+		/*
+			Keep province dropdown behavior consistent across all forms:
+			if a user has access to only one province, show only that province.
+		*/
+		return get_province_option($province);
 	}
 
 	function get_additional_information_option($additional_information){
