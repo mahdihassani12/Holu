@@ -237,7 +237,7 @@
                   <div class="row mt-3">
                     <div class="col-12 text-center">
                       <p class="text-muted">2019 &copy; All rights reserved by <a href="http://www.ariyabod.af"  class="text-primary font-weight-medium ml-1">Ariyabod</a> </p>
-                      <p class="text-muted"  class="text-primary font-weight-medium ml-1">Developed by <span class="text-primary font-weight-medium ml-1">Zalmai Afshar</span></p>
+                      <p class="text-muted"  class="text-primary font-weight-medium ml-1">Developed by <span class="text-primary font-weight-medium ml-1">Mahdi Hassani</span></p>
                     </div> <!-- end col -->
                   </div>
 
