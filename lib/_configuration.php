@@ -1500,6 +1500,18 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		$holu_accessibilities = strtolower($_SESSION['holu_accessibilities']);
 		$access_path = strtolower($access_path);
 		$result = "";
+
+		/*
+			Backward compatibility:
+			Users created before province-management was introduced may not have the new
+			`list_province` access points saved in their accessibility payload.
+			If they already have user-management access, grant province-management access too.
+		*/
+		if(strpos($access_path, 'system_accessibility/management/list_province/')===0){
+			if(strpos($holu_accessibilities, 'system_accessibility/management/list_user/') !== false){
+				return 1;
+			}
+		}
 				
 		if(strpos($holu_accessibilities, $access_path) !== false){
 			$result = 1;
