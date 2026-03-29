@@ -20,37 +20,15 @@
   foreach($holu_provinces as $holu_province){
     $access_point = 'province_accessibility/'.$holu_province.'/';
     if(check_access($access_point)==1){
-
-      switch ($holu_province) {
-        case 'Herat':{
-          $tms_accessed_provinces .= '\'Herat\',';
-        }break;
-
-        case 'Kabul':{
-          $tms_accessed_provinces .= '\'Kabul\',\'Kabul-AQ\',';
-        }break;
-
-        case 'Mazar_Sharif':{
-          $tms_accessed_provinces .= '\'Mazar-Sharif\',';
-        }break;
-
-        case 'Badghis':{
-          $tms_accessed_provinces .= '\'Badghis\',';
-        }break;
-
-        case 'Jalaal_Abad':{
-          $tms_accessed_provinces .= '\'Jalaal-Abad\',';
-        }break;
-        
-        default:{
-
-        }break;
+      foreach(get_tms_province_variants($holu_province) as $tms_variant){
+        $tms_accessed_provinces .= "'".$tms_variant."',";
       }
-
-      
     }
   }
   $tms_accessed_provinces = rtrim($tms_accessed_provinces, ",");
+  if($tms_accessed_provinces===''){
+    $tms_accessed_provinces = "'__NO_PROVINCE_ACCESS__'";
+  }
 
   
 

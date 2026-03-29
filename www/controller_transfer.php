@@ -665,31 +665,7 @@
 			    $currency = holu_escape($_POST['currency']);
 			    $description = holu_escape($_POST['description']);
 
-				switch ($from_province) {
-					case 'Kabul':{
-					  $bill_number_extention = "TKBL";
-					}break;
-  
-					case 'Herat':{
-					  $bill_number_extention = "THRT";
-					}break;
-  
-					case 'Mazar_Sharif':{
-					  $bill_number_extention = "TMZR";
-					}break;
-  
-					case 'Badghis':{
-					  $bill_number_extention = "TBDG";
-					}break;
-  
-					case 'Jalaal_Abad':{
-					  $bill_number_extention = "TJLB";
-					}break;
-					
-					default:{
-						$bill_number_extention = "TTTT";
-					}break;
-				}
+				$bill_number_extention = get_province_bill_extension($from_province, 'transfer');
 
 				$num_transfers_sq = $db->prepare(
 			    	"SELECT 
