@@ -1505,11 +1505,23 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			Backward compatibility:
 			Users created before province-management was introduced may not have the new
 			`list_province` access points saved in their accessibility payload.
-			If they already have user-management access, grant province-management access too.
+			If they already have any user-management access point, grant
+			province-management access too.
 		*/
 		if(strpos($access_path, 'system_accessibility/management/list_province/')===0){
-			if(strpos($holu_accessibilities, 'system_accessibility/management/list_user/') !== false){
-				return 1;
+			$user_management_access_points = array(
+				'system_accessibility/management/list_user',
+				'system_accessibility/management/list_user/',
+				'system_accessibility/management/list_user/add_user',
+				'system_accessibility/management/list_user/edit_user',
+				'system_accessibility/management/list_user/delete_user',
+				'system_accessibility/management/list_user/set_accessibility',
+			);
+
+			foreach($user_management_access_points as $user_management_access_point){
+				if(strpos($holu_accessibilities, $user_management_access_point) !== false){
+					return 1;
+				}
 			}
 		}
 				
