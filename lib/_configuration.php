@@ -25,7 +25,17 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 
 	$holu_transaction_types = ['Income', 'Expense', 'Exchange', 'Purchase', 'Transfer'];
 
-	$holu_provinces = ['Kabul', 'Herat', 'Mazar_Sharif', 'Badghis', 'Jalaal_Abad'];
+	$holu_provinces = array();
+
+	$province_sq = $db->query("SELECT name FROM `provinces` ORDER BY name ASC");
+	if($province_sq){
+		while($province_row = $province_sq->fetch()){
+			$province_name = trim($province_row['name']);
+			if($province_name!==""){
+				$holu_provinces[] = $province_name;
+			}
+		}
+	}
 
 	$holu_additional_informations = [
 		'Customer Name', 
@@ -975,6 +985,43 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				),
 				array(
 					"type" => "sidebar",
+					"url" => "list_province.php",
+					"label" => "List of Provinces",
+					"icon" => '',
+					"location" => "list_province/",
+					"path" => "system_accessibility/management/list_province/",
+					"subs" => array(
+						array(
+							"type" => "operation",
+							"url" => "",
+							"label" => "Add Province",
+							"icon" => '',
+							"location" => "add_province/",
+							"path" => "system_accessibility/management/list_province/add_province",
+							"subs" => array(),
+						),
+						array(
+							"type" => "operation",
+							"url" => "",
+							"label" => "Edit Province",
+							"icon" => '',
+							"location" => "edit_province/",
+							"path" => "system_accessibility/management/list_province/edit_province",
+							"subs" => array(),
+						),
+						array(
+							"type" => "operation",
+							"url" => "",
+							"label" => "Delete Province",
+							"icon" => '',
+							"location" => "delete_province/",
+							"path" => "system_accessibility/management/list_province/delete_province",
+							"subs" => array(),
+						),
+					),
+				),
+				array(
+					"type" => "sidebar",
 					"url" => "list_user.php",
 					"label" => "List of Users",
 					"icon" => '',
@@ -1182,6 +1229,54 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			}
 		}
 		return $transaction_type_options;
+	}
+
+
+	function get_province_code($province){
+		$clean_province = strtoupper(preg_replace('/[^a-zA-Z]/', '', $province));
+		if($clean_province==""){
+			return 'XXX';
+		}
+		return str_pad(substr($clean_province, 0, 3), 3, 'X');
+	}
+
+	function get_province_bill_extension($province, $transaction_type){
+		$prefix = '';
+		switch ($transaction_type) {
+			case 'expense':
+				$prefix = 'X';
+			break;
+			case 'purchase':
+				$prefix = 'P';
+			break;
+			case 'transfer':
+				$prefix = 'T';
+			break;
+			default:
+				$prefix = '';
+			break;
+		}
+
+		return $prefix.get_province_code($province);
+	}
+
+	function map_tms_province_to_holu_province($tms_province){
+		global $holu_provinces;
+
+		$candidate = str_replace('-', '_', trim($tms_province));
+		if($candidate==='Kabul_AQ'){
+			$candidate = 'Kabul';
+		}
+
+		return in_array($candidate, $holu_provinces) ? $candidate : '';
+	}
+
+	function get_tms_province_variants($holu_province){
+		$variants = array(str_replace('_', '-', $holu_province));
+		if($holu_province==='Kabul'){
+			$variants[] = 'Kabul-AQ';
+		}
+		return $variants;
 	}
 
 	function get_province_option($province){
