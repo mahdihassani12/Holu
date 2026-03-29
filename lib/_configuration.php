@@ -1536,6 +1536,27 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			if(strpos($holu_accessibilities, 'province_accessibility/')===false){
 				return 1;
 			}
+
+			/*
+				Province names may be stored with either spaces or underscores
+				depending on when/how the province or accessibility entry was created.
+				Support both variants so access checks stay consistent across pages.
+			*/
+			$province_name = trim(str_replace('province_accessibility/', '', $access_path), '/');
+			if($province_name!==''){
+				$province_variants = array_unique(array(
+					$province_name,
+					str_replace(' ', '_', $province_name),
+					str_replace('_', ' ', $province_name),
+				));
+
+				foreach($province_variants as $province_variant){
+					$variant_access_path = 'province_accessibility/'.$province_variant.'/';
+					if(strpos($holu_accessibilities, $variant_access_path)!==false){
+						return 1;
+					}
+				}
+			}
 		}
 				
 		if(strpos($holu_accessibilities, $access_path) !== false){
