@@ -282,36 +282,7 @@
 		    				$tms_customer_row = $tms_customer_sq->fetch();
 
 		    				$tms_province = $tms_customer_row['province'];
-
-		    				switch ($tms_province) {
-		    					case 'Herat':{
-		    						$holu_province = 'Herat';
-		    					}break;
-
-		    					case 'Kabul':{
-		    						$holu_province = 'Kabul';
-		    					}break;
-
-		    					case 'Kabul-AQ':{
-		    						$holu_province = 'Kabul';
-		    					}break;
-
-		    					case 'Mazar-Sharif':{
-		    						$holu_province = 'Mazar_Sharif';
-		    					}break;
-
-		    					case 'Badghis':{
-		    						$holu_province = 'Badghis';
-		    					}break;
-
-		    					case 'Jalaal-Abad':{
-		    						$holu_province = 'Jalaal_Abad';
-		    					}break;
-		    					
-		    					default:{
-		    						$holu_province = '';
-		    					}break;
-		    				}
+						$holu_province = map_tms_province_to_holu_province($tms_province);
 
 		    				$holu_categories_id = 99;
 
@@ -348,36 +319,7 @@
 		    				$tms_customer_row = $tms_customer_sq->fetch();
 
 		    				$tms_province = $tms_customer_row['province'];
-
-		    				switch ($tms_province) {
-		    					case 'Herat':{
-		    						$holu_province = 'Herat';
-		    					}break;
-
-		    					case 'Kabul':{
-		    						$holu_province = 'Kabul';
-		    					}break;
-
-		    					case 'Kabul-AQ':{
-		    						$holu_province = 'Kabul';
-		    					}break;
-
-		    					case 'Mazar-Sharif':{
-		    						$holu_province = 'Mazar_Sharif';
-		    					}break;
-
-		    					case 'Badghis':{
-		    						$holu_province = 'Badghis';
-		    					}break;
-
-		    					case 'Jalaal-Abad':{
-		    						$holu_province = 'Jalaal_Abad';
-		    					}break;
-		    					
-		    					default:{
-		    						$holu_province = '';
-		    					}break;
-		    				}
+						$holu_province = map_tms_province_to_holu_province($tms_province);
 
 		    				$holu_categories_id = 100;
 
@@ -411,36 +353,7 @@
 		    				$tms_customer_row = $tms_customer_sq->fetch();
 
 		    				$tms_province = $tms_customer_row['province'];
-
-		    				switch ($tms_province) {
-		    					case 'Herat':{
-		    						$holu_province = 'Herat';
-		    					}break;
-
-		    					case 'Kabul':{
-		    						$holu_province = 'Kabul';
-		    					}break;
-
-		    					case 'Kabul-AQ':{
-		    						$holu_province = 'Kabul';
-		    					}break;
-
-		    					case 'Mazar-Sharif':{
-		    						$holu_province = 'Mazar_Sharif';
-		    					}break;
-
-		    					case 'Badghis':{
-		    						$holu_province = 'Badghis';
-		    					}break;
-
-		    					case 'Jalaal-Abad':{
-		    						$holu_province = 'Jalaal_Abad';
-		    					}break;
-		    					
-		    					default:{
-		    						$holu_province = '';
-		    					}break;
-		    				}
+						$holu_province = map_tms_province_to_holu_province($tms_province);
 
 		    				$holu_categories_id = 100;
 
@@ -1247,32 +1160,7 @@
 				    	array_push($key_infos, 'Employee');
 				    	array_push($value_infos, holu_escape($_POST['employee']));
 				    }
-		
-				    switch ($province) {
-				      case 'Kabul':{
-				        $bill_number_extention = "KBL";
-				      }break;
-		
-				      case 'Herat':{
-				        $bill_number_extention = "HRT";
-				      }break;
-		
-				      case 'Mazar_Sharif':{
-				        $bill_number_extention = "MZR";
-				      }break;
-		
-				      case 'Badghis':{
-				        $bill_number_extention = "BDG";
-				      }break;
-
-				      case 'Jalaal_Abad':{
-				        $bill_number_extention = "JLB";
-				      }break;
-				      
-				      default:{
-				      	$bill_number_extention = "XXX";
-				      }break;
-				    }
+					$bill_number_extention = get_province_bill_extension($province, 'income');
 		
 				    $num_income_sq = $db->prepare(
 				    	"SELECT 
@@ -1796,32 +1684,7 @@
 				    	array_push($key_infos, 'Employee');
 				    	array_push($value_infos, holu_escape($_POST['employee']));
 				    }
-		
-				    switch ($province) {
-				      case 'Kabul':{
-				        $bill_number_extention = "KBL";
-				      }break;
-		
-				      case 'Herat':{
-				        $bill_number_extention = "HRT";
-				      }break;
-		
-				      case 'Mazar_Sharif':{
-				        $bill_number_extention = "MZR";
-				      }break;
-		
-				      case 'Badghis':{
-				        $bill_number_extention = "BDG";
-				      }break;
-
-				      case 'Jalaal_Abad':{
-				        $bill_number_extention = "JLB";
-				      }break;
-				      
-				      default:{
-				      	$bill_number_extention = "XXX";
-				      }break;
-				    }
+					$bill_number_extention = get_province_bill_extension($province, 'income');
 		
 				    $num_income_sq = $db->prepare(
 				    	"SELECT 

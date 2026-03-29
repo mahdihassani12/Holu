@@ -745,31 +745,7 @@
             array_push($value_infos, holu_escape($_POST['employee']));
           }
 
-			    switch ($province) {
-			      case 'Kabul':{
-			        $bill_number_extention = "XKBL";
-			      }break;
-
-			      case 'Herat':{
-			        $bill_number_extention = "XHRT";
-			      }break;
-
-			      case 'Mazar_Sharif':{
-			        $bill_number_extention = "XMZR";
-			      }break;
-
-			      case 'Badghis':{
-			        $bill_number_extention = "XBDG";
-			      }break;
-
-			      case 'Jalaal_Abad':{
-			        $bill_number_extention = "XJLB";
-			      }break;
-			      
-			      default:{
-			      	$bill_number_extention = "XXXX";
-			      }break;
-			    }
+			    $bill_number_extention = get_province_bill_extension($province, 'expense');
 
 			    $num_expense_sq = $db->prepare(
 			    	"SELECT 
