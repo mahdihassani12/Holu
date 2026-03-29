@@ -150,6 +150,7 @@ if(isset($_POST['flag_request'])){
         $duplicate_sqx = $duplicate_sq->execute([
           'name'=>$name
         ]);
+
         if($duplicate_sq && $duplicate_sq->rowCount()>0){
           header("location:list_province.php?duplicated");
           exit();
@@ -160,7 +161,7 @@ if(isset($_POST['flag_request'])){
           'name'=>$name
         ]);
 
-        if($province_iq){
+        if($province_iqx){
           header("location:list_province.php?success");
           exit();
         }else{
@@ -184,6 +185,7 @@ if(isset($_POST['flag_request'])){
           'name'=>$name,
           'id'=>$data_id
         ]);
+
         if($duplicate_sq && $duplicate_sq->rowCount()>0){
           header("location:list_province.php?duplicated");
           exit();
@@ -195,7 +197,7 @@ if(isset($_POST['flag_request'])){
           'id'=>$data_id
         ]);
 
-        if($province_uq){
+        if($province_uqx){
           header("location:list_province.php?success");
           exit();
         }else{
@@ -229,7 +231,7 @@ if(isset($_POST['flag_request'])){
           'id'=>$data_id
         ]);
 
-        if($province_dq){
+        if($province_dqx){
           header("location:list_province.php?success");
           exit();
         }else{
