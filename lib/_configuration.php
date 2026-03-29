@@ -1494,30 +1494,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 
 		/*
 			Backward compatibility:
-			Users created before province-management was introduced may not have the new
-			`list_province` access points saved in their accessibility payload.
-			If they already have any user-management access point, grant
-			province-management access too.
-		*/
-		if(strpos($access_path, 'system_accessibility/management/list_province/')===0){
-			$user_management_access_points = array(
-				'system_accessibility/management/list_user',
-				'system_accessibility/management/list_user/',
-				'system_accessibility/management/list_user/add_user',
-				'system_accessibility/management/list_user/edit_user',
-				'system_accessibility/management/list_user/delete_user',
-				'system_accessibility/management/list_user/set_accessibility',
-			);
-
-			foreach($user_management_access_points as $user_management_access_point){
-				if(strpos($holu_accessibilities, $user_management_access_point) !== false){
-					return 1;
-				}
-			}
-		}
-
-		/*
-			Backward compatibility:
 			Old users may not have any `province_accessibility/*` entries in their
 			stored accessibility payload (those permissions were added later).
 			In that case, treat province access as "all provinces" so province dropdowns
