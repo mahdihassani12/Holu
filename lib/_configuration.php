@@ -1570,7 +1570,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 
 						case 'system_accessibility/request/report_transfer/':{
 
-							$transfer_sq = $db->query("SELECT count(id) as num_pending FROM `transfers` WHERE deleted='0' AND is_approved='0' AND to_province IN ($accessed_provinces)");
+						$transfer_sq = $db->query("SELECT count(id) as num_pending FROM `transfers` WHERE deleted='0' AND is_approved='0' AND to_province IN ($accessed_provinces)");
   						$transfer_row = $transfer_sq->fetch();
 
   						if($transfer_row['num_pending']>0){
