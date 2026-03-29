@@ -884,31 +884,7 @@
 			    $description = holu_escape($_POST['description']);
 			    
 
-			    switch ($province) {
-			      case 'Kabul':{
-			        $bill_number_extention = "PKBL";
-			      }break;
-
-			      case 'Herat':{
-			        $bill_number_extention = "PHRT";
-			      }break;
-
-			      case 'Mazar_Sharif':{
-			        $bill_number_extention = "PMZR";
-			      }break;
-
-			      case 'Badghis':{
-			        $bill_number_extention = "PBDG";
-			      }break;
-
-			      case 'Jalaal_Abad':{
-			        $bill_number_extention = "PJLB";
-			      }break;
-			      
-			      default:{
-			      	$bill_number_extention = "PPPP";
-			      }break;
-			    }
+			    $bill_number_extention = get_province_bill_extension($province, 'purchase');
 
 			    $num_purchase_sq = $db->prepare(
 			    	"SELECT 
