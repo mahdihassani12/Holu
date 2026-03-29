@@ -141,15 +141,27 @@ if(isset($_POST['flag_request'])){
       case "add_province":
 
         $name = trim(holu_escape($_POST['name']));
-        $duplicate_sq = $db->query("SELECT id FROM `provinces` WHERE name='$name' LIMIT 1");
+        if($name===''){
+          header("location:list_province.php?error");
+          exit();
+        }
+
+        $duplicate_sq = $db->prepare("SELECT id FROM `provinces` WHERE name=:name LIMIT 1");
+        $duplicate_sqx = $duplicate_sq->execute([
+          'name'=>$name
+        ]);
+
         if($duplicate_sq && $duplicate_sq->rowCount()>0){
           header("location:list_province.php?duplicated");
           exit();
         }
 
-        $province_iq = $db->query("INSERT INTO `provinces` (name) VALUES ('$name')");
+        $province_iq = $db->prepare("INSERT INTO `provinces` (name) VALUES (:name)");
+        $province_iqx = $province_iq->execute([
+          'name'=>$name
+        ]);
 
-        if($province_iq){
+        if($province_iqx){
           header("location:list_province.php?success");
           exit();
         }else{
@@ -163,16 +175,29 @@ if(isset($_POST['flag_request'])){
 
         $data_id = holu_escape($_POST['data_id']);
         $name = trim(holu_escape($_POST['name']));
+        if($name===''){
+          header("location:list_province.php?error");
+          exit();
+        }
 
-        $duplicate_sq = $db->query("SELECT id FROM `provinces` WHERE name='$name' AND id!='$data_id' LIMIT 1");
+        $duplicate_sq = $db->prepare("SELECT id FROM `provinces` WHERE name=:name AND id!=:id LIMIT 1");
+        $duplicate_sqx = $duplicate_sq->execute([
+          'name'=>$name,
+          'id'=>$data_id
+        ]);
+
         if($duplicate_sq && $duplicate_sq->rowCount()>0){
           header("location:list_province.php?duplicated");
           exit();
         }
 
-        $province_uq = $db->query("UPDATE `provinces` SET name='$name' WHERE id='$data_id' LIMIT 1");
+        $province_uq = $db->prepare("UPDATE `provinces` SET name=:name WHERE id=:id LIMIT 1");
+        $province_uqx = $province_uq->execute([
+          'name'=>$name,
+          'id'=>$data_id
+        ]);
 
-        if($province_uq){
+        if($province_uqx){
           header("location:list_province.php?success");
           exit();
         }else{
@@ -201,9 +226,12 @@ if(isset($_POST['flag_request'])){
           exit();
         }
 
-        $province_dq = $db->query("DELETE FROM `provinces` WHERE id='$data_id' LIMIT 1");
+        $province_dq = $db->prepare("DELETE FROM `provinces` WHERE id=:id LIMIT 1");
+        $province_dqx = $province_dq->execute([
+          'id'=>$data_id
+        ]);
 
-        if($province_dq){
+        if($province_dqx){
           header("location:list_province.php?success");
           exit();
         }else{
