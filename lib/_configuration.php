@@ -1524,6 +1524,19 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				}
 			}
 		}
+
+		/*
+			Backward compatibility:
+			Old users may not have any `province_accessibility/*` entries in their
+			stored accessibility payload (those permissions were added later).
+			In that case, treat province access as "all provinces" so province dropdowns
+			and province-based reports/operations keep working.
+		*/
+		if(strpos($access_path, 'province_accessibility/')===0){
+			if(strpos($holu_accessibilities, 'province_accessibility/')===false){
+				return 1;
+			}
+		}
 				
 		if(strpos($holu_accessibilities, $access_path) !== false){
 			$result = 1;
