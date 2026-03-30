@@ -324,12 +324,21 @@
 	        	<div class="form-group row">
 	            <label class="col-sm-3 col-form-label" for="province">Province</label>
 	            <div class="col-sm-6">
-	              <select id="province" name="province" class="form-control">
+	              <select id="province" name="province" class="form-control" data-branch-target="branch" data-branch-value="0">
 	              	<option selected hidden value="">Select an option</option>
 	              	<?php echo get_province_option('0'); ?>
 	              </select>
 	            </div>
 	          </div>
+
+	          <div class="form-group row">
+            <label class="col-sm-3 col-form-label" for="branch">Branch</label>
+            <div class="col-sm-6">
+              <select id="branch" name="branch" class="form-control">
+                <?php echo get_branch_option('0', ''); ?>
+              </select>
+            </div>
+          </div>
 
 	        	<div class="form-group row">
 	            <label class="col-sm-3 col-form-label" for="expense_date">Expense Date</label>

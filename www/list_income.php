@@ -3,6 +3,7 @@
   $holu_page_paths = ["Transaction", "Income"];
 
   set_filtering_data('income_province');
+  set_filtering_data('income_branch');
   set_filtering_data('income_date');
   set_filtering_data('income_categories_id');
   set_filtering_data('income_sub_categories_id');

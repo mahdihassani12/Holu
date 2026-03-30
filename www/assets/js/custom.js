@@ -51,9 +51,36 @@ function reload_js(){
     });
   });
   disable_form_submit_btn();
+  bind_province_branch_filters();
 }
 
 reload_js();
+
+
+function bind_province_branch_filters(){
+  $(document).off('change.holuProvinceBranch', 'select[data-branch-target]');
+  $(document).on('change.holuProvinceBranch', 'select[data-branch-target]', function(){
+    var $province = $(this);
+    var targetId = $province.data('branch-target');
+    var branchValue = $province.data('branch-value') || '0';
+    var $target = $('#' + targetId);
+    if(!$target.length){
+      $target = $province.closest('form').find('[name="' + targetId + '"]');
+    }
+    if(!$target.length){
+      return;
+    }
+    get_branch_option($province.val(), branchValue, $target.attr('id') || targetId);
+    $province.data('branch-value', '0');
+  });
+
+  $('select[data-branch-target]').each(function(){
+    var $province = $(this);
+    if($province.val()!==''){
+      $province.triggerHandler('change');
+    }
+  });
+}
 
 function get_random_color() {
   var letters = '0123456789ABCDEF'.split('');
