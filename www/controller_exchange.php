@@ -34,9 +34,18 @@
             <div class="form-group row">
               <label class="col-sm-3 col-form-label" for="province">Province</label>
               <div class="col-sm-6">
-                <select id="province" name="province" class="form-control" required>
+                <select id="province" name="province" class="form-control" required data-branch-target="branch" data-branch-value="0">
                   <option selected hidden value="">Select an option</option>
                   <?php echo get_province_option("0"); ?>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label" for="branch">Branch</label>
+              <div class="col-sm-6">
+                <select id="branch" name="branch" class="form-control" required>
+                  <option selected hidden value="">Select an option</option>
                 </select>
               </div>
             </div>
@@ -133,6 +142,17 @@
 			        	<input type="hidden" name="flag_operation" id="flag_operation" value="edit_exchange"/>
 
 			        	<input type="hidden" name="data_id" id="data_id" value="<?php echo holu_encode($data_id); ?>"/>
+
+                <?php if(!empty($exchange_row['province'])){ ?>
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label" for="branch">Branch</label>
+                  <div class="col-sm-6">
+                    <select id="branch" name="branch" class="form-control" required>
+                      <?php echo get_branch_option($exchange_row['province'], $exchange_row['branch']); ?>
+                    </select>
+                  </div>
+                </div>
+                <?php } ?>
 
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label" for="exchange_date">Exchange Date</label>
@@ -340,6 +360,10 @@
 			                        <td><?php echo $exchange_row['province']; ?></td>
 			                      </tr>
 			                      <tr>
+			                        <th>Branch</th>
+			                        <td><?php echo $exchange_row['branch']; ?></td>
+			                      </tr>
+			                      <tr>
 			                        <th>Date</th>
 			                        <td><?php echo $exchange_row['exchange_date']; ?></td>
 			                      </tr>
@@ -492,6 +516,7 @@
   			if(check_duplicate_exchange($_POST)==0){
 
 	  			$province = holu_escape($_POST['province']);
+			    $branch = holu_escape($_POST['branch'] ?? '');
 			    $exchange_date = holu_escape($_POST['exchange_date']);
 	  			$from_amount = holu_escape($_POST['from_amount']);
 			    $from_currency = holu_escape($_POST['from_currency']);
@@ -501,6 +526,7 @@
 
 			    $exchange_iq = $db->prepare("INSERT INTO `exchanges` (
 			    	province, 
+			    	branch,
 			    	exchange_date, 
 			    	from_amount, 
 			    	from_currency, 
@@ -512,6 +538,7 @@
 			    	users_id
 			    ) VALUES (
 				    :province, 
+				    :branch,
 				    :exchange_date, 
 				    :from_amount, 
 				    :from_currency, 
@@ -525,6 +552,7 @@
 
 			    $exchange_iqx = $exchange_iq->execute([
 			    	'province'=>$province,
+			    	'branch'=>$branch,
 			    	'exchange_date'=>$exchange_date,
 			    	'from_amount'=>$from_amount,
 			    	'from_currency'=>$from_currency,
@@ -558,6 +586,7 @@
 	  			track_editions('edit_exchange', ['exchanges_id'=>$_POST['data_id'], 'data_array'=>$_POST]);
 
 	  			$data_id        = holu_escape(holu_decode($post['data_id'] ?? ''));
+				$branch         = holu_escape($post['branch'] ?? '');
 				$exchange_date  = holu_escape($post['exchange_date'] ?? '');
 				$from_amount    = holu_escape($post['from_amount'] ?? '');
 				$from_currency  = holu_escape($post['from_currency'] ?? '');
@@ -567,6 +596,7 @@
 				$description    = holu_escape($post['description'] ?? '');
 
 	  			$exchange_uq = $db->prepare("UPDATE `exchanges` SET 
+	  				branch=:branch,
 	  				exchange_date=:exchange_date, 
 	  				from_amount=:from_amount, 
 	  				from_currency=:from_currency, 
@@ -577,6 +607,7 @@
 	  			LIMIT 1");
 
 	  			$exchange_uqx = $exchange_uq->execute([
+			    	'branch'=>$branch,
 			    	'exchange_date'=>$exchange_date,
 			    	'from_amount'=>$from_amount,
 			    	'from_currency'=>$from_currency,
@@ -634,4 +665,3 @@
   	}
   }
 ?>
-

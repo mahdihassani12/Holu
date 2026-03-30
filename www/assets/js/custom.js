@@ -45,6 +45,11 @@ function reload_js(){
 
 
   $('.select2').select2();
+  $('form').each(function(){
+    $(this).find('select[name="branch"]').slice(1).each(function(){
+      $(this).closest('.form-group').remove();
+    });
+  });
   disable_form_submit_btn();
 }
 
@@ -132,6 +137,32 @@ function get_sub_category_option(sub_categories_id, categories_id, target_id){
     }
   });
 }
+
+function get_branch_option(province, branch, target_id){
+  $.ajax({
+    url:'controller_ajax.php',
+    method:'post',
+    data:{
+      operation:'get_branch_option',
+      province:province,
+      branch:branch
+    },
+    success:function(result){
+      $("#"+target_id).html(result);
+    }
+  });
+}
+window.get_branch_option = get_branch_option;
+
+$(document).on('change', '[data-branch-target]', function(){
+  var targetId = $(this).data('branch-target');
+  var branchValue = $(this).data('branch-value') || '0';
+  if($(this).data('branch-loaded')===1){
+    branchValue = '0';
+  }
+  $(this).data('branch-loaded', 1);
+  get_branch_option($(this).val(), branchValue, targetId);
+});
 
 
 $('.tip').each(function () {
@@ -315,7 +346,3 @@ function get_sub_cat_conf(){
 }
 
 //End of functions
-
-
-
-

@@ -19,6 +19,12 @@
 				echo get_sub_category_option($sub_categories_id, $categories_id);
 			}break;
 
+			case "get_branch_option": {
+				$province = holu_escape($_POST['province']);
+				$branch = holu_escape($_POST['branch']);
+				echo get_branch_option($province, $branch);
+			}break;
+
 			case "markup_item": {
 				$rtap = holu_escape($_POST['rtap']);
 				$reference_type = holu_escape($_POST['reference_type']);

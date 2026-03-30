@@ -16,6 +16,7 @@
   $loaded_transaction_components = '';
 
   $province = "0";
+  $branch = "";
   $from_date = "";
   $to_date = "";
   $customer_name = "";
@@ -51,6 +52,21 @@
       $closing_transfer_filtering_data .= " AND (transfers.from_province='".$province."' OR to_province='".$province."') ";
 
       $excel_data .= "&province=".$province;
+    }
+    if(isset($_GET['branch']) AND !empty($_GET['branch'])){
+      $branch = $_GET['branch'];
+      $income_filtering_data .= " AND incomes.branch='".$branch."' ";
+      $expense_filtering_data .= " AND expenses.branch='".$branch."' ";
+      $exchange_filtering_data .= " AND exchanges.branch='".$branch."' ";
+      $purchase_filtering_data .= " AND 0 ";
+      $transfer_filtering_data .= " AND (transfers.from_branch='".$branch."' OR transfers.to_branch='".$branch."') ";
+      $closing_income_filtering_data .= " AND incomes.branch='".$branch."' ";
+      $closing_expense_filtering_data .= " AND expenses.branch='".$branch."' ";
+      $closing_exchange_filtering_data .= " AND exchanges.branch='".$branch."' ";
+      $closing_purchase_filtering_data .= " AND 0 ";
+      $closing_transfer_filtering_data .= " AND (transfers.from_branch='".$branch."' OR transfers.to_branch='".$branch."') ";
+
+      $excel_data .= "&branch=".$branch;
     }
     if(isset($_GET['from_date']) AND !empty($_GET['from_date'])){
       $from_date = $_GET['from_date'];
@@ -477,6 +493,7 @@
     'Income' AS transaction_type,
     incomes.sub_categories_id AS transaction_sub_categories_id,
     incomes.province AS transaction_province,
+    incomes.branch AS transaction_branch,
     incomes.income_date AS transaction_date,
     incomes.income_amount AS transaction_amount,
     incomes.currency AS transaction_currency,
@@ -501,6 +518,7 @@
     'Expense' AS transaction_type,
     expenses.sub_categories_id AS transaction_sub_categories_id,
     expenses.province AS transaction_province,
+    expenses.branch AS transaction_branch,
     expenses.expense_date AS transaction_date,
     expenses.expense_amount AS transaction_amount,
     expenses.currency AS transaction_currency,
@@ -525,6 +543,7 @@
     'Exchange' AS transaction_type,
     0 AS transaction_sub_categories_id,
     exchanges.province AS transaction_province,
+    exchanges.branch AS transaction_branch,
     exchanges.exchange_date AS transaction_date,
     CONCAT(exchanges.from_amount, ' to ', exchanges.to_amount) AS transaction_amount,
     CONCAT(exchanges.from_currency, ' to ', exchanges.to_currency) AS transaction_currency,
@@ -549,6 +568,7 @@
     'Purchase' AS transaction_type,
     purchases.sub_categories_id AS transaction_sub_categories_id,
     purchases.province AS transaction_province,
+    '' AS transaction_branch,
     purchases.purchase_date AS transaction_date,
     purchases.purchase_amount AS transaction_amount,
     purchases.currency AS transaction_currency,
@@ -576,6 +596,7 @@
     'Transfer' AS transaction_type,
     0 AS transaction_sub_categories_id,
     CONCAT(transfers.from_province, ' to ', transfers.to_province) AS transaction_province,
+    CONCAT(transfers.from_branch, ' to ', transfers.to_branch) AS transaction_branch,
     transfers.transfer_date AS transaction_date,
     transfers.transfer_amount AS transaction_amount,
     transfers.currency AS transaction_currency,
@@ -906,9 +927,18 @@
                   <div class="form-group row">
                     <label class="col-sm-3 col-form-label" for="province">Province</label>
                     <div class="col-sm-6">
-                      <select id="province" name="province" class="form-control" required>
+                      <select id="province" name="province" class="form-control" required data-branch-target="branch" data-branch-value="<?php echo $branch; ?>">
                         <option selected hidden value="">Select an option</option>
                         <?php echo get_province_option($province); ?>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <label class="col-sm-3 col-form-label" for="branch">Branch</label>
+                    <div class="col-sm-6">
+                      <select id="branch" name="branch" class="form-control">
+                        <?php echo get_branch_option($province, $branch); ?>
                       </select>
                     </div>
                   </div>
@@ -1064,6 +1094,7 @@
                         <th>Sub Category</th>
                         <th>Date</th>
                         <th>Province</th>
+                        <th>Branch</th>
                         <th>Check Number</th>
                         <th>Additional Information</th>
                         <th>Markups</th>
@@ -1201,6 +1232,7 @@
                             <td><?php echo $sub_category; ?></td>
                             <td><?php echo $transaction_row['transaction_date']; ?></td>
                             <td><?php echo $transaction_row['transaction_province']; ?></td>
+                            <td><?php echo $transaction_row['transaction_branch']; ?></td>
                             <td class="text-center" id="check_number_container<?php echo $transaction_row['transaction_type'].$transaction_row['transaction_id']; ?>"><?php echo $check_number_container; ?></td>
                             <td class="text-center">
                               <?php
