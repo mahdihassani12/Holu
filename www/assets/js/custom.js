@@ -45,6 +45,11 @@ function reload_js(){
 
 
   $('.select2').select2();
+  $('form').each(function(){
+    $(this).find('select[name="branch"]').slice(1).each(function(){
+      $(this).closest('.form-group').remove();
+    });
+  });
   disable_form_submit_btn();
 }
 
