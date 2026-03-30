@@ -81,6 +81,7 @@
                       <tr>
                         <th class="text-center">#</th>
                         <th>Province</th>
+                        <th>Branch</th>
                         <th>Date</th>
                         <th>From Amount</th>
                         <th>From Currency</th>
@@ -99,6 +100,7 @@
                           <tr>
                             <th class="text-center"><?php echo $holu_count++; ?></th>
                             <td><?php echo $exchange_row['province']; ?></td>
+                            <td><?php echo $exchange_row['branch']; ?></td>
                             <td><?php echo $exchange_row['exchange_date']; ?></td>
                             <td><?php echo $exchange_row['from_amount']; ?></td>
                             <td><?php echo $exchange_row['from_currency']; ?></td>

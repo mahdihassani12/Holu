@@ -34,7 +34,7 @@
             <div class="form-group row">
               <label class="col-sm-3 col-form-label" for="from_province">From Province</label>
               <div class="col-sm-6">
-                <select id="from_province" name="from_province" class="form-control" required>
+                <select id="from_province" name="from_province" class="form-control" required onchange="get_branch_option(this.value, '0', 'from_branch');">
                   <option selected hidden value="">Select an option</option>
                   <?php echo get_province_option("0"); ?>
                 </select>
@@ -42,11 +42,29 @@
             </div>
 
             <div class="form-group row">
+              <label class="col-sm-3 col-form-label" for="from_branch">From Branch</label>
+              <div class="col-sm-6">
+                <select id="from_branch" name="from_branch" class="form-control" required>
+                  <option selected hidden value="">Select an option</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
               <label class="col-sm-3 col-form-label" for="to_province">To Province</label>
               <div class="col-sm-6">
-                <select id="to_province" name="to_province" class="form-control" required>
+                <select id="to_province" name="to_province" class="form-control" required onchange="get_branch_option(this.value, '0', 'to_branch');">
                   <option selected hidden value="">Select an option</option>
                   <?php echo get_all_province_option("0"); ?>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label" for="to_branch">To Branch</label>
+              <div class="col-sm-6">
+                <select id="to_branch" name="to_branch" class="form-control" required>
+                  <option selected hidden value="">Select an option</option>
                 </select>
               </div>
             </div>
@@ -147,25 +165,43 @@
 
 			        	<input type="hidden" name="data_id" id="data_id" value="<?php echo holu_encode($data_id); ?>"/>
 
-			        	<div class="form-group row">
+		        	<div class="form-group row">
 		              <label class="col-sm-3 col-form-label" for="from_province">From Province</label>
 		              <div class="col-sm-6">
-		                <select id="from_province" name="from_province" class="form-control" required>
+		                <select id="from_province" name="from_province" class="form-control" required onchange="get_branch_option(this.value, '<?php echo $transfer_row['from_branch']; ?>', 'from_branch');">
 		                  <option selected hidden value="">Select an option</option>
 		                  <?php echo get_province_option($transfer_row['from_province']); ?>
 		                </select>
 		              </div>
 		            </div>
 
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label" for="from_branch">From Branch</label>
+                  <div class="col-sm-6">
+                    <select id="from_branch" name="from_branch" class="form-control" required>
+                      <?php echo get_branch_option($transfer_row['from_province'], $transfer_row['from_branch']); ?>
+                    </select>
+                  </div>
+                </div>
+
 			        	<div class="form-group row">
 		              <label class="col-sm-3 col-form-label" for="to_province">To Province</label>
 		              <div class="col-sm-6">
-		                <select id="to_province" name="to_province" class="form-control" required>
+		                <select id="to_province" name="to_province" class="form-control" required onchange="get_branch_option(this.value, '<?php echo $transfer_row['to_branch']; ?>', 'to_branch');">
 		                  <option selected hidden value="">Select an option</option>
 		                  <?php echo get_all_province_option($transfer_row['to_province']); ?>
 		                </select>
 		              </div>
 		            </div>
+
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label" for="to_branch">To Branch</label>
+                  <div class="col-sm-6">
+                    <select id="to_branch" name="to_branch" class="form-control" required>
+                      <?php echo get_branch_option($transfer_row['to_province'], $transfer_row['to_branch']); ?>
+                    </select>
+                  </div>
+                </div>
 
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label" for="transfer_date">Transfer Date</label>
@@ -513,8 +549,16 @@
 			                        <td><?php echo $transfer_row['from_province']; ?></td>
 			                      </tr>
 			                      <tr>
+			                        <th>From Branch</th>
+			                        <td><?php echo $transfer_row['from_branch']; ?></td>
+			                      </tr>
+			                      <tr>
 			                        <th>To Province</th>
 			                        <td><?php echo $transfer_row['to_province']; ?></td>
+			                      </tr>
+			                      <tr>
+			                        <th>To Branch</th>
+			                        <td><?php echo $transfer_row['to_branch']; ?></td>
 			                      </tr>
 			                      <tr>
 			                        <th>Date</th>
@@ -659,7 +703,9 @@
   			case "add_transfer":
 
 	  			$from_province = holu_escape($_POST['from_province']);
+	  			$from_branch = holu_escape($_POST['from_branch']);
 	  			$to_province = holu_escape($_POST['to_province']);
+	  			$to_branch = holu_escape($_POST['to_branch']);
 			    $transfer_date = holu_escape($_POST['transfer_date']);
 	  			$transfer_amount = holu_escape($_POST['transfer_amount']);
 			    $currency = holu_escape($_POST['currency']);
@@ -686,7 +732,9 @@
 
 			    $transfer_iq = $db->prepare("INSERT INTO `transfers` (
 			    	from_province, 
+			    	from_branch,
 			    	to_province, 
+			    	to_branch,
 			    	transfer_date, 
 			    	transfer_amount, 
 			    	currency, 
@@ -697,7 +745,9 @@
 					  check_number
 			    ) VALUES (
 				    :from_province, 
+				    :from_branch,
 				    :to_province, 
+				    :to_branch,
 				    :transfer_date, 
 				    :transfer_amount, 
 				    :currency, 
@@ -710,7 +760,9 @@
 
 			    $transfer_iqx = $transfer_iq->execute([
 			    	'from_province'=>$from_province,
+			    	'from_branch'=>$from_branch,
 			    	'to_province'=>$to_province,
+			    	'to_branch'=>$to_branch,
 			    	'transfer_date'=>$transfer_date,
 			    	'transfer_amount'=>$transfer_amount,
 			    	'currency'=>$currency,
@@ -764,7 +816,9 @@
 
 	  			$data_id = holu_escape(holu_decode($_POST['data_id']));
 			    $from_province = holu_escape($_POST['from_province']);
+			    $from_branch = holu_escape($_POST['from_branch']);
 			    $to_province = holu_escape($_POST['to_province']);
+			    $to_branch = holu_escape($_POST['to_branch']);
 			    $transfer_date = holu_escape($_POST['transfer_date']);
 	  			$transfer_amount = holu_escape($_POST['transfer_amount']);
 			    $currency = holu_escape($_POST['currency']);
@@ -772,7 +826,9 @@
 
 	  			$transfer_uq = $db->prepare("UPDATE `transfers` SET 
 	  				from_province=:from_province, 
+	  				from_branch=:from_branch,
 	  				to_province=:to_province, 
+	  				to_branch=:to_branch,
 	  				transfer_date=:transfer_date, 
 	  				transfer_amount=:transfer_amount, 
 	  				currency=:currency, 
@@ -782,7 +838,9 @@
 
 	  			$transfer_uqx = $transfer_uq->execute([
 			    	'from_province'=>$from_province,
+			    	'from_branch'=>$from_branch,
 			    	'to_province'=>$to_province,
+			    	'to_branch'=>$to_branch,
 			    	'transfer_date'=>$transfer_date,
 			    	'transfer_amount'=>$transfer_amount,
 			    	'currency'=>$currency,
@@ -877,4 +935,3 @@
   	}
   }
 ?>
-
