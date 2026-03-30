@@ -229,7 +229,11 @@
                 <div id="additional_information_input_containers">
                   <?php
 
-                  $ai = json_decode($expense_row['additional_informations']);
+                  $json = $expense_row['additional_informations'] ?? '';
+
+				$ai = $json !== ''
+					? json_decode($json, true)
+					: null;
                   $additional_informations = '';
                   if(!empty($ai)){
                     foreach ($ai as $key => $value) {
