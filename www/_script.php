@@ -43,3 +43,21 @@
 
 <!-- Additional js -->
 <script src="assets/js/custom.js"></script>
+<script>
+  if (typeof window.get_branch_option !== 'function') {
+    window.get_branch_option = function(province, branch, target_id){
+      $.ajax({
+        url: 'controller_ajax.php',
+        method: 'post',
+        data: {
+          operation: 'get_branch_option',
+          province: province,
+          branch: branch
+        },
+        success: function(result){
+          $("#" + target_id).html(result);
+        }
+      });
+    };
+  }
+</script>

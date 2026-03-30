@@ -83,6 +83,7 @@
                       <tr>
                         <th class="text-center">#</th>
                         <th>Province</th>
+                        <th>Branch</th>
                         <th>Category</th>
                         <th>Sub Category</th>
                         <th>Date</th>
@@ -116,6 +117,7 @@
                           <tr>
                             <th class="text-center"><?php echo $holu_count++; ?></th>
                             <td><?php echo $expense_row['province']; ?></td>
+                            <td><?php echo $expense_row['branch']; ?></td>
                             <td><?php echo get_col('categories', 'category_name', 'id', get_col('sub_categories', 'categories_id', 'id', $expense_row['sub_categories_id'])); ?></td>
                             <td><?php echo get_col('sub_categories', 'sub_category_name', 'id', $expense_row['sub_categories_id']); ?></td>
                             <td><?php echo $expense_row['expense_date']; ?></td>
