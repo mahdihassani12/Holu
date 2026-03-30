@@ -3,6 +3,7 @@
   $holu_page_paths = ["Transaction", "Exchange"];
 
   set_filtering_data('exchange_province');
+  set_filtering_data('exchange_branch');
   set_filtering_data('exchange_date');
 
   set_pagination();

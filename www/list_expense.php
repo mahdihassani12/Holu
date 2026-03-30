@@ -3,6 +3,7 @@
   $holu_page_paths = ["Transaction", "Expense"];
 
   set_filtering_data('expense_province');
+  set_filtering_data('expense_branch');
   set_filtering_data('expense_date');
   set_filtering_data('expense_categories_id');
   set_filtering_data('expense_sub_categories_id');

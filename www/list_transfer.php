@@ -3,6 +3,7 @@
   $holu_page_paths = ["Transaction", "Transfer"];
 
   set_filtering_data('transfer_province');
+  set_filtering_data('transfer_branch');
   set_filtering_data('transfer_date');
 
   set_pagination();

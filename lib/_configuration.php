@@ -1984,6 +1984,14 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				}
 			break;
 
+			case "income_branch":
+				if(isset($_GET['branch']) AND !empty($_GET['branch'])){
+					$branch = $_GET['branch'];
+					$holu_filtering_data .= " AND incomes.branch='".$branch."' ";
+					array_push($holu_filtering_array, "Branch: $branch");
+				}
+			break;
+
 			case "income_date":
 				if(isset($_GET['from_income_date']) AND !empty($_GET['from_income_date'])){
 					$from_income_date = $_GET['from_income_date'];
@@ -2037,6 +2045,14 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 					$province = $_GET['province'];
 					$holu_filtering_data .= " AND expenses.province='".$province."' ";
 					array_push($holu_filtering_array, "Province: $province");
+				}
+			break;
+
+			case "expense_branch":
+				if(isset($_GET['branch']) AND !empty($_GET['branch'])){
+					$branch = $_GET['branch'];
+					$holu_filtering_data .= " AND expenses.branch='".$branch."' ";
+					array_push($holu_filtering_array, "Branch: $branch");
 				}
 			break;
 
@@ -2149,6 +2165,14 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 					$province = $_GET['province'];
 					$holu_filtering_data .= " AND exchanges.province='".$province."' ";
 					array_push($holu_filtering_array, "Province: $province");
+				}
+			break;
+
+			case "exchange_branch":
+				if(isset($_GET['branch']) AND !empty($_GET['branch'])){
+					$branch = $_GET['branch'];
+					$holu_filtering_data .= " AND exchanges.branch='".$branch."' ";
+					array_push($holu_filtering_array, "Branch: $branch");
 				}
 			break;
 
