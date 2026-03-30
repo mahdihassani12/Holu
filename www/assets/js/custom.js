@@ -133,6 +133,21 @@ function get_sub_category_option(sub_categories_id, categories_id, target_id){
   });
 }
 
+function get_branch_option(province, branch, target_id){
+  $.ajax({
+    url:'controller_ajax.php',
+    method:'post',
+    data:{
+      operation:'get_branch_option',
+      province:province,
+      branch:branch
+    },
+    success:function(result){
+      $("#"+target_id).html(result);
+    }
+  });
+}
+
 
 $('.tip').each(function () {
   $(this).tooltip(
@@ -315,7 +330,6 @@ function get_sub_cat_conf(){
 }
 
 //End of functions
-
 
 
 

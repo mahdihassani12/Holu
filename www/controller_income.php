@@ -34,9 +34,18 @@
             <div class="form-group row">
               <label class="col-sm-3 col-form-label" for="province">Province</label>
               <div class="col-sm-6">
-                <select id="province" name="province" class="form-control select2" required>
+                <select id="province" name="province" class="form-control select2" required onchange="get_branch_option(this.value, '0', 'branch');">
                   <option selected hidden value="">Select an option</option>
                   <?php echo get_province_option("0"); ?>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label" for="branch">Branch</label>
+              <div class="col-sm-6">
+                <select id="branch" name="branch" class="form-control select2" required>
+                  <option selected hidden value="">Select an option</option>
                 </select>
               </div>
             </div>
@@ -164,6 +173,15 @@
 			        	<input type="hidden" name="data_id" id="data_id" value="<?php echo holu_encode($data_id); ?>"/>
 
 			        	<input type="hidden" name="province" id="province" value="<?php echo $income_row['province']; ?>"/>
+
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label" for="branch">Branch</label>
+                  <div class="col-sm-6">
+                    <select id="branch" name="branch" class="form-control select2" required>
+                      <?php echo get_branch_option($income_row['province'], $income_row['branch']); ?>
+                    </select>
+                  </div>
+                </div>
 
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label" for="categories_id">Category</label>
@@ -856,6 +874,10 @@
 			                        <td><?php echo $income_row['province']; ?></td>
 			                      </tr>
 			                      <tr>
+			                        <th>Branch</th>
+			                        <td><?php echo $income_row['branch']; ?></td>
+			                      </tr>
+			                      <tr>
 			                        <th>Category</th>
 			                        <td><?php echo get_col('sub_categories', 'sub_category_name', 'id', $income_row['sub_categories_id']); ?></td>
 			                      </tr>
@@ -1102,6 +1124,7 @@
   				if(check_duplicate_income($_POST)==0){
 
   					$province = holu_escape($_POST['province']);
+					$branch = holu_escape($_POST['branch']);
 				    $sub_categories_id = holu_escape($_POST['sub_categories_id']);
 				    $income_date = holu_escape($_POST['income_date']);
 				    $currency = holu_escape($_POST['currency']);
@@ -1180,6 +1203,7 @@
 		
 				    $income_iq = $db->prepare("INSERT INTO `incomes` (
 				    	province, 
+				    	branch,
 				    	sub_categories_id, 
 				    	income_date, 
 				    	income_amount, 
@@ -1191,6 +1215,7 @@
 				    	users_id
 				    ) VALUES (
 				    	:province, 
+				    	:branch,
 				    	:sub_categories_id, 
 				    	:income_date, 
 				    	:income_amount, 
@@ -1204,6 +1229,7 @@
 		
 				    $income_iqx = $income_iq->execute([
 				    	'province'=>$province,
+				    	'branch'=>$branch,
 				    	'sub_categories_id'=>$sub_categories_id,
 				    	'income_date'=>$income_date,
 				    	'income_amount'=>$income_amount,
@@ -1331,6 +1357,7 @@
 							
 							$income_iq2 = $db->prepare("INSERT INTO `incomes` (
 					    	province, 
+					    	branch,
 					    	sub_categories_id, 
 					    	income_date, 
 					    	income_amount, 
@@ -1342,6 +1369,7 @@
 					    	users_id
 					    ) VALUES (
 					    	:province, 
+					    	:branch,
 					    	:sub_categories_id, 
 					    	:income_date, 
 					    	:income_amount, 
@@ -1355,6 +1383,7 @@
 			
 					    $income_iqx2 = $income_iq->execute([
 					    	'province'=>$province,
+					    	'branch'=>$branch,
 					    	'sub_categories_id'=>$sub_cat_id,
 					    	'income_date'=>$income_date,
 					    	'income_amount'=>$percentage,
@@ -1458,6 +1487,7 @@
 	  				track_editions('edit_income', ['incomes_id'=>$_POST['data_id'], 'data_array'=>$_POST]);
 	
 		  			$data_id = holu_escape(holu_decode($_POST['data_id']));
+				    $branch = holu_escape($_POST['branch']);
 				    $sub_categories_id = holu_escape($_POST['sub_categories_id']);
 		  			$income_amount = holu_escape($_POST['income_amount']);
 				    $income_date = holu_escape($_POST['income_date']);
@@ -1502,6 +1532,7 @@
 	
 		  			$income_uq = $db->prepare(
 		  				"UPDATE `incomes` SET 
+			  				branch=:branch,
 			  				sub_categories_id=:sub_categories_id, 
 			  				income_amount=:income_amount, 
 			  				income_date=:income_date, 
@@ -1512,6 +1543,7 @@
 		  			);
 	
 		  			$income_uqx = $income_uq->execute([
+				    	'branch'=>$branch,
 				    	'sub_categories_id'=>$sub_categories_id,
 				    	'income_date'=>$income_date,
 				    	'income_amount'=>$income_amount,
@@ -1640,6 +1672,7 @@
 
   				if(check_duplicate_income($_POST)==0){
   					$province = holu_escape($_POST['province']);
+					$branch = holu_escape($_POST['branch']);
 				    $sub_categories_id = holu_escape($_POST['sub_categories_id']);
 				    $income_date = holu_escape($_POST['income_date']);
 		  			$income_amount = holu_escape($_POST['income_amount']);
@@ -1704,6 +1737,7 @@
 		
 				    $income_iq = $db->prepare("INSERT INTO `incomes` (
 				    	province, 
+				    	branch,
 				    	sub_categories_id, 
 				    	income_date, 
 				    	income_amount, 
@@ -1715,6 +1749,7 @@
 				    	users_id
 				    ) VALUES (
 				    	:province, 
+				    	:branch,
 				    	:sub_categories_id, 
 				    	:income_date, 
 				    	:income_amount, 
@@ -1728,6 +1763,7 @@
 		
 				    $income_iqx = $income_iq->execute([
 				    	'province'=>$province,
+				    	'branch'=>$branch,
 				    	'sub_categories_id'=>$sub_categories_id,
 				    	'income_date'=>$income_date,
 				    	'income_amount'=>$income_amount,
@@ -1938,4 +1974,3 @@
   	}
   }
 ?>
-

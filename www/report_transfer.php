@@ -70,7 +70,9 @@
                       <tr>
                         <th class="text-center">#</th>
                         <th>From Province</th>
+                        <th>From Branch</th>
                         <th>To Province</th>
+                        <th>To Branch</th>
                         <th>Date</th>
                         <th>Amount</th>
                         <th>Currency</th>
@@ -88,7 +90,9 @@
                           <tr>
                             <th class="text-center"><?php echo $holu_count++; ?></th>
                             <td><?php echo $transfer_row['from_province']; ?></td>
+                            <td><?php echo $transfer_row['from_branch']; ?></td>
                             <td><?php echo $transfer_row['to_province']; ?></td>
+                            <td><?php echo $transfer_row['to_branch']; ?></td>
                             <td><?php echo $transfer_row['transfer_date']; ?></td>
                             <td><?php echo $transfer_row['transfer_amount']; ?></td>
                             <td><?php echo $transfer_row['currency']; ?></td>
