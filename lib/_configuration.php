@@ -1347,6 +1347,34 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		return get_province_option($province);
 	}
 
+	function get_branch_option($province, $branch){
+		global $db;
+		$branch_options = '<option selected hidden value="">Select an option</option>';
+
+		if(empty($province)){
+			return $branch_options;
+		}
+
+		$branch_sq = $db->prepare(
+			"SELECT branches.name
+			FROM `branches`
+			LEFT JOIN `provinces` ON provinces.id=branches.province_id
+			WHERE provinces.name=:province
+			ORDER BY branches.name ASC"
+		);
+
+		$branch_sqx = $branch_sq->execute([
+			'province'=>$province
+		]);
+
+		while($branch_row = $branch_sq->fetch()){
+			$branch_name = $branch_row['name'];
+			$branch_options .= '<option '.(($branch_name==$branch)?'selected':'').' value="'.$branch_name.'">'.$branch_name.'</option>';
+		}
+
+		return $branch_options;
+	}
+
 	function get_additional_information_option($additional_information){
 		global $holu_additional_informations;
 		$additional_information_options = "";
@@ -2283,6 +2311,14 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 					$province = $_GET['province'];
 					$holu_filtering_data .= " AND (transfers.from_province='".$province."' OR transfers.to_province='".$province."') ";
 					array_push($holu_filtering_array, "Province: $province");
+				}
+			break;
+
+			case "transfer_branch":
+				if(isset($_GET['branch']) AND !empty($_GET['branch'])){
+					$branch = $_GET['branch'];
+					$holu_filtering_data .= " AND (transfers.from_branch='".$branch."' OR transfers.to_branch='".$branch."') ";
+					array_push($holu_filtering_array, "Branch: $branch");
 				}
 			break;
 

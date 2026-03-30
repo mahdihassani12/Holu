@@ -27,6 +27,7 @@
         $loaded_transaction_components = '';
 
         $province = "0";
+        $branch = "";
         $from_date = "";
         $to_date = "";
         $customer_name = "";
@@ -50,6 +51,14 @@
           $expense_filtering_data .= " AND expenses.province='".$province."' ";
           $exchange_filtering_data .= " AND exchanges.province='".$province."' ";
           $purchase_filtering_data .= " AND purchases.province='".$province."' ";
+        }
+        if(isset($_GET['branch']) AND !empty($_GET['branch'])){
+          $branch = $_GET['branch'];
+          $income_filtering_data .= " AND incomes.branch='".$branch."' ";
+          $expense_filtering_data .= " AND expenses.branch='".$branch."' ";
+          $exchange_filtering_data .= " AND exchanges.branch='".$branch."' ";
+          $purchase_filtering_data .= " AND 0 ";
+          $transfer_filtering_data .= " AND (transfers.from_branch='".$branch."' OR transfers.to_branch='".$branch."') ";
         }
         if(isset($_GET['from_date']) AND !empty($_GET['from_date'])){
           $from_date = $_GET['from_date'];
@@ -352,6 +361,7 @@
         'Income' AS transaction_type,
         incomes.sub_categories_id AS transaction_sub_categories_id,
         incomes.province AS transaction_province,
+        incomes.branch AS transaction_branch,
         incomes.income_date AS transaction_date,
         incomes.income_amount AS transaction_amount,
         incomes.currency AS transaction_currency,
@@ -376,6 +386,7 @@
         'Expense' AS transaction_type,
         expenses.sub_categories_id AS transaction_sub_categories_id,
         expenses.province AS transaction_province,
+        expenses.branch AS transaction_branch,
         expenses.expense_date AS transaction_date,
         expenses.expense_amount AS transaction_amount,
         expenses.currency AS transaction_currency,
@@ -400,6 +411,7 @@
         'Exchange' AS transaction_type,
         0 AS transaction_sub_categories_id,
         exchanges.province AS transaction_province,
+        exchanges.branch AS transaction_branch,
         exchanges.exchange_date AS transaction_date,
         CONCAT(exchanges.from_amount, ' to ', exchanges.to_amount) AS transaction_amount,
         CONCAT(exchanges.from_currency, ' to ', exchanges.to_currency) AS transaction_currency,
@@ -424,6 +436,7 @@
         'Purchase' AS transaction_type,
         purchases.sub_categories_id AS transaction_sub_categories_id,
         purchases.province AS transaction_province,
+        '' AS transaction_branch,
         purchases.purchase_date AS transaction_date,
         purchases.purchase_amount AS transaction_amount,
         purchases.currency AS transaction_currency,
@@ -451,6 +464,7 @@
         'Transfer' AS transaction_type,
         0 AS transaction_sub_categories_id,
         CONCAT(transfers.from_province, ' to ', transfers.to_province) AS transaction_province,
+        CONCAT(transfers.from_branch, ' to ', transfers.to_branch) AS transaction_branch,
         transfers.transfer_date AS transaction_date,
         transfers.transfer_amount AS transaction_amount,
         transfers.currency AS transaction_currency,
@@ -489,6 +503,7 @@
           'Sub Category',
           'Date',
           'Province',
+          'Branch',
           'Check Number',
           'Additional Information',
           'SIB Number',
@@ -530,6 +545,7 @@
               $transaction_row['transaction__sub_categories'],
               $transaction_row['transaction_date'],
               $transaction_row['transaction_province'],
+              $transaction_row['transaction_branch'],
               $transaction_row['transaction_check_number'],
               $additional_informations,
               $transaction_row['transaction_sib_number'],
