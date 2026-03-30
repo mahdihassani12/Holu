@@ -34,7 +34,7 @@
             <div class="form-group row">
               <label class="col-sm-3 col-form-label" for="province">Province</label>
               <div class="col-sm-6">
-                <select id="province" name="province" class="form-control" required data-branch-target="branch" data-branch-value="0">
+                <select id="province" name="province" class="form-control" required onchange="get_branch_option(this.value, '0', 'branch');">
                   <option selected hidden value="">Select an option</option>
                   <?php echo get_province_option("0"); ?>
                 </select>
@@ -176,6 +176,15 @@
                   </div>
                 </div>
                 <?php } ?>
+
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label" for="branch">Branch</label>
+                  <div class="col-sm-6">
+                    <select id="branch" name="branch" class="form-control" required>
+                      <?php echo get_branch_option($expense_row['province'], $expense_row['branch']); ?>
+                    </select>
+                  </div>
+                </div>
 
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label" for="categories_id">Category</label>
@@ -727,7 +736,7 @@
   			if(check_duplicate_expense($_POST)==0){
 
 	  			$province = holu_escape($_POST['province']);
-			    $branch = holu_escape($_POST['branch'] ?? '');
+			    $branch = holu_escape($_POST['branch']);
 			    $sub_categories_id = holu_escape($_POST['sub_categories_id']);
 			    $expense_date = holu_escape($_POST['expense_date']);
 	  			$expense_amount = holu_escape($_POST['expense_amount']);
@@ -941,7 +950,7 @@
 	  			track_editions('edit_expense', ['expenses_id'=>$_POST['data_id'], 'data_array'=>$_POST]);
 
 	  			$data_id = holu_escape(holu_decode($_POST['data_id']));
-			    $branch = holu_escape($_POST['branch'] ?? '');
+			    $branch = holu_escape($_POST['branch']);
 			    $sub_categories_id = holu_escape($_POST['sub_categories_id']);
 	  			$expense_amount = holu_escape($_POST['expense_amount']);
 			    $expense_date = holu_escape($_POST['expense_date']);
