@@ -166,6 +166,17 @@
 
 			        	<input type="hidden" name="data_id" id="data_id" value="<?php echo holu_encode($data_id); ?>"/>
 
+                <?php if(!empty($expense_row['province'])){ ?>
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label" for="branch">Branch</label>
+                  <div class="col-sm-6">
+                    <select id="branch" name="branch" class="form-control" required>
+                      <?php echo get_branch_option($expense_row['province'], $expense_row['branch']); ?>
+                    </select>
+                  </div>
+                </div>
+                <?php } ?>
+
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label" for="branch">Branch</label>
                   <div class="col-sm-6">

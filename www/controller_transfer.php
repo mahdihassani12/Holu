@@ -194,6 +194,17 @@
 		              </div>
 		            </div>
 
+                <?php if(!empty($transfer_row['to_province'])){ ?>
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label" for="to_branch">To Branch</label>
+                  <div class="col-sm-6">
+                    <select id="to_branch" name="to_branch" class="form-control" required>
+                      <?php echo get_branch_option($transfer_row['to_province'], $transfer_row['to_branch']); ?>
+                    </select>
+                  </div>
+                </div>
+                <?php } ?>
+
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label" for="to_branch">To Branch</label>
                   <div class="col-sm-6">
@@ -355,10 +366,19 @@
 						<div class="form-group row">
 						<label class="col-sm-3 col-form-label" for="province">Province</label>
 						<div class="col-sm-6">
-						<select id="province" name="province" class="form-control">
+						<select id="province" name="province" class="form-control" data-branch-target="branch" data-branch-value="0">
 							<option selected hidden value="">Select an option</option>
 							<?php echo get_province_option('0'); ?>
 						</select>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label class="col-sm-3 col-form-label" for="branch">Branch</label>
+						<div class="col-sm-6">
+							<select id="branch" name="branch" class="form-control">
+								<?php echo get_branch_option('0', ''); ?>
+							</select>
 						</div>
 					</div>
 
@@ -401,10 +421,19 @@
 						<div class="form-group row">
 						<label class="col-sm-3 col-form-label" for="province">Province</label>
 						<div class="col-sm-6">
-						<select id="province" name="province" class="form-control">
+						<select id="province" name="province" class="form-control" data-branch-target="branch" data-branch-value="0">
 							<option selected hidden value="">Select an option</option>
 							<?php echo get_province_option('0'); ?>
 						</select>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label class="col-sm-3 col-form-label" for="branch">Branch</label>
+						<div class="col-sm-6">
+							<select id="branch" name="branch" class="form-control">
+								<?php echo get_branch_option('0', ''); ?>
+							</select>
 						</div>
 					</div>
 

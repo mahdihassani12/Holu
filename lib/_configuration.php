@@ -2314,6 +2314,14 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				}
 			break;
 
+			case "transfer_branch":
+				if(isset($_GET['branch']) AND !empty($_GET['branch'])){
+					$branch = $_GET['branch'];
+					$holu_filtering_data .= " AND (transfers.from_branch='".$branch."' OR transfers.to_branch='".$branch."') ";
+					array_push($holu_filtering_array, "Branch: $branch");
+				}
+			break;
+
 			case "transfer_date":
 				if(isset($_GET['from_transfer_date']) AND !empty($_GET['from_transfer_date'])){
 					$from_transfer_date = $_GET['from_transfer_date'];
