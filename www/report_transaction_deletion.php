@@ -10,6 +10,7 @@
   $transfer_filtering_data = "";
 
   $province = "0";
+  $branch = "";
   $start_deletion_date = "";
   $end_deletion_date = "";
   $transaction_type = "";
@@ -29,6 +30,14 @@
     $exchange_filtering_data .= " AND exchanges.province='".$province."' ";
     $purchase_filtering_data .= " AND purchases.province='".$province."' ";
     $transfer_filtering_data .= " AND (transfers.from_province='".$province."' OR to_province='".$province."') ";
+  }
+  if(isset($_GET['branch']) AND !empty($_GET['branch'])){
+    $branch = $_GET['branch'];
+    $income_filtering_data .= " AND incomes.branch='".$branch."' ";
+    $expense_filtering_data .= " AND expenses.branch='".$branch."' ";
+    $exchange_filtering_data .= " AND exchanges.branch='".$branch."' ";
+    $purchase_filtering_data .= " AND 0 ";
+    $transfer_filtering_data .= " AND (transfers.from_branch='".$branch."' OR transfers.to_branch='".$branch."') ";
   }
   if(isset($_GET['start_deletion_date']) AND !empty($_GET['start_deletion_date'])){
     $start_deletion_date = $_GET['start_deletion_date'];
@@ -297,9 +306,18 @@
                   <div class="form-group row">
                     <label class="col-sm-3 col-form-label" for="province">Province</label>
                     <div class="col-sm-6">
-                      <select id="province" name="province" class="form-control" required>
+                      <select id="province" name="province" class="form-control" required data-branch-target="branch" data-branch-value="<?php echo $branch; ?>" onchange="get_branch_option(this.value, this.getAttribute('data-branch-value') || '0', this.getAttribute('data-branch-target') || 'branch', this); this.setAttribute('data-branch-value', '0');">
                         <option selected hidden value="">Select an option</option>
                         <?php echo get_province_option($province); ?>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <label class="col-sm-3 col-form-label" for="branch">Branch</label>
+                    <div class="col-sm-6">
+                      <select id="branch" name="branch" class="form-control">
+                        <?php echo get_branch_option($province, $branch); ?>
                       </select>
                     </div>
                   </div>

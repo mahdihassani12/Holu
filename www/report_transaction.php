@@ -927,7 +927,7 @@
                   <div class="form-group row">
                     <label class="col-sm-3 col-form-label" for="province">Province</label>
                     <div class="col-sm-6">
-                      <select id="province" name="province" class="form-control" required data-branch-target="branch" data-branch-value="<?php echo $branch; ?>">
+                      <select id="province" name="province" class="form-control" required data-branch-target="branch" data-branch-value="<?php echo $branch; ?>" onchange="get_branch_option(this.value, this.getAttribute('data-branch-value') || '0', this.getAttribute('data-branch-target') || 'branch', this); this.setAttribute('data-branch-value', '0');">
                         <option selected hidden value="">Select an option</option>
                         <?php echo get_province_option($province); ?>
                       </select>
