@@ -477,6 +477,7 @@
     'Income' AS transaction_type,
     incomes.sub_categories_id AS transaction_sub_categories_id,
     incomes.province AS transaction_province,
+    incomes.branch AS transaction_branch,
     incomes.income_date AS transaction_date,
     incomes.income_amount AS transaction_amount,
     incomes.currency AS transaction_currency,
@@ -501,6 +502,7 @@
     'Expense' AS transaction_type,
     expenses.sub_categories_id AS transaction_sub_categories_id,
     expenses.province AS transaction_province,
+    expenses.branch AS transaction_branch,
     expenses.expense_date AS transaction_date,
     expenses.expense_amount AS transaction_amount,
     expenses.currency AS transaction_currency,
@@ -525,6 +527,7 @@
     'Exchange' AS transaction_type,
     0 AS transaction_sub_categories_id,
     exchanges.province AS transaction_province,
+    exchanges.branch AS transaction_branch,
     exchanges.exchange_date AS transaction_date,
     CONCAT(exchanges.from_amount, ' to ', exchanges.to_amount) AS transaction_amount,
     CONCAT(exchanges.from_currency, ' to ', exchanges.to_currency) AS transaction_currency,
@@ -549,6 +552,7 @@
     'Purchase' AS transaction_type,
     purchases.sub_categories_id AS transaction_sub_categories_id,
     purchases.province AS transaction_province,
+    '' AS transaction_branch,
     purchases.purchase_date AS transaction_date,
     purchases.purchase_amount AS transaction_amount,
     purchases.currency AS transaction_currency,
@@ -576,6 +580,7 @@
     'Transfer' AS transaction_type,
     0 AS transaction_sub_categories_id,
     CONCAT(transfers.from_province, ' to ', transfers.to_province) AS transaction_province,
+    CONCAT(transfers.from_branch, ' to ', transfers.to_branch) AS transaction_branch,
     transfers.transfer_date AS transaction_date,
     transfers.transfer_amount AS transaction_amount,
     transfers.currency AS transaction_currency,
@@ -1064,6 +1069,7 @@
                         <th>Sub Category</th>
                         <th>Date</th>
                         <th>Province</th>
+                        <th>Branch</th>
                         <th>Check Number</th>
                         <th>Additional Information</th>
                         <th>Markups</th>
@@ -1201,6 +1207,7 @@
                             <td><?php echo $sub_category; ?></td>
                             <td><?php echo $transaction_row['transaction_date']; ?></td>
                             <td><?php echo $transaction_row['transaction_province']; ?></td>
+                            <td><?php echo $transaction_row['transaction_branch']; ?></td>
                             <td class="text-center" id="check_number_container<?php echo $transaction_row['transaction_type'].$transaction_row['transaction_id']; ?>"><?php echo $check_number_container; ?></td>
                             <td class="text-center">
                               <?php
