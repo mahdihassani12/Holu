@@ -147,17 +147,6 @@ function get_branch_option(province, branch, target_id){
     }
   });
 }
-window.get_branch_option = get_branch_option;
-
-$(document).on('change', '[data-branch-target]', function(){
-  var targetId = $(this).data('branch-target');
-  var branchValue = $(this).data('branch-value') || '0';
-  if($(this).data('branch-loaded')===1){
-    branchValue = '0';
-  }
-  $(this).data('branch-loaded', 1);
-  get_branch_option($(this).val(), branchValue, targetId);
-});
 
 
 $('.tip').each(function () {
@@ -341,4 +330,6 @@ function get_sub_cat_conf(){
 }
 
 //End of functions
+
+
 
