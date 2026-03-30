@@ -174,25 +174,7 @@
 
 			        	<input type="hidden" name="province" id="province" value="<?php echo $income_row['province']; ?>"/>
 
-                <?php if(!empty($income_row['province'])){ ?>
-                <div class="form-group row">
-                  <label class="col-sm-3 col-form-label" for="branch">Branch</label>
-                  <div class="col-sm-6">
-                    <select id="branch" name="branch" class="form-control select2" required>
-                      <?php echo get_branch_option($income_row['province'], $income_row['branch']); ?>
-                    </select>
-                  </div>
-                </div>
-                <?php } ?>
-
-                <div class="form-group row">
-                  <label class="col-sm-3 col-form-label" for="branch">Branch</label>
-                  <div class="col-sm-6">
-                    <select id="branch" name="branch" class="form-control select2" required>
-                      <?php echo get_branch_option($income_row['province'], $income_row['branch']); ?>
-                    </select>
-                  </div>
-                </div>
+                <input type="hidden" name="branch" id="branch" value="<?php echo $income_row['branch']; ?>"/>
 
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label" for="categories_id">Category</label>
