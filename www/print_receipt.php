@@ -65,7 +65,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
       'reference_id'=>$incomes_id
     ]);
     $customer_name_row = $customer_name_sq->fetch();
-    $customer_name = $customer_name_row['value_info'];
+    $customer_name = ($customer_name_row !== false && isset($customer_name_row['value_info'])) ? $customer_name_row['value_info'] : null;
 
     $customer_id_sq = $db->prepare(
       "SELECT value_info 
@@ -80,7 +80,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
       'reference_id'=>$incomes_id
     ]);
     $customer_id_row = $customer_id_sq->fetch();
-    $customer_id = $customer_id_row['value_info'];
+    $customer_id = ($customer_id_row !== false && isset($customer_id_row['value_info'])) ? $customer_id_row['value_info'] : null;
 
     $bill_number = $income_row['check_number'];
     $bill_date = $income_row['income_date'];

@@ -120,7 +120,7 @@
                               <td><?php echo $income_row['currency']; ?></td>
                               <td><?php echo $income_row['check_number']; ?></td>
                               <td class="text-right"><p lang="fa" dir="rtl"><?php echo $income_row['description']; ?></p></td>
-                              <td class="text-center"><?php echo print_ai_labels(json_decode($income_row['additional_informations'])); ?></p></td>
+                              <td class="text-center"><?php echo print_ai_labels(json_decode($income_row['additional_informations'] ?? '{}')); ?></p></td>
                               <td><?php echo get_col('users', 'username', 'id', $income_row['users_id']); ?></td>
                               <td class="text-center">
                                 <div class="dropdown mt-1 opertation_container">
