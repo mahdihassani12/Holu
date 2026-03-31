@@ -1309,6 +1309,27 @@
                   <div class="alert alert-warning text-center">Exchange: <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_afn'] ?? 0, 2); ?> AFN to <?php echo number_format($total_exchange_row['total_to_usd'] ?? 0, 2); ?> USD</span> - <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_usd'] ?? 0, 2); ?> USD to <?php echo number_format($total_exchange_row['total_to_afn'] ?? 0, 2); ?> AFN</span> - <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_afn2'] ?? 0, 2); ?> AFN to <?php echo number_format($total_exchange_row['total_to_irt'] ?? 0, 2); ?> IRT</span> - <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_irt'] ?? 0, 2); ?> IRT to <?php echo number_format($total_exchange_row['total_to_afn2'] ?? 0, 2); ?> AFN</span>
                   </div>
 
+                  <div class="alert alert-secondary text-center">
+                    Transfer (In - Out):
+                    <span class="badge badge-success"><?php echo number_format($total_transfer_row['total_transfer_in_afn'] ?? 0, 2); ?> AFN In</span>
+                    -
+                    <span class="badge badge-danger"><?php echo number_format($total_transfer_row['total_transfer_out_afn'] ?? 0, 2); ?> AFN Out</span>
+                    |
+                    <span class="badge badge-secondary">Net: <?php echo number_format(($total_transfer_row['total_transfer_in_afn'] ?? 0) - ($total_transfer_row['total_transfer_out_afn'] ?? 0), 2); ?> AFN</span>
+                    -
+                    <span class="badge badge-success"><?php echo number_format($total_transfer_row['total_transfer_in_usd'] ?? 0, 2); ?> USD In</span>
+                    -
+                    <span class="badge badge-danger"><?php echo number_format($total_transfer_row['total_transfer_out_usd'] ?? 0, 2); ?> USD Out</span>
+                    |
+                    <span class="badge badge-secondary">Net: <?php echo number_format(($total_transfer_row['total_transfer_in_usd'] ?? 0) - ($total_transfer_row['total_transfer_out_usd'] ?? 0), 2); ?> USD</span>
+                    -
+                    <span class="badge badge-success"><?php echo number_format($total_transfer_row['total_transfer_in_irt'] ?? 0, 2); ?> IRT In</span>
+                    -
+                    <span class="badge badge-danger"><?php echo number_format($total_transfer_row['total_transfer_out_irt'] ?? 0, 2); ?> IRT Out</span>
+                    |
+                    <span class="badge badge-secondary">Net: <?php echo number_format(($total_transfer_row['total_transfer_in_irt'] ?? 0) - ($total_transfer_row['total_transfer_out_irt'] ?? 0), 2); ?> IRT</span>
+                  </div>
+
                   <div class="alert alert-info text-center">Total: <span class="badge badge-info">
                       <?php echo number_format($total_afn, 2); ?> AFN</span> - 
                       <span class="badge badge-info">
