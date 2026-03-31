@@ -1277,24 +1277,83 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		return str_pad(substr($clean_province, 0, 3), 3, 'X');
 	}
 
-	function get_province_bill_extension($province, $transaction_type){
-		$prefix = '';
+	function get_branch_code($branch){
+		$clean_branch = strtoupper(preg_replace('/[^a-zA-Z]/', '', $branch));
+		if($clean_branch==""){
+			return 'XXX';
+		}
+		return str_pad(substr($clean_branch, 0, 3), 3, 'X');
+	}
+
+	function get_transaction_prefix($transaction_type){
 		switch ($transaction_type) {
+			case 'income':
+				return 'I';
 			case 'expense':
-				$prefix = 'X';
-			break;
+				return 'X';
 			case 'purchase':
-				$prefix = 'P';
-			break;
+				return 'P';
 			case 'transfer':
-				$prefix = 'T';
-			break;
+				return 'T';
 			default:
-				$prefix = '';
-			break;
+				return '';
+		}
+	}
+
+	function get_province_bill_extension($province, $transaction_type){
+		return get_transaction_prefix($transaction_type).get_province_code($province);
+	}
+
+	function generate_check_number($transaction_type, $province, $branch, $sequence){
+		$prefix = get_transaction_prefix($transaction_type);
+		$province_code = get_province_code($province);
+		$branch_code = get_branch_code($branch);
+		$sequence = max(1, (int)$sequence);
+
+		return $prefix.'-'.$province_code.'-'.$branch_code.'-'.str_pad((string)$sequence, 8, '0', STR_PAD_LEFT);
+	}
+
+	function extract_check_number_sequence($check_number){
+		if(preg_match('/(\d{1,})$/', trim((string)$check_number), $matches)){
+			return (int)$matches[1];
+		}
+		return 0;
+	}
+
+	function get_next_check_number_sequence($table, $province_column, $province, $branch_column, $branch){
+		global $db;
+
+		$sequence = 0;
+
+		$last_check_number_sq = $db->prepare(
+			"SELECT check_number
+			FROM `".$table."`
+			WHERE `".$province_column."`=:province AND `".$branch_column."`=:branch
+			ORDER BY id DESC
+			LIMIT 1"
+		);
+		$last_check_number_sq->execute([
+			'province'=>$province,
+			'branch'=>$branch
+		]);
+		$last_check_number = $last_check_number_sq->fetchColumn();
+		$sequence = extract_check_number_sequence($last_check_number);
+
+		if($sequence<=0){
+			$fallback_count_sq = $db->prepare(
+				"SELECT COUNT(id)
+				FROM `".$table."`
+				WHERE `".$province_column."`=:province AND `".$branch_column."`=:branch
+				LIMIT 1"
+			);
+			$fallback_count_sq->execute([
+				'province'=>$province,
+				'branch'=>$branch
+			]);
+			$sequence = (int)$fallback_count_sq->fetchColumn();
 		}
 
-		return $prefix.get_province_code($province);
+		return $sequence + 1;
 	}
 
 	function map_tms_province_to_holu_province($tms_province){

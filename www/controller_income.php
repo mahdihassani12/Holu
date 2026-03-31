@@ -1185,23 +1185,8 @@
 				    	array_push($key_infos, 'Employee');
 				    	array_push($value_infos, holu_escape($_POST['employee']));
 				    }
-					$bill_number_extention = get_province_bill_extension($province, 'income');
-		
-				    $num_income_sq = $db->prepare(
-				    	"SELECT 
-				    	count(id) AS num_income
-				    	FROM `incomes`
-				    	WHERE province=:province
-		      		LIMIT 1"
-				    );
-		
-				    $num_income_sqx = $num_income_sq->execute([
-				    	'province'=>$province
-				    ]);
-		
-				    $num_income_row = $num_income_sq->fetch();
-				    $num_income = $num_income_row['num_income'];
-				    $check_number = $bill_number_extention.(1000073+$num_income);
+				    $check_number_sequence = get_next_check_number_sequence('incomes', 'province', $province, 'branch', $branch);
+				    $check_number = generate_check_number('income', $province, $branch, $check_number_sequence);
 		
 				    $income_iq = $db->prepare("INSERT INTO `incomes` (
 				    	province, 
@@ -1339,21 +1324,8 @@
 
 						// Insert the percentage
 
-						$num_income_sq = $db->prepare(
-							"SELECT 
-							count(id) AS num_income
-							FROM `incomes`
-							WHERE province=:province
-						LIMIT 1"
-						);
-			
-						$num_income_sqx = $num_income_sq->execute([
-							'province'=>$province
-						]);
-			
-						$num_income_row = $num_income_sq->fetch();
-						$num_income = $num_income_row['num_income'];
-						$check_number = $bill_number_extention.(1000073+$num_income);	
+						$check_number_sequence = get_next_check_number_sequence('incomes', 'province', $province, 'branch', $branch);
+						$check_number = generate_check_number('income', $province, $branch, $check_number_sequence);	
 						
 						if(!empty($income_percentage) && isset($income_percentage)){
 							
@@ -1719,23 +1691,8 @@
 				    	array_push($key_infos, 'Employee');
 				    	array_push($value_infos, holu_escape($_POST['employee']));
 				    }
-					$bill_number_extention = get_province_bill_extension($province, 'income');
-		
-				    $num_income_sq = $db->prepare(
-				    	"SELECT 
-				    	count(id) AS num_income
-				    	FROM `incomes`
-				    	WHERE province=:province
-		      		LIMIT 1"
-				    );
-		
-				    $num_income_sqx = $num_income_sq->execute([
-				    	'province'=>$province
-				    ]);
-		
-				    $num_income_row = $num_income_sq->fetch();
-				    $num_income = $num_income_row['num_income'];
-				    $check_number = $bill_number_extention.(1000073+$num_income);
+				    $check_number_sequence = get_next_check_number_sequence('incomes', 'province', $province, 'branch', $branch);
+				    $check_number = generate_check_number('income', $province, $branch, $check_number_sequence);
 		
 				    $income_iq = $db->prepare("INSERT INTO `incomes` (
 				    	province, 
