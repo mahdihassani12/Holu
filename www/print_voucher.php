@@ -105,7 +105,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
       <head>
         <meta charset="utf-8">
         <title><?php echo $holu_system_name; ?></title>
-        <link rel="shortcut icon" href="assets/images/favicon.ico">
+        <link rel="shortcut icon" href="assets/images/fav.png">
         <style type="text/css">
         @page {
           size: auto;
@@ -445,7 +445,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           <section class="header_details">
 
             <div id="logo">
-                <img src="assets/images/logo-lg.png">
+                <img src="assets/images/logo.png">
             </div>
 
             <div id="company">
@@ -642,7 +642,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
       <head>
         <meta charset="utf-8">
         <title><?php echo $holu_system_name; ?></title>
-        <link rel="shortcut icon" href="assets/images/favicon.ico">
+        <link rel="shortcut icon" href="assets/images/fav.png">
         <style type="text/css">
         @page {
           size: auto;
@@ -974,7 +974,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           <section class="header_details">
 
             <div id="logo">
-                <img src="assets/images/logo-lg.png">
+                <img src="assets/images/logo.png">
             </div>
 
             <div id="company">
@@ -1156,7 +1156,7 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
       <head>
         <meta charset="utf-8">
         <title><?php echo $holu_system_name; ?></title>
-        <link rel="shortcut icon" href="assets/images/favicon.ico">
+        <link rel="shortcut icon" href="assets/images/fav.png">
         <style type="text/css">
         @page {
           size: auto;
@@ -1487,7 +1487,7 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
           <section class="header_details">
 
             <div id="logo">
-                <img src="assets/images/logo-lg.png">
+                <img src="assets/images/logo.png">
             </div>
 
             <div id="company">

@@ -51,7 +51,7 @@ if(isset($_POST['submit'])){
   <meta content="Zalmai" name="author" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <!-- App favicon -->
-  <link rel="shortcut icon" href="www/assets/images/logo-sm.png">
+  <link rel="shortcut icon" href="www/assets/images/fav.png">
   <!-- App css -->
   <link href="www/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
   <link href="www/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
@@ -80,7 +80,7 @@ if(isset($_POST['submit'])){
 
               <div class="text-center w-75 m-auto">
                 <a href="index-2.html">
-                  <span class="logo-lg"><img src="www/assets/images/logo-lg.png" alt=""></span>
+                  <span class="logo-lg"><img src="www/assets/images/logo.png" alt=""></span>
                 </a>
 
                 <p class="text-muted mb-4 mt-3">Enter your username and password to access admin panel.</p>
@@ -132,8 +132,7 @@ if(isset($_POST['submit'])){
                     </a>
                   </p>
                   <p class="text-muted">
-                    2021 &copy; All rights reserved by 
-                    <a href="http://www.ariyabod.af" class="font-weight-medium ml-1">Ariyabod
+                    2026 &copy; All rights reserved by Benyamin Hope.
                     </a>
                   </p>
                 </div> <!-- end col -->

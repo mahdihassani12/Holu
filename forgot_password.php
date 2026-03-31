@@ -115,7 +115,7 @@
 
                   <div class='text-center w-80 m-auto'>
                     <a href='index-2.html'>
-                      <span class='logo-lg'><img src='www/assets/images/logo-lg.png' alt=''></span>
+                      <span class='logo-lg'><img src='www/assets/images/logo.png' alt=''></span>
                     </a>
 
                     <h4 class='text-muted mb-4 mt-3'>Verification Code</h4>
@@ -189,7 +189,7 @@
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="www/assets/images/logo-sm.png">
+    <link rel="shortcut icon" href="www/assets/images/fav.png">
     <!-- App css -->
     <link href="www/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="www/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
@@ -209,7 +209,7 @@
 
                   <div class="text-center w-80 m-auto">
                     <a href="index-2.html">
-                      <span class="logo-lg"><img src="www/assets/images/logo-lg.png" alt=""></span>
+                      <span class="logo-lg"><img src="www/assets/images/logo.png" alt=""></span>
                     </a>
 
                   </div>
@@ -236,7 +236,7 @@
 
                   <div class="row mt-3">
                     <div class="col-12 text-center">
-                      <p class="text-muted">2019 &copy; All rights reserved by <a href="http://www.ariyabod.af"  class="text-primary font-weight-medium ml-1">Ariyabod</a> </p>
+                      <p class="text-muted">2026 &copy; All rights reserved by Benyamin Hope. </p>
                       <p class="text-muted"  class="text-primary font-weight-medium ml-1">Developed by <span class="text-primary font-weight-medium ml-1">Mahdi Hassani</span></p>
                     </div> <!-- end col -->
                   </div>

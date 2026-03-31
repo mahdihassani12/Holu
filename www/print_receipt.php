@@ -294,7 +294,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
       <head>
         <meta charset="utf-8">
         <title><?php echo $holu_system_name; ?></title>
-        <link rel="shortcut icon" href="assets/images/favicon.ico">
+        <link rel="shortcut icon" href="assets/images/fav.png">
         <style type="text/css">
 
         @page {
@@ -641,7 +641,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
               </div>
 
               <div id="logo">
-                <img src="assets/images/logo-lg.png">
+                <img src="assets/images/logo.png">
               </div>
             </section>
         </header>
