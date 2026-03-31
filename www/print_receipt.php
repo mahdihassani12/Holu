@@ -45,16 +45,12 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
     ]);
 
     $invoices_id = $db->lastInsertId();
-    $address = 'Bank-e Khon St. ,Shahid Sadeq 31, Herat, Afghanistan';
-    $finance_phone = '0790003250 - 0790003260';
-    $techincal_phone = '0799532532 - 0792532532';
-    $sales_phone = '0790003210 - 0790003220';
-    $bank_name = 'Islamic Bank of Afghanistan';
-    $account_name = 'ARIYA BOD TECHNOLOGY SERVICE CO';
-    $account_no_usd = '04602200000302';
-    $account_no_afn = '04602100000620';
-    $swift_code = 'TJSC RU MM';
-    $bill_number_extention = "HRT";
+    $address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University';
+    $finance_phone = '0787506000';
+    $bank_name = 'Azizi Bank';
+    $account_name = 'BENYAMIN HOME INFORMATION';
+    $account_no_usd = '000101215333739';
+    $account_no_afn = '000101115085020';
 
     $customer_name_sq = $db->prepare(
       "SELECT value_info 
@@ -631,7 +627,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
             <img src="assets/images/header.png" class="header_img" />
             <section class="header_details">
               <div>
-                <h2 class="name">Ariyabod Companies Group</h2>
+                <h2 class="name">Benyamin Hope</h2>
                 <h2 class="name">Customer Details</h2>
                 <div class="address">Customer Name: <?php echo $customer_name; ?></div>
                 <div class="address">Customer ID: <?php echo $customer_id; ?></div>
@@ -654,36 +650,22 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
             <div id="client" style="line-height: 1.5;">
               <h2 class="name">Contact Details</h2>
               <div>
-                <i class="fas fa-map-marker-alt"></i>
                 Address: <?php echo $address; ?>
               </div>
               <div>
-                <i class="far fa-envelope"></i>
-                Finance Email: billing@ariyabod.af
+                Finance Email: billing@benyaminhome.af
               </div>
               <div>
-                <i class="far fa-envelope"></i>
-                Sales Email: sales@ariyabod.af
+                Sales Email: sales@benyaminhome.af
               </div>
               <div>
-                <i class="far fa-envelope"></i>
-                Support Email: support@ariyabod.af
+                Support Email: support@benyaminhome.af
               </div>
               <div>
-                <i class="fas fa-phone"></i>
-                Finance Phone: <?php echo $finance_phone; ?>
+                Phone: <?php echo $finance_phone; ?>
               </div>
               <div>
-                <i class="fas fa-phone"></i>
-                Sales Phone: <?php echo $sales_phone; ?>
-              </div>
-              <div>
-                <i class="fas fa-phone"></i>
-                Technical Support: <?php echo $techincal_phone; ?>
-              </div>
-              <div>
-                <i class="fab fa-internet-explorer"></i>
-                Website: www.ariyabod.af
+                Website: www.benyaminhome.af
               </div>
             </div>
 
@@ -693,7 +675,6 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
               <div class="address">Account Name: <?php echo $account_name; ?></div>
               <div class="address">Account No-USD: <?php echo $account_no_usd; ?></div>
               <div class="address">Account No-AFN: <?php echo $account_no_afn; ?></div>
-              <div class="address">Swift Code: <?php echo $swift_code; ?></div>
               <div>
                 <strong class="sign">Receipt Signature</strong>
               </div>
