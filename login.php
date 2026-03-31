@@ -79,7 +79,7 @@ if(isset($_POST['submit'])){
             <div class="card-body p-4" style="border:2px solid #f8a39d;">
 
               <div class="text-center w-75 m-auto">
-                <a href="index-2.html">
+                <a href="/">
                   <span class="logo-lg"><img src="www/assets/images/logo.png" alt=""></span>
                 </a>
 
