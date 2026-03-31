@@ -48,7 +48,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
     $address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University';
     $finance_phone = '0787506000';
     $bank_name = 'Azizi Bank';
-    $account_name = 'BENYAMIN HOME INFORMATION';
+    $account_name = 'BENYAMIN HOPE INFORMATION';
     $account_no_usd = '000101215333739';
     $account_no_afn = '000101115085020';
 

@@ -45,14 +45,12 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
     ]);
 
     $invoices_id = $db->lastInsertId();
-    $address = 'Bank-e Khon St. ,Shahid Sadeq 31, Herat, Afghanistan';
-    $phone = '0790003250';
-    $bank_name = 'Islamic Bank of Afghanistan';
-    $account_name = 'ARIYA BOD TECHNOLOGY SERVICE CO';
-    $account_no_usd = '04602200000302';
-    $account_no_afn = '04602100000620';
-    $swift_code = 'TJSC RU MM';
-    $bill_number_extention = "HRT";
+    $address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University';
+    $phone = '0787506000';
+    $bank_name = 'Azizi Bank';
+    $account_name = 'BENYAMIN HOPE INFORMATION';
+    $account_no_usd = '000101215333739';
+    $account_no_afn = '000101115085020';
 
     $doc_header = "Voucher Payment";
     $bill_number = $expense_row['check_number'];
@@ -402,6 +400,11 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           justify-content: space-between;
           font-size: 12px;
         }
+
+        .footer > div {
+          max-width: 25%;
+        }
+
         .footer i{
           display: inline-block;
           font-size: 17px;
@@ -450,7 +453,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
             <div id="company">
                 <div>
-                  <strong>Ariyabod Companies Group</strong>
+                  <strong>Benyamin Hope Information</strong>
                 </div>
                 <div>
                   <strong><?php echo $doc_header; ?></strong>
@@ -492,11 +495,11 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
               </div>
               <div>
                   <i class="fab fa-internet-explorer"></i>
-                  www.ariyabod.af
+                  www.benyaminhope.af
               </div>
               <div>
                   <i class="far fa-envelope"></i>
-                  finance@ariyabod.af
+                  finance@benyaminhope.af
               </div>
               <div>
                   <i class="fas fa-phone"></i>
@@ -580,14 +583,12 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
     ]);
 
     $invoices_id = $db->lastInsertId();
-    $address = 'Bank-e Khon St. ,Shahid Sadeq 31, Herat, Afghanistan';
-    $phone = '0790003250';
-    $bank_name = 'Islamic Bank of Afghanistan';
-    $account_name = 'ARIYA BOD TECHNOLOGY SERVICE CO';
-    $account_no_usd = '04602200000302';
-    $account_no_afn = '04602100000620';
-    $swift_code = 'TJSC RU MM';
-    $bill_number_extention = "HRT";
+    $address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University';
+    $phone = '0787506000';
+    $bank_name = 'Azizi Bank';
+    $account_name = 'BENYAMIN HOPE INFORMATION';
+    $account_no_usd = '000101215333739';
+    $account_no_afn = '000101115085020';
 
     $doc_header = "Voucher Payment";
     $bill_number = $purchase_row['check_number'];
@@ -979,7 +980,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
             <div id="company">
                 <div>
-                  <strong>Ariyabod Companies Group</strong>
+                  <strong>Benyamin Hope Information</strong>
                 </div>
                 <div>
                   <strong><?php echo $doc_header; ?></strong>
@@ -1021,11 +1022,11 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
               </div>
               <div>
                   <i class="fab fa-internet-explorer"></i>
-                  www.ariyabod.af
+                  www.benyaminhope.af
               </div>
               <div>
                   <i class="far fa-envelope"></i>
-                  finance@ariyabod.af
+                  finance@benyaminhope.af
               </div>
               <div>
                   <i class="fas fa-phone"></i>
@@ -1110,14 +1111,12 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
     ]);
 
     $invoices_id = $db->lastInsertId();
-    $address = 'Bank-e Khon St. ,Shahid Sadeq 31, Herat, Afghanistan';
-    $phone = '0790003250';
-    $bank_name = 'Islamic Bank of Afghanistan';
-    $account_name = 'ARIYA BOD TECHNOLOGY SERVICE CO';
-    $account_no_usd = '04602200000302';
-    $account_no_afn = '04602100000620';
-    $swift_code = 'TJSC RU MM';
-    $bill_number_extention = "HRT";
+    $address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University';
+    $phone = '0787506000';
+    $bank_name = 'Azizi Bank';
+    $account_name = 'BENYAMIN HOPE INFORMATION';
+    $account_no_usd = '000101215333739';
+    $account_no_afn = '000101115085020';
 
     $doc_header = "Voucher Payment";
     $bill_number = $transfer_row['check_number'];
@@ -1492,7 +1491,7 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
 
             <div id="company">
                 <div>
-                  <strong>Ariyabod Companies Group</strong>
+                  <strong>Benyamin Hope Information</strong>
                 </div>
                 <div>
                   <strong><?php echo $doc_header; ?></strong>
@@ -1534,11 +1533,11 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
               </div>
               <div>
                   <i class="fab fa-internet-explorer"></i>
-                  www.ariyabod.af
+                  www.benyaminhope.af
               </div>
               <div>
                   <i class="far fa-envelope"></i>
-                  finance@ariyabod.af
+                  finance@benyaminhope.af
               </div>
               <div>
                   <i class="fas fa-phone"></i>
