@@ -1367,9 +1367,27 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			'province'=>$province
 		]);
 
+		$has_branch_specific_access = false;
+		$holu_accessibilities = strtolower($_SESSION['holu_accessibilities'] ?? '');
+		$province_slug = preg_quote(strtolower($province), '/');
+		if(preg_match('/province_accessibility\/'.$province_slug.'\/[^\/]+\/+/', $holu_accessibilities)){
+			$has_branch_specific_access = true;
+		}
+
 		while($branch_row = $branch_sq->fetch()){
 			$branch_name = $branch_row['name'];
-			$branch_options .= '<option '.(($branch_name==$branch)?'selected':'').' value="'.$branch_name.'">'.$branch_name.'</option>';
+			/*
+				Backward compatibility:
+				If there is no branch-specific access configured for this province, keep
+				showing all province branches (old behavior). Once branch entries exist
+				for the province, restrict branch options to selected branches only.
+			*/
+			$branch_access_point = 'province_accessibility/'.$province.'/'.$branch_name.'/';
+			$can_access_branch = (!$has_branch_specific_access || check_access($branch_access_point)==1);
+
+			if($can_access_branch){
+				$branch_options .= '<option '.(($branch_name==$branch)?'selected':'').' value="'.$branch_name.'">'.$branch_name.'</option>';
+			}
 		}
 
 		return $branch_options;
@@ -1743,9 +1761,31 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	}
 
 	function print_access_provinces($holu_provinces){
+		global $db;
 		$access_points = "[";
 		foreach ($holu_provinces as $holu_province) {
-			$access_points .= '{ "id": "province_accessibility/'.$holu_province.'/", "text": "'.$holu_province.'" },';
+			$branch_sq = $db->prepare(
+				"SELECT branches.name
+				FROM `branches`
+				LEFT JOIN `provinces` ON provinces.id=branches.province_id
+				WHERE provinces.name=:province
+				ORDER BY branches.name ASC"
+			);
+			$branch_sqx = $branch_sq->execute([
+				'province'=>$holu_province
+			]);
+
+			if($branch_sq->rowCount()>0){
+				$branch_access_points = "[";
+				while($branch_row = $branch_sq->fetch()){
+					$branch_name = $branch_row['name'];
+					$branch_access_points .= '{ "id": "province_accessibility/'.$holu_province.'/'.$branch_name.'/", "text": "'.$branch_name.'" },';
+				}
+				$branch_access_points .= "]";
+				$access_points .= '{ "id": "province_accessibility/'.$holu_province.'/", "text": "'.$holu_province.'", "children": '.$branch_access_points.' },';
+			}else{
+				$access_points .= '{ "id": "province_accessibility/'.$holu_province.'/", "text": "'.$holu_province.'" },';
+			}
 		}
 		$access_points .= "]";
 		return $access_points;
