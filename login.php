@@ -61,11 +61,11 @@ if(isset($_POST['submit'])){
   <link href="www/assets/css/custom.css" rel="stylesheet" type="text/css" />
   <style type="text/css">
     #login_form #submit{
-      background: #f8a39d;
-      border-color: #f8a39d;
+      background: #36b8cb;
+      border-color: #36b8cb;
     }
     .login_details a{
-      color: #f8a39d;
+      color: #36b8cb;
     }
   </style>
 </head>
@@ -76,7 +76,7 @@ if(isset($_POST['submit'])){
         <div class="col-md-8 col-lg-6 col-xl-5">
           <div class="card">
 
-            <div class="card-body p-4" style="border:2px solid #f8a39d;">
+            <div class="card-body p-4" style="border:2px solid #36b8cb;">
 
               <div class="text-center w-75 m-auto">
                 <a href="index-2.html">
