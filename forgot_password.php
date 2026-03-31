@@ -111,7 +111,7 @@
             <body>
               <div class='card'>
 
-                <div class='card-body p-4' style='border:3px solid #00b8a5;'>
+                <div class='card-body p-4' style='border:3px solid #36b8cb;'>
 
                   <div class='text-center w-80 m-auto'>
                     <a href='index-2.html'>
@@ -205,7 +205,7 @@
             <div class="col-md-8 col-lg-6 col-xl-5">
               <div class="card">
 
-                <div class="card-body p-4" style="border:3px solid #00b8a5;">
+                <div class="card-body p-4" style="border:3px solid #36b8cb;">
 
                   <div class="text-center w-80 m-auto">
                     <a href="index-2.html">
