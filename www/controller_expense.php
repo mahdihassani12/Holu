@@ -774,23 +774,22 @@
             array_push($value_infos, holu_escape($_POST['employee']));
           }
 
-			    $bill_number_extention = get_province_bill_extension($province, 'expense');
-
 			    $num_expense_sq = $db->prepare(
 			    	"SELECT 
 			    	count(id) AS num_expense
 			    	FROM `expenses`
-			    	WHERE province=:province
+			    	WHERE province=:province AND branch=:branch
 	      		LIMIT 1"
 			    );
 
 			    $num_expense_sqx = $num_expense_sq->execute([
-			    	'province'=>$province
+			    	'province'=>$province,
+			    	'branch'=>$branch
 			    ]);
 
 			    $num_expense_row = $num_expense_sq->fetch();
 			    $num_expense = $num_expense_row['num_expense'];
-			    $check_number = $bill_number_extention.(1000073+$num_expense);
+			    $check_number = generate_check_number('expense', $province, $branch, $num_expense+1);
 
 			    $expense_iq = $db->prepare(
 			    	"INSERT INTO `expenses` (
