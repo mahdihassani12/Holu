@@ -6,7 +6,7 @@
 	text-align:right !important;
 }
 .card-box-header{
-	background-color:#f8a39d !important;
+	background-color:#36b8cb !important;
 	margin-bottom: -1px !important;
 	padding-top: 15px;
 	padding-bottom: 15px;
@@ -27,7 +27,7 @@
 }
 
 .table thead{
-	background-color: #f8a39d !important;
+	background-color: #36b8cb !important;
 	color: #ffffff !important;
 }
 
@@ -37,11 +37,11 @@
 	background-color: #fff !important;
 	margin-top: -7px !important;
 	margin-left: 3px !important;
-	color: #f8a39d;
+	color: #36b8cb;
 }
 
 .modal-header{
-	background-color: #f8a39d !important;
+	background-color: #36b8cb !important;
 }
 
 .modal-header h4{
@@ -76,8 +76,8 @@ textarea {
 }
 
 .operation_list{
-	border: 1px solid #e05247 !important;
-  background-color: #f8a39d !important;
+	border: 1px solid #2F8F9D !important;
+  background-color: #36b8cb !important;
 }
 
 .logo-lg img{
@@ -197,41 +197,41 @@ ul.tree_view li{
   border-right: unset;
 }
 .left-side-menu-dark .left-side-menu #sidebar-menu>ul>li>a.active{
-	background: #f8a39d;
+	background: #36b8cb;
 	box-shadow: 4px 4px 10px 0 rgb(0 0 0 / 10%), 4px 4px 15px -5px rgb(21 114 232 / 40%);
 }
 .left-side-menu-dark .logo-box{
-	background: #f8a39d;
+	background: #36b8cb;
 }
 .metismenu li a[aria-expanded=true]{
-	color: #f8a39d !important;	
+	color: #36b8cb !important;	
 }
 .left-side-menu-dark .left-side-menu .nav-second-level li a.active, .left-side-menu-dark .left-side-menu .nav-thrid-level li a.active {
-    color: #f8a39d;
+    color: #36b8cb;
 }
 .navbar-custom{
-	background: #e05247  !important;
+	background: #2F8F9D  !important;
 }
 .widget{
-	background: #f8a39d !important;
+	background: #36b8cb !important;
 	color: #e1e4e8;
 }
 /*.badge{
-*	background: #f8a39d;
+*	background: #36b8cb;
 }*/
 .badge-dark{
 	background-color: #fff;
-	color: #f8a39d;
+	color: #36b8cb;
 }
 .Zebra_Pagination li.active a{
 	color: #FFF;
   cursor: default;
-  background-color: #f8a39d;
-  border-color: #f8a39d;
+  background-color: #36b8cb;
+  border-color: #36b8cb;
 }
 .Zebra_Pagination a, .Zebra_Pagination span{
 	   padding: 6px 12px;
-    color: #f8a39d;
+    color: #36b8cb;
     text-decoration: none;
     background-color: #FFF;
     border: 1px solid #DDD;
@@ -241,10 +241,10 @@ ul.tree_view li{
     margin-left: -1px;
 }
 a{
-	color: #f8a39d;
+	color: #36b8cb;
 }
 .dropdown-item:focus, .dropdown-item:hover{
-	background-color: #e05247;
+	background-color: #2F8F9D;
 }
 .success_btn{
 	color: #fff;
