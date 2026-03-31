@@ -2553,37 +2553,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		global $holu_users_id;
 		$result = '';
 
-		if(check_access($rtap.'tms_markup')==1){
-			$markup_sq1 = $db->prepare("SELECT deleted FROM `markups` 
-				WHERE reference_type=:reference_type
-				AND reference_id=:reference_id
-				AND markup_type=:markup_type
-			");
-
-			$markup_sqx1 = $markup_sq1->execute([
-				'reference_type'=>$reference_type,
-				'reference_id'=>$reference_id,
-				'markup_type'=>'TMS Markup'
-			]);
-
-			if($markup_sq1->rowCount()>0){
-				$markup_row1 = $markup_sq1->fetch();
-				if($markup_row1['deleted']=='0'){
-					$result .= '
-						<span class="badge badge-success holu_markup_items" onclick="markup_item(\''.$rtap.'\', \''.$reference_type.'\', \''.$reference_id.'\', \'TMS Markup\');">TMS Markup</span>
-					';
-				}else{
-					$result .= '
-						<span class="badge badge-secondary holu_markup_items" onclick="markup_item(\''.$rtap.'\', \''.$reference_type.'\', \''.$reference_id.'\', \'TMS Markup\');">TMS Markup</span>
-					';
-				}
-			}else{
-				$result .= '
-					<span class="badge badge-secondary holu_markup_items" onclick="markup_item(\''.$rtap.'\', \''.$reference_type.'\', \''.$reference_id.'\', \'TMS Markup\');">TMS Markup</span>
-				';
-			}
-		}
-
 		if(check_access($rtap.'qb_markup')==1){
 
 			if($reference_type=="Transfer"){
@@ -2617,34 +2586,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 					';
 				}
 
-				$r_markup_sq2 = $db->prepare("SELECT deleted FROM `markups` 
-					WHERE reference_type=:reference_type
-					AND reference_id=:reference_id
-					AND markup_type=:markup_type
-				");
-
-				$r_markup_sqx2 = $r_markup_sq2->execute([
-					'reference_type'=>$reference_type,
-					'reference_id'=>$reference_id,
-					'markup_type'=>'RQB Markup'
-				]);
-
-				if($r_markup_sq2->rowCount()>0){
-					$r_markup_row2 = $r_markup_sq2->fetch();
-					if($r_markup_row2['deleted']=='0'){
-						$result .= '
-							<span class="badge badge-success holu_markup_items" onclick="markup_item(\''.$rtap.'\', \''.$reference_type.'\', \''.$reference_id.'\', \'RQB Markup\');">RQB Markup</span>
-						';
-					}else{
-						$result .= '
-							<span class="badge badge-secondary holu_markup_items" onclick="markup_item(\''.$rtap.'\', \''.$reference_type.'\', \''.$reference_id.'\', \'RQB Markup\');">RQB Markup</span>
-						';
-					}
-				}else{
-					$result .= '
-						<span class="badge badge-secondary holu_markup_items" onclick="markup_item(\''.$rtap.'\', \''.$reference_type.'\', \''.$reference_id.'\', \'RQB Markup\');">RQB Markup</span>
-					';
-				}
 			}else{
 				$markup_sq2 = $db->prepare("SELECT deleted FROM `markups` 
 					WHERE reference_type=:reference_type
@@ -2752,18 +2693,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 						 $tms_markup, $qb_markup, $sib_markup, $ad_markup){
 		$result = '';
 
-		if(check_access($rtap.'tms_markup')==1){
-						
-			if($tms_markup=='1'){
-				$result .= '
-					<span class="badge badge-success holu_markup_items" onclick="markup_item(\''.$rtap.'\', \''.$reference_type.'\', \''.$reference_id.'\', \'TMS Markup\');">TMS Markup</span>';
-			}else{
-				$result .= '
-					<span class="badge badge-secondary holu_markup_items" onclick="markup_item(\''.$rtap.'\', \''.$reference_type.'\', \''.$reference_id.'\', \'TMS Markup\');">TMS Markup</span>';
-			}
-			
-		}
-
 		if(check_access($rtap.'qb_markup')==1){
 
 			if($reference_type=="Transfer"){
@@ -2771,7 +2700,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				$qb_markups = explode(',', $qb_markup);
 
 				$sqb_markup = $qb_markups[0];
-				$rqb_markup = $qb_markups[1];
 
 				if($sqb_markup=='1'){
 					$result .= '
@@ -2779,14 +2707,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				}else{
 					$result .= '
 						<span class="badge badge-secondary holu_markup_items" onclick="markup_item(\''.$rtap.'\', \''.$reference_type.'\', \''.$reference_id.'\', \'QB Markup\');">QB Markup</span>';
-				}
-
-				if($rqb_markup=='1'){
-					$result .= '
-						<span class="badge badge-success holu_markup_items" onclick="markup_item(\''.$rtap.'\', \''.$reference_type.'\', \''.$reference_id.'\', \'RQB Markup\');">RQB Markup</span>';
-				}else{
-					$result .= '
-						<span class="badge badge-secondary holu_markup_items" onclick="markup_item(\''.$rtap.'\', \''.$reference_type.'\', \''.$reference_id.'\', \'RQB Markup\');">RQB Markup</span>';
 				}
 
 			}else{
