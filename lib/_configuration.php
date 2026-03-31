@@ -13,7 +13,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
   $pagination->reverse(false);
 
 	//general_attributes
-	$holu_system_name = "Holu";
+	$holu_system_name = "FlowBook";
 
 	$holu_date = date("Y-m-d");
 

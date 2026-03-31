@@ -135,7 +135,7 @@ function convert_chart_to_pdf(canvas_id){
   pdf.addImage($(pdfCanvas)[0], 'PNG', 0, 0);
 
   // download the pdf
-  pdf.save('Ariyabod Holu.pdf');
+  pdf.save('FlowBook.pdf');
 }
 
 function get_category_option(categories_id, category_type, target_id){
