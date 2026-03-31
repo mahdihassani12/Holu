@@ -774,8 +774,22 @@
             array_push($value_infos, holu_escape($_POST['employee']));
           }
 
-			    $check_number_sequence = get_next_check_number_sequence('expenses', 'province', $province, 'branch', $branch);
-			    $check_number = generate_check_number('expense', $province, $branch, $check_number_sequence);
+			    $num_expense_sq = $db->prepare(
+			    	"SELECT 
+			    	count(id) AS num_expense
+			    	FROM `expenses`
+			    	WHERE province=:province AND branch=:branch
+	      		LIMIT 1"
+			    );
+
+			    $num_expense_sqx = $num_expense_sq->execute([
+			    	'province'=>$province,
+			    	'branch'=>$branch
+			    ]);
+
+			    $num_expense_row = $num_expense_sq->fetch();
+			    $num_expense = $num_expense_row['num_expense'];
+			    $check_number = generate_check_number('expense', $province, $branch, $num_expense+1);
 
 			    $expense_iq = $db->prepare(
 			    	"INSERT INTO `expenses` (

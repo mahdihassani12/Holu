@@ -740,8 +740,22 @@
 			    $currency = holu_escape($_POST['currency']);
 			    $description = holu_escape($_POST['description']);
 
-				$check_number_sequence = get_next_check_number_sequence('transfers', 'from_province', $from_province, 'from_branch', $from_branch);
-			    $check_number = generate_check_number('transfer', $from_province, $from_branch, $check_number_sequence);
+				$num_transfers_sq = $db->prepare(
+			    	"SELECT 
+						count(id) AS num_transfers
+						FROM `transfers`
+						WHERE from_province=:from_province AND from_branch=:from_branch
+					LIMIT 1"
+			    );
+
+			    $num_transfers_sqx = $num_transfers_sq->execute([
+			    	'from_province'=>$from_province,
+			    	'from_branch'=>$from_branch
+			    ]);
+
+			    $num_transfers_row = $num_transfers_sq->fetch();
+			    $num_transfers = $num_transfers_row['num_transfers'];
+			    $check_number = generate_check_number('transfer', $from_province, $from_branch, $num_transfers+1);
 
 
 			    $transfer_iq = $db->prepare("INSERT INTO `transfers` (
