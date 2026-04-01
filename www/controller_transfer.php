@@ -860,7 +860,12 @@
 	  				transfer_date=:transfer_date, 
 	  				transfer_amount=:transfer_amount, 
 	  				currency=:currency, 
-	  				description=:description 
+	  				description=:description,
+	  				is_approved='0',
+	  				approve_date='',
+	  				approve_time='',
+	  				approve_description='',
+	  				approved_by='0'
 	  			WHERE id=:data_id 
 	  			LIMIT 1");
 
@@ -881,7 +886,7 @@
 						foreach ($_FILES['transfer_attachment']['name'] as $key => $value) {
 					    if($_FILES['transfer_attachment']['size'][$key]<10485760){
 					    	
-						    $target_dir = "../uploads/transfer_attachment/".holu_encode($transfers_id);
+							    $target_dir = "../uploads/transfer_attachment/".holu_encode($data_id);
 						    if(!file_exists($target_dir)){
 									mkdir($target_dir, 0777, true);
 								}
@@ -890,7 +895,7 @@
 								$file_insertion_entry_uq = $db->prepare("INSERT INTO `attachments` (type, reference_id, path, insertion_date, insertion_time, users_id) VALUES (:type, :reference_id, :path, :insertion_date, :insertion_time, :users_id)");
 								$file_insertion_entry_uqx = $file_insertion_entry_uq->execute([
 									'type'=>'Transfer Attachment',
-									'reference_id'=>$transfers_id,
+									'reference_id'=>$data_id,
 									'path'=>$target_file,
 									'insertion_date'=>$holu_date,
 									'insertion_time'=>$holu_time,
