@@ -1976,7 +1976,7 @@
 
           <div class="form-group row">
             <div class="col-sm-12">
-              <input type="text" id="highest_expense_expense_date" name="highest_expense_expense_date" class="form-control date_picker" placeholder="Pick a date..." required value="'.date("Y-m-d").'" onchange="get_dashboard_highest_expenses_table();">
+              <input type="date" id="highest_expense_expense_date" name="highest_expense_expense_date" class="form-control" required value="'.date("Y-m-d").'" min="2015-01-01" max="2100-12-31" onchange="get_dashboard_highest_expenses_table();">
             </div>
           </div>
 				';
