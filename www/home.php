@@ -282,10 +282,27 @@ $holu_page_paths = ["Home"];
             <div class="col-lg-12">
               <div class="card-box card-box-header">
 
-                <h4 class="header-title">Monthly Purchase</h4>
+                <h4 class="header-title">Monthly Exchange</h4>
 
               </div>
-              <div class="card-box" style="height: 280px !important;" id="monthly_purchase">
+              <div class="card-box" style="height: 280px !important;" id="monthly_exchange">
+
+                <div class="w-100 text-center">
+                  <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                </div>
+
+              </div> <!-- end card-box -->
+            </div> <!-- end col -->
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card-box card-box-header">
+
+                <h4 class="header-title">Monthly Transfer</h4>
+
+              </div>
+              <div class="card-box" style="height: 280px !important;" id="monthly_transfer">
 
                 <div class="w-100 text-center">
                   <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
@@ -645,50 +662,95 @@ $holu_page_paths = ["Home"];
   <?php if(check_access('system_accessibility/home/monthly_purchase/')==1){ ?>
     <script>
       //////////////////////////////////////////
-      function get_dashboard_monthly_purchase_line(){
+      function get_dashboard_monthly_exchange_line(){
 
-        var monthly_purchase_province = $("#monthly_purchase_province").val();
-        var monthly_purchase_branch = $("#monthly_purchase_branch").val();
-        var monthly_purchase_currency = $("#monthly_purchase_currency").val();
-        var monthly_purchase_year = $("#monthly_purchase_year").val();
+        var monthly_exchange_province = $("#monthly_exchange_province").val();
+        var monthly_exchange_branch = $("#monthly_exchange_branch").val();
+        var monthly_exchange_currency = $("#monthly_exchange_currency").val();
+        var monthly_exchange_year = $("#monthly_exchange_year").val();
 
         $.ajax({
           url:'controller_ajax.php',
           type:'post',
           data:{
-            operation:'get_dashboard_monthly_purchase_line',
-            monthly_purchase_province:monthly_purchase_province,
-            monthly_purchase_branch:monthly_purchase_branch,
-            monthly_purchase_currency:monthly_purchase_currency,
-            monthly_purchase_year:monthly_purchase_year
+            operation:'get_dashboard_monthly_exchange_line',
+            monthly_exchange_province:monthly_exchange_province,
+            monthly_exchange_branch:monthly_exchange_branch,
+            monthly_exchange_currency:monthly_exchange_currency,
+            monthly_exchange_year:monthly_exchange_year
           },
           success: function(data){
-            $("#monthly_purchase_line_property").html(data);
+            $("#monthly_exchange_line_property").html(data);
           },
           error: function(xhr, status, error){
-            get_dashboard_monthly_purchase_line();
+            get_dashboard_monthly_exchange_line();
           }
         });
       }
 
-      function get_dashboard_monthly_purchase_field(){
+      function get_dashboard_monthly_exchange_field(){
         $.ajax({
           url:'controller_ajax.php',
           type:'post',
           data:{
-            operation:'get_dashboard_monthly_purchase_field'
+            operation:'get_dashboard_monthly_exchange_field'
           },
           success: function(data){
-            $("#monthly_purchase").html(data);
-            get_dashboard_monthly_purchase_line();
+            $("#monthly_exchange").html(data);
+            get_dashboard_monthly_exchange_line();
             reload_js();
           },
           error: function(xhr, status, error){
-            get_dashboard_monthly_purchase_field();
+            get_dashboard_monthly_exchange_field();
           }
         });
       }
-      get_dashboard_monthly_purchase_field();
+      get_dashboard_monthly_exchange_field();
+
+      function get_dashboard_monthly_transfer_line(){
+
+        var monthly_transfer_province = $("#monthly_transfer_province").val();
+        var monthly_transfer_branch = $("#monthly_transfer_branch").val();
+        var monthly_transfer_currency = $("#monthly_transfer_currency").val();
+        var monthly_transfer_year = $("#monthly_transfer_year").val();
+
+        $.ajax({
+          url:'controller_ajax.php',
+          type:'post',
+          data:{
+            operation:'get_dashboard_monthly_transfer_line',
+            monthly_transfer_province:monthly_transfer_province,
+            monthly_transfer_branch:monthly_transfer_branch,
+            monthly_transfer_currency:monthly_transfer_currency,
+            monthly_transfer_year:monthly_transfer_year
+          },
+          success: function(data){
+            $("#monthly_transfer_line_property").html(data);
+          },
+          error: function(xhr, status, error){
+            get_dashboard_monthly_transfer_line();
+          }
+        });
+      }
+
+      function get_dashboard_monthly_transfer_field(){
+        $.ajax({
+          url:'controller_ajax.php',
+          type:'post',
+          data:{
+            operation:'get_dashboard_monthly_transfer_field'
+          },
+          success: function(data){
+            $("#monthly_transfer").html(data);
+            get_dashboard_monthly_transfer_line();
+            reload_js();
+          },
+          error: function(xhr, status, error){
+            get_dashboard_monthly_transfer_field();
+          }
+        });
+      }
+      get_dashboard_monthly_transfer_field();
     </script>
   <?php } ?>
   <div id="income_in_province_donut_property"></div>
@@ -699,7 +761,8 @@ $holu_page_paths = ["Home"];
   <div id="transferout_in_province_donut_property"></div>
   <div id="monthly_income_line_property"></div>
   <div id="monthly_expense_line_property"></div>
-  <div id="monthly_purchase_line_property"></div>
+  <div id="monthly_exchange_line_property"></div>
+  <div id="monthly_transfer_line_property"></div>
 </body>
 
 </html>
