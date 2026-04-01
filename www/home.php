@@ -309,6 +309,16 @@ $holu_page_paths = ["Home"];
   <!-- END wrapper -->
   <div class="rightbar-overlay"></div>
   <?php include("_script.php"); ?>
+  <script>
+    function sync_dashboard_branch_filter(province, branch_target_id, refresh_callback){
+      get_branch_option(province, '0', branch_target_id, true);
+      setTimeout(function(){
+        if(typeof refresh_callback === 'function'){
+          refresh_callback();
+        }
+      }, 150);
+    }
+  </script>
 
   <?php if(check_access('system_accessibility/home/closing_balance/')==1){ ?>
     <script>
@@ -344,6 +354,7 @@ $holu_page_paths = ["Home"];
       function get_dashboard_highest_expenses_table(){
 
         var highest_expense_province = $("#highest_expense_province").val();
+        var highest_expense_branch = $("#highest_expense_branch").val();
         var highest_expense_currency = $("#highest_expense_currency").val();
         var highest_expense_expense_date = $("#highest_expense_expense_date").val();
 
@@ -353,6 +364,7 @@ $holu_page_paths = ["Home"];
           data:{
             operation:'get_dashboard_highest_expenses_table',
             highest_expense_province:highest_expense_province,
+            highest_expense_branch:highest_expense_branch,
             highest_expense_currency:highest_expense_currency,
             highest_expense_expense_date:highest_expense_expense_date
           },
@@ -536,6 +548,7 @@ $holu_page_paths = ["Home"];
       function get_dashboard_monthly_income_line(){
 
         var monthly_income_province = $("#monthly_income_province").val();
+        var monthly_income_branch = $("#monthly_income_branch").val();
         var monthly_income_currency = $("#monthly_income_currency").val();
         var monthly_income_year = $("#monthly_income_year").val();
 
@@ -545,6 +558,7 @@ $holu_page_paths = ["Home"];
           data:{
             operation:'get_dashboard_monthly_income_line',
             monthly_income_province:monthly_income_province,
+            monthly_income_branch:monthly_income_branch,
             monthly_income_currency:monthly_income_currency,
             monthly_income_year:monthly_income_year
           },
@@ -584,6 +598,7 @@ $holu_page_paths = ["Home"];
       function get_dashboard_monthly_expense_line(){
 
         var monthly_expense_province = $("#monthly_expense_province").val();
+        var monthly_expense_branch = $("#monthly_expense_branch").val();
         var monthly_expense_currency = $("#monthly_expense_currency").val();
         var monthly_expense_year = $("#monthly_expense_year").val();
 
@@ -593,6 +608,7 @@ $holu_page_paths = ["Home"];
           data:{
             operation:'get_dashboard_monthly_expense_line',
             monthly_expense_province:monthly_expense_province,
+            monthly_expense_branch:monthly_expense_branch,
             monthly_expense_currency:monthly_expense_currency,
             monthly_expense_year:monthly_expense_year
           },
@@ -632,6 +648,7 @@ $holu_page_paths = ["Home"];
       function get_dashboard_monthly_purchase_line(){
 
         var monthly_purchase_province = $("#monthly_purchase_province").val();
+        var monthly_purchase_branch = $("#monthly_purchase_branch").val();
         var monthly_purchase_currency = $("#monthly_purchase_currency").val();
         var monthly_purchase_year = $("#monthly_purchase_year").val();
 
@@ -641,6 +658,7 @@ $holu_page_paths = ["Home"];
           data:{
             operation:'get_dashboard_monthly_purchase_line',
             monthly_purchase_province:monthly_purchase_province,
+            monthly_purchase_branch:monthly_purchase_branch,
             monthly_purchase_currency:monthly_purchase_currency,
             monthly_purchase_year:monthly_purchase_year
           },
