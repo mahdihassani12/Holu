@@ -2,6 +2,22 @@
   include("../lib/_configuration.php");
   $holu_page_paths = ["Reports", "Report of Transactions"];
 
+  function has_customer_reference_for_sib($additional_informations_raw){
+    if(empty($additional_informations_raw)){
+      return false;
+    }
+
+    $decoded_additional_informations = json_decode($additional_informations_raw, true);
+    if(!is_array($decoded_additional_informations)){
+      return false;
+    }
+
+    $customer_name = isset($decoded_additional_informations['Customer Name']) ? trim((string)$decoded_additional_informations['Customer Name']) : '';
+    $customer_id = isset($decoded_additional_informations['Customer ID']) ? trim((string)$decoded_additional_informations['Customer ID']) : '';
+
+    return ($customer_name !== '' || $customer_id !== '');
+  }
+
   $income_filtering_data = "";
   $expense_filtering_data = "";
   $exchange_filtering_data = "";
@@ -1124,6 +1140,7 @@
 
                           $check_number = $transaction_row['transaction_check_number'];
                           $sib_number = $transaction_row['transaction_sib_number'];
+                          $has_customer_reference = has_customer_reference_for_sib($transaction_row['transaction_additional_informations'] ?? '');
 
                           $sib_number_container = "";
                           $check_number_container = "";
@@ -1141,14 +1158,16 @@
                                 ';
                               }
                               
-                              $sib_number_container = '
-                              <p>'.$sib_number.'</p>
-                              ';
-
-                              if(check_access("system_accessibility/report/report_transaction/edit_sib_number/")){
-                                $sib_number_container .= '
-                                  <span onclick="edit_sib_number(\''.$transaction_row['transaction_id'].'\', \'edit\');" class="badge badge-warning" style="cursor:pointer;"><i class="fas fa-edit"></i></span>
+                              if($has_customer_reference){
+                                $sib_number_container = '
+                                <p>'.$sib_number.'</p>
                                 ';
+
+                                if(check_access("system_accessibility/report/report_transaction/edit_sib_number/")){
+                                  $sib_number_container .= '
+                                    <span onclick="edit_sib_number(\''.$transaction_row['transaction_id'].'\', \'edit\');" class="badge badge-warning" style="cursor:pointer;"><i class="fas fa-edit"></i></span>
+                                  ';
+                                }
                               }
                               $operation_destination = 'controller_income.php';
 

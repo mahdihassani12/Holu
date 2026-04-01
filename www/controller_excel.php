@@ -9,6 +9,22 @@
   use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
   use Box\Spout\Common\Entity\Style\Color;
 
+  function has_customer_reference_for_sib($additional_informations_raw){
+    if(empty($additional_informations_raw)){
+      return false;
+    }
+
+    $decoded_additional_informations = json_decode($additional_informations_raw, true);
+    if(!is_array($decoded_additional_informations)){
+      return false;
+    }
+
+    $customer_name = isset($decoded_additional_informations['Customer Name']) ? trim((string)$decoded_additional_informations['Customer Name']) : '';
+    $customer_id = isset($decoded_additional_informations['Customer ID']) ? trim((string)$decoded_additional_informations['Customer ID']) : '';
+
+    return ($customer_name !== '' || $customer_id !== '');
+  }
+
   if(isset($_GET['excel_type']) AND !empty($_GET['excel_type'])){
 
     $excel_type = holu_escape($_GET['excel_type']);
@@ -535,6 +551,13 @@
             }
 
             $transaction_row['transaction__sub_categories'] = $transaction_row['transaction_sub_categories_id']!="" ? get_col('sub_categories', 'sub_category_name', 'id', $transaction_row['transaction_sub_categories_id']) : '';
+            $transaction_sib_number = $transaction_row['transaction_sib_number'];
+            if(
+              $transaction_row['transaction_type'] === 'Income' &&
+              !has_customer_reference_for_sib($transaction_row['transaction_additional_informations'] ?? '')
+            ){
+              $transaction_sib_number = '';
+            }
 
             $writer->addRow([
               $count++,
@@ -548,7 +571,7 @@
               $transaction_row['transaction_branch'],
               $transaction_row['transaction_check_number'],
               $additional_informations,
-              $transaction_row['transaction_sib_number'],
+              $transaction_sib_number,
             ]);
           }
         }
