@@ -194,17 +194,6 @@
 		              </div>
 		            </div>
 
-                <?php if(!empty($transfer_row['to_province'])){ ?>
-                <div class="form-group row">
-                  <label class="col-sm-3 col-form-label" for="to_branch">To Branch</label>
-                  <div class="col-sm-6">
-                    <select id="to_branch" name="to_branch" class="form-control" required>
-                      <?php echo get_branch_option($transfer_row['to_province'], $transfer_row['to_branch']); ?>
-                    </select>
-                  </div>
-                </div>
-                <?php } ?>
-
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label" for="to_branch">To Branch</label>
                   <div class="col-sm-6">
