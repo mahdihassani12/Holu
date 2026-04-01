@@ -85,7 +85,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
             </td>
             <td class="tbody">
               <small>'
-                .print_ai_labels(json_decode($expense_row['additional_informations'])).
+                .print_ai_labels(json_decode($expense_row['additional_informations'] ?? '')).
               '</small>
             </td>
             <td class="tbody"><strong>'.$expense_row['currency'].'</strong></td>
@@ -625,7 +625,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
             </td>
             <td class="tbody">
               <small>'
-                .print_ai_labels(json_decode($purchase_row['additional_informations'])).
+                .print_ai_labels(json_decode($purchase_row['additional_informations'] ?? '')).
               '</small>
             </td>
             <td class="tbody"><strong>'.$purchase_row['currency'].'</strong></td>

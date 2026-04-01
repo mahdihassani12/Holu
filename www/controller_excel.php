@@ -525,7 +525,7 @@
             if($transaction_row['transaction_type']=='Transfer'){
               $additional_informations = $transaction_row['transaction_approve_description'];
             }else{
-              $ai = json_decode($transaction_row['transaction_additional_informations']);
+              $ai = json_decode($transaction_row['transaction_additional_informations'] ?? '');
               if(!empty($ai)){
                 foreach ($ai as $key => $value) {
                   $additional_informations .= 

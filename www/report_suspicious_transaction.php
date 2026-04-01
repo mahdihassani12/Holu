@@ -772,7 +772,7 @@
                             <td><?php echo $sub_category; ?></td>
                             <td><?php echo $transaction_row['transaction_date']; ?></td>
                             <td><?php echo $transaction_row['transaction_province']; ?></td>
-                            <td class="text-center"><?php echo print_ai_labels(json_decode($transaction_row['transaction_additional_informations'])); ?></td>
+                            <td class="text-center"><?php echo print_ai_labels(json_decode($transaction_row['transaction_additional_informations'] ?? '')); ?></td>
                             <td class="text-center">
                               <?php echo get_col('users', 'username', 'id', $transaction_row['transaction_users_id']); ?>
                             </td>

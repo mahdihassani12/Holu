@@ -245,7 +245,7 @@
                               <td>'.$income_row['income_date'].'</td>
                               <td>'.$income_row['province'].'</td>
                               <td>'.$check_number.'</td>
-                              <td class="text-center">'.print_ai_labels(json_decode($income_row['additional_informations'])).'</td>
+                              <td class="text-center">'.print_ai_labels(json_decode($income_row['additional_informations'] ?? '')).'</td>
                               <td class="text-center" id="markupsIncome'.$income_row['id'].'">
                                 '.get_markups('system_accessibility/report/report_accounting/', 'Income', $income_row['id'], $income_row['tms_markup'], $income_row['qb_markup'], $income_row['sib_markup'], $income_row['ad_markup']).'
                               </td>
