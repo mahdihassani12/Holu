@@ -22,7 +22,8 @@
 			case "get_branch_option": {
 				$province = holu_escape($_POST['province']);
 				$branch = holu_escape($_POST['branch']);
-				echo get_branch_option($province, $branch);
+				$allow_all_branches = (isset($_POST['allow_all_branches']) && $_POST['allow_all_branches']=='1');
+				echo get_branch_option($province, $branch, $allow_all_branches);
 			}break;
 
 			case "markup_item": {

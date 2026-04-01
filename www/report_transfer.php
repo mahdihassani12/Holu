@@ -9,9 +9,9 @@
 
   set_pagination();
 
-  $transfer_sq = $db->query("SELECT * FROM `transfers` WHERE deleted='0' $holu_filtering_data AND to_province IN ($accessed_provinces) ORDER BY is_approved ASC, id DESC limit $holu_to OFFSET $holu_from");
+  $transfer_sq = $db->query("SELECT * FROM `transfers` WHERE deleted='0' $holu_filtering_data AND (to_province IN ($accessed_provinces) OR users_id='$holu_users_id') ORDER BY is_approved ASC, id DESC limit $holu_to OFFSET $holu_from");
 
-  $Pagenation = $db->query("SELECT count(id) as record FROM `transfers` WHERE deleted='0' $holu_filtering_data AND to_province IN ($accessed_provinces)");
+  $Pagenation = $db->query("SELECT count(id) as record FROM `transfers` WHERE deleted='0' $holu_filtering_data AND (to_province IN ($accessed_provinces) OR users_id='$holu_users_id')");
   extract($Pagenation->fetch());
 
   
