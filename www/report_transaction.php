@@ -1255,9 +1255,17 @@
                             <td class="text-center" id="check_number_container<?php echo $transaction_row['transaction_type'].$transaction_row['transaction_id']; ?>"><?php echo $check_number_container; ?></td>
                             <td class="text-center">
                               <?php
-                              if($transaction_type!='Transfer'){
-                                echo print_ai_labels(json_decode($transaction_row['transaction_additional_informations']));
-                              }
+                                if ($transaction_type != 'Transfer') {
+                                    $json = $transaction_row['transaction_additional_informations'] ?? '';
+
+                                    if (!empty($json)) {
+                                        $decoded = json_decode($json);
+
+                                        if (json_last_error() === JSON_ERROR_NONE) {
+                                            echo print_ai_labels($decoded);
+                                        }
+                                    }
+                                }
                               ?>
                             </td>
                             <td class="text-center" id="markups<?php echo $transaction_type.$transaction_row['transaction_id']; ?>">
