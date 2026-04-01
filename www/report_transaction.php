@@ -506,7 +506,9 @@
     incomes.sib_markup AS transaction_sib_markup,
     incomes.ad_markup AS transaction_ad_markup,
     incomes.additional_informations AS transaction_additional_informations,
-    '' AS transaction_approve_description
+    '' AS transaction_approve_description,
+    '' AS transaction_from_province,
+    '' AS transaction_to_province
     FROM `incomes`
     WHERE incomes.deleted='0' 
     AND incomes.province IN ($accessed_provinces) 
@@ -531,7 +533,9 @@
     expenses.sib_markup AS transaction_sib_markup,
     expenses.ad_markup AS transaction_ad_markup,
     expenses.additional_informations AS transaction_additional_informations,
-    '' AS transaction_approve_description
+    '' AS transaction_approve_description,
+    '' AS transaction_from_province,
+    '' AS transaction_to_province
     FROM `expenses`
     WHERE expenses.deleted='0' 
     AND expenses.province IN ($accessed_provinces) 
@@ -556,7 +560,9 @@
     exchanges.sib_markup AS transaction_sib_markup,
     exchanges.ad_markup AS transaction_ad_markup,
     '' AS transaction_additional_informations,
-    '' AS transaction_approve_description
+    '' AS transaction_approve_description,
+    '' AS transaction_from_province,
+    '' AS transaction_to_province
     FROM `exchanges`
     WHERE exchanges.deleted='0' 
     AND exchanges.province IN ($accessed_provinces) 
@@ -581,7 +587,9 @@
     purchases.sib_markup AS transaction_sib_markup,
     purchases.ad_markup AS transaction_ad_markup,
     '' AS transaction_additional_informations,
-    '' AS transaction_approve_description
+    '' AS transaction_approve_description,
+    '' AS transaction_from_province,
+    '' AS transaction_to_province
     FROM `purchases`
     WHERE purchases.deleted='0' 
     AND purchases.is_approved='1'
@@ -609,7 +617,9 @@
     transfers.sib_markup AS transaction_sib_markup,
     transfers.ad_markup AS transaction_ad_markup,
     '' AS transaction_additional_informations,
-    transfers.approve_description AS transaction_approve_description
+    transfers.approve_description AS transaction_approve_description,
+    transfers.from_province AS transaction_from_province,
+    transfers.to_province AS transaction_to_province
     FROM `transfers`
     WHERE transfers.deleted='0' 
     AND transfers.is_approved='1'
@@ -1208,6 +1218,15 @@
                             $sub_category = get_col('sub_categories', 'sub_category_name', 'id', $transaction_row['transaction_sub_categories_id']);
                           }
 
+                          $transaction_description = $transaction_row['transaction_description'];
+                          if($transaction_type=='Transfer' && $province!="0"){
+                            if($province==$transaction_row['transaction_to_province'] && $transaction_row['transaction_approve_description']!=""){
+                              $transaction_description = $transaction_row['transaction_approve_description'];
+                            }elseif($province==$transaction_row['transaction_from_province']){
+                              $transaction_description = $transaction_row['transaction_description'];
+                            }
+                          }
+
                           if(check_access("system_accessibility/report/report_transaction/print_receipt/") AND $transaction_type=="Income"){
                             $operations .= '<a class="dropdown-item" href="print_receipt.php?incomes_id='.holu_encode($transaction_row['transaction_id']).'" target=" _ "><i class="fas fa-print"></i> Print Receipt</a>';
                           }
@@ -1225,7 +1244,7 @@
                           ?>
                           <tr>
                             <th class="text-center"><?php echo $holu_count++; ?></th>
-                            <td class="text-right"><p lang="fa" dir="rtl"><?php echo $transaction_row['transaction_description']; ?></p></td>
+                            <td class="text-right"><p lang="fa" dir="rtl"><?php echo $transaction_description; ?></p></td>
                             <td><?php echo $transaction_row['transaction_amount']; ?></td>
                             <td><?php echo $transaction_row['transaction_currency']; ?></td>
                             <td><?php echo $transaction_row['transaction_type']; ?></td>
@@ -1236,11 +1255,7 @@
                             <td class="text-center" id="check_number_container<?php echo $transaction_row['transaction_type'].$transaction_row['transaction_id']; ?>"><?php echo $check_number_container; ?></td>
                             <td class="text-center">
                               <?php
-                              if($transaction_type=='Transfer'){
-                                echo print_ai_labels([
-                                  'Approve Description' => $transaction_row['transaction_approve_description']
-                                ]);
-                              }else{
+                              if($transaction_type!='Transfer'){
                                 echo print_ai_labels(json_decode($transaction_row['transaction_additional_informations']));
                               }
                               ?>
