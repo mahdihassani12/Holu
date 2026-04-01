@@ -1950,9 +1950,17 @@
 				$result = '
 					<div class="form-group row">
             <div class="col-sm-12">
-              <select id="highest_expense_province" name="highest_expense_province" class="form-control" required onchange="get_dashboard_highest_expenses_table();">
+              <select id="highest_expense_province" name="highest_expense_province" class="form-control" required onchange="sync_dashboard_branch_filter(this.value, \'highest_expense_branch\', get_dashboard_highest_expenses_table);">
                 <option selected hidden value="">Select an option</option>
                 '.get_province_option($holu_provinces[0]).'
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-12">
+              <select id="highest_expense_branch" name="highest_expense_branch" class="form-control" required onchange="get_dashboard_highest_expenses_table();">
+                '.get_branch_option($holu_provinces[0], '0', true).'
               </select>
             </div>
           </div>
@@ -1968,7 +1976,7 @@
 
           <div class="form-group row">
             <div class="col-sm-12">
-              <input type="text" id="highest_expense_expense_date" name="highest_expense_expense_date" class="form-control date_picker" placeholder="Pick a date..." required value="'.date("Y-m-d").'" onchange="get_dashboard_highest_expenses_table();">
+              <input type="date" id="highest_expense_expense_date" name="highest_expense_expense_date" class="form-control" required value="'.date("Y-m-d").'" min="2015-01-01" max="2100-12-31" onchange="get_dashboard_highest_expenses_table();">
             </div>
           </div>
 				';
@@ -1985,6 +1993,13 @@
 				if (isset($_POST['highest_expense_province']) AND !empty($_POST['highest_expense_province'])) {
 					$province = holu_escape($_POST['highest_expense_province']);
 					$filtering_data .= " AND expenses.province='".$province."' ";
+				}
+
+				if (isset($_POST['highest_expense_branch']) AND !empty($_POST['highest_expense_branch'])) {
+					$branch = holu_escape($_POST['highest_expense_branch']);
+					if($branch!='0'){
+						$filtering_data .= " AND expenses.branch='".$branch."' ";
+					}
 				}
 
 				if (isset($_POST['highest_expense_currency']) AND !empty($_POST['highest_expense_currency'])) {
@@ -2446,9 +2461,17 @@
             <div class="col-lg-3" style="height: 250px !important;">
 							<div class="form-group row">
 		            <div class="col-sm-12">
-		              <select id="monthly_income_province" name="monthly_income_province" class="form-control" required onchange="get_dashboard_monthly_income_line();">
+		              <select id="monthly_income_province" name="monthly_income_province" class="form-control" required onchange="sync_dashboard_branch_filter(this.value, \'monthly_income_branch\', get_dashboard_monthly_income_line);">
 		                <option selected hidden value="">Select an option</option>
 		                '.get_province_option($holu_provinces[0]).'
+		              </select>
+		            </div>
+		          </div>
+
+		          <div class="form-group row">
+		            <div class="col-sm-12">
+		              <select id="monthly_income_branch" name="monthly_income_branch" class="form-control" required onchange="get_dashboard_monthly_income_line();">
+		                '.get_branch_option($holu_provinces[0], '0', true).'
 		              </select>
 		            </div>
 		          </div>
@@ -2489,6 +2512,7 @@
     // ✅ Sanitize inputs
     $province = holu_escape($_POST['monthly_income_province'] ?? '');
     $currency = holu_escape($_POST['monthly_income_currency'] ?? '');
+    $branch = holu_escape($_POST['monthly_income_branch'] ?? '0');
 
     $year = isset($_POST['monthly_income_year']) ? (int) $_POST['monthly_income_year'] : 0;
     if ($year < 1) {
@@ -2522,6 +2546,11 @@
         $end_date   = sprintf('%04d-%02d-%02d', $year, $monthNumber, $days);
 
         // ✅ Query
+        $branch_filtering_data = "";
+        if($branch!='0'){
+            $branch_filtering_data = " AND branch = '$branch' ";
+        }
+
         $income_sq = $db->query("
             SELECT SUM(income_amount) AS total_income
             FROM incomes
@@ -2529,6 +2558,7 @@
             AND province = '$province'
             AND currency = '$currency'
             AND income_date BETWEEN '$start_date' AND '$end_date'
+            $branch_filtering_data
             AND province IN ($accessed_provinces)
             AND sub_categories_id IN ($accessed_sub_categories_income)
         ");
@@ -2593,9 +2623,17 @@ break;
             <div class="col-lg-3" style="height: 250px !important;">
 							<div class="form-group row">
 		            <div class="col-sm-12">
-		              <select id="monthly_expense_province" name="monthly_expense_province" class="form-control" required onchange="get_dashboard_monthly_expense_line();">
+		              <select id="monthly_expense_province" name="monthly_expense_province" class="form-control" required onchange="sync_dashboard_branch_filter(this.value, \'monthly_expense_branch\', get_dashboard_monthly_expense_line);">
 		                <option selected hidden value="">Select an option</option>
 		                '.get_province_option($holu_provinces[0]).'
+		              </select>
+		            </div>
+		          </div>
+
+		          <div class="form-group row">
+		            <div class="col-sm-12">
+		              <select id="monthly_expense_branch" name="monthly_expense_branch" class="form-control" required onchange="get_dashboard_monthly_expense_line();">
+		                '.get_branch_option($holu_provinces[0], '0', true).'
 		              </select>
 		            </div>
 		          </div>
@@ -2636,6 +2674,7 @@ break;
     // ✅ Sanitize inputs
     $province = holu_escape($_POST['monthly_expense_province'] ?? '');
     $currency = holu_escape($_POST['monthly_expense_currency'] ?? '');
+    $branch = holu_escape($_POST['monthly_expense_branch'] ?? '0');
 
     $year = isset($_POST['monthly_expense_year']) ? (int) $_POST['monthly_expense_year'] : 0;
     if ($year < 1) {
@@ -2669,6 +2708,11 @@ break;
         $end_date   = sprintf('%04d-%02d-%02d', $year, $monthNumber, $days);
 
         // ✅ Query
+        $branch_filtering_data = "";
+        if($branch!='0'){
+            $branch_filtering_data = " AND branch = '$branch' ";
+        }
+
         $expense_sq = $db->query("
             SELECT SUM(expense_amount) AS total_expense
             FROM expenses
@@ -2676,6 +2720,7 @@ break;
             AND province = '$province'
             AND currency = '$currency'
             AND expense_date BETWEEN '$start_date' AND '$end_date'
+            $branch_filtering_data
             AND province IN ($accessed_provinces)
             AND sub_categories_id IN ($accessed_sub_categories_expense)
         ");
@@ -2740,9 +2785,17 @@ break;
             <div class="col-lg-3" style="height: 250px !important;">
 							<div class="form-group row">
 		            <div class="col-sm-12">
-		              <select id="monthly_purchase_province" name="monthly_purchase_province" class="form-control" required onchange="get_dashboard_monthly_purchase_line();">
+		              <select id="monthly_purchase_province" name="monthly_purchase_province" class="form-control" required onchange="sync_dashboard_branch_filter(this.value, \'monthly_purchase_branch\', get_dashboard_monthly_purchase_line);">
 		                <option selected hidden value="">Select an option</option>
 		                '.get_province_option($holu_provinces[0]).'
+		              </select>
+		            </div>
+		          </div>
+
+		          <div class="form-group row">
+		            <div class="col-sm-12">
+		              <select id="monthly_purchase_branch" name="monthly_purchase_branch" class="form-control" required onchange="get_dashboard_monthly_purchase_line();">
+		                '.get_branch_option($holu_provinces[0], '0', true).'
 		              </select>
 		            </div>
 		          </div>
@@ -2783,6 +2836,7 @@ break;
     // ✅ Sanitize inputs
     $province = holu_escape($_POST['monthly_purchase_province'] ?? '');
     $currency = holu_escape($_POST['monthly_purchase_currency'] ?? '');
+    $branch = holu_escape($_POST['monthly_purchase_branch'] ?? '0');
 
     $year = isset($_POST['monthly_purchase_year']) ? (int) $_POST['monthly_purchase_year'] : 0;
     if ($year < 1) {
@@ -2816,6 +2870,11 @@ break;
         $end_date   = sprintf('%04d-%02d-%02d', $year, $monthNumber, $days);
 
         // ✅ Query
+        $branch_filtering_data = "";
+        if($branch!='0'){
+            $branch_filtering_data = " AND branch = '$branch' ";
+        }
+
         $purchase_sq = $db->query("
             SELECT SUM(purchase_amount) AS total_purchase
             FROM purchases
@@ -2823,6 +2882,7 @@ break;
             AND province = '$province'
             AND currency = '$currency'
             AND purchase_date BETWEEN '$start_date' AND '$end_date'
+            $branch_filtering_data
             AND province IN ($accessed_provinces)
             AND sub_categories_id IN ($accessed_sub_categories_purchase)
         ");

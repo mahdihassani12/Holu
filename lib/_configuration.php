@@ -4612,19 +4612,13 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 
 	function get_year_options($year){
 
-    $years = array(
-      '2015',
-      '2016',
-      '2017',
-      '2018',
-      '2019',
-      '2020',
-      '2021',
-      '2022',
-      '2023',
-      '2024',
-      '2025',
-    );
+    $years = array();
+    $start_year = 2015;
+    $end_year = (int)date('Y') + 5;
+
+    for($i=$start_year; $i<=$end_year; $i++){
+      $years[] = (string)$i;
+    }
 
     $year_options = '';
     if (count($years)>0){
