@@ -2775,7 +2775,7 @@ break;
 }
 break;
 
-			case 'get_dashboard_monthly_purchase_field':{
+			case 'get_dashboard_monthly_exchange_field':{
 
 				$result = '';
 
@@ -2785,7 +2785,7 @@ break;
             <div class="col-lg-3" style="height: 250px !important;">
 							<div class="form-group row">
 		            <div class="col-sm-12">
-		              <select id="monthly_purchase_province" name="monthly_purchase_province" class="form-control" required onchange="sync_dashboard_branch_filter(this.value, \'monthly_purchase_branch\', get_dashboard_monthly_purchase_line);">
+		              <select id="monthly_exchange_province" name="monthly_exchange_province" class="form-control" required onchange="sync_dashboard_branch_filter(this.value, \'monthly_exchange_branch\', get_dashboard_monthly_exchange_line);">
 		                <option selected hidden value="">Select an option</option>
 		                '.get_province_option($holu_provinces[0]).'
 		              </select>
@@ -2794,7 +2794,7 @@ break;
 
 		          <div class="form-group row">
 		            <div class="col-sm-12">
-		              <select id="monthly_purchase_branch" name="monthly_purchase_branch" class="form-control" required onchange="get_dashboard_monthly_purchase_line();">
+		              <select id="monthly_exchange_branch" name="monthly_exchange_branch" class="form-control" required onchange="get_dashboard_monthly_exchange_line();">
 		                '.get_branch_option($holu_provinces[0], '0', true).'
 		              </select>
 		            </div>
@@ -2802,7 +2802,7 @@ break;
 
 		          <div class="form-group row">
 		            <div class="col-sm-12">
-		              <select id="monthly_purchase_currency" name="monthly_purchase_currency" class="form-control" required onchange="get_dashboard_monthly_purchase_line();">
+		              <select id="monthly_exchange_currency" name="monthly_exchange_currency" class="form-control" required onchange="get_dashboard_monthly_exchange_line();">
 		                <option selected hidden value="">Select an option</option>
 		                '.get_currency_option($holu_currencies[0]).'
 		              </select>
@@ -2811,7 +2811,7 @@ break;
 
 		          <div class="form-group row">
 		            <div class="col-sm-12">
-		              <select id="monthly_purchase_year" name="monthly_purchase_year" class="form-control" required onchange="get_dashboard_monthly_purchase_line();">
+		              <select id="monthly_exchange_year" name="monthly_exchange_year" class="form-control" required onchange="get_dashboard_monthly_exchange_line();">
 		                <option selected hidden value="">Select an option</option>
 		                '.get_year_options(date("Y")).'
 		              </select>
@@ -2819,8 +2819,8 @@ break;
 		          </div>
 		          
 		        </div>
-		        <div class="col-9" id="container_monthly_purchase_line">
-			        <canvas id="canvas_monthly_purchase_line" ></canvas>
+		        <div class="col-9" id="container_monthly_exchange_line">
+			        <canvas id="canvas_monthly_exchange_line" ></canvas>
 			      </div>
 		      </div>
 				';
@@ -2828,17 +2828,16 @@ break;
 				echo $result;
 			}break;
 
-			case 'get_dashboard_monthly_purchase_line': {
+			case 'get_dashboard_monthly_exchange_line': {
 
     $month_labels = [];
-    $total_purchases = [];
+    $total_exchanges = [];
 
-    // ✅ Sanitize inputs
-    $province = holu_escape($_POST['monthly_purchase_province'] ?? '');
-    $currency = holu_escape($_POST['monthly_purchase_currency'] ?? '');
-    $branch = holu_escape($_POST['monthly_purchase_branch'] ?? '0');
+    $province = holu_escape($_POST['monthly_exchange_province'] ?? '');
+    $currency = holu_escape($_POST['monthly_exchange_currency'] ?? '');
+    $branch = holu_escape($_POST['monthly_exchange_branch'] ?? '0');
 
-    $year = isset($_POST['monthly_purchase_year']) ? (int) $_POST['monthly_purchase_year'] : 0;
+    $year = isset($_POST['monthly_exchange_year']) ? (int) $_POST['monthly_exchange_year'] : 0;
     if ($year < 1) {
         $year = (int) date('Y');
     }
@@ -2869,58 +2868,210 @@ break;
         $start_date = sprintf('%04d-%02d-01', $year, $monthNumber);
         $end_date   = sprintf('%04d-%02d-%02d', $year, $monthNumber, $days);
 
-        // ✅ Query
         $branch_filtering_data = "";
         if($branch!='0'){
             $branch_filtering_data = " AND branch = '$branch' ";
         }
 
-        $purchase_sq = $db->query("
-            SELECT SUM(purchase_amount) AS total_purchase
-            FROM purchases
+        $exchange_sq = $db->query("
+            SELECT SUM(from_amount) AS total_exchange
+            FROM exchanges
             WHERE deleted = '0'
             AND province = '$province'
-            AND currency = '$currency'
-            AND purchase_date BETWEEN '$start_date' AND '$end_date'
+            AND from_currency = '$currency'
+            AND exchange_date BETWEEN '$start_date' AND '$end_date'
             $branch_filtering_data
             AND province IN ($accessed_provinces)
-            AND sub_categories_id IN ($accessed_sub_categories_purchase)
         ");
 
         $total = 0;
 
-        if ($purchase_sq && $purchase_sq->rowCount() > 0) {
-            $row = $purchase_sq->fetch();
-            $total = $row['total_purchase'] ?? 0;
+        if ($exchange_sq && $exchange_sq->rowCount() > 0) {
+            $row = $exchange_sq->fetch();
+            $total = $row['total_exchange'] ?? 0;
         }
 
         $month_labels[] = $monthName;
-        $total_purchases[] = (float) $total;
+        $total_exchanges[] = (float) $total;
     }
 
-    // ✅ Convert to JS
     $month_labels_js = '"' . implode('","', $month_labels) . '"';
-    $total_purchases_js = implode(',', $total_purchases);
+    $total_exchanges_js = implode(',', $total_exchanges);
 
-    // ✅ Output
     echo '
     <script>
-        $("#canvas_monthly_purchase_line").remove(); 
-        $("#container_monthly_purchase_line").append("<canvas id=\'canvas_monthly_purchase_line\'></canvas>");
+        $("#canvas_monthly_exchange_line").remove(); 
+        $("#container_monthly_exchange_line").append("<canvas id=\'canvas_monthly_exchange_line\'></canvas>");
 
-        var ctx = document.getElementById("canvas_monthly_purchase_line").getContext("2d");
+        var ctx = document.getElementById("canvas_monthly_exchange_line").getContext("2d");
 
         new Chart(ctx, {
             type: "line",
             data: {
                 labels: [' . $month_labels_js . '],
                 datasets: [{
-                    label: "Total Purchase",
+                    label: "Total Exchange",
                     backgroundColor: window.chartColors.orange,
                     borderColor: window.chartColors.orange,
                     borderWidth: 3,
                     fill: false,
-                    data: [' . $total_purchases_js . ']
+                    data: [' . $total_exchanges_js . ']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: "top"
+                    }
+                }
+            }
+        });
+    </script>';
+}
+break;
+
+			case 'get_dashboard_monthly_transfer_field':{
+
+				$result = '';
+
+				$result = '
+
+					<div class="row">
+            <div class="col-lg-3" style="height: 250px !important;">
+							<div class="form-group row">
+		            <div class="col-sm-12">
+		              <select id="monthly_transfer_province" name="monthly_transfer_province" class="form-control" required onchange="sync_dashboard_branch_filter(this.value, \'monthly_transfer_branch\', get_dashboard_monthly_transfer_line);">
+		                <option selected hidden value="">Select an option</option>
+		                '.get_province_option($holu_provinces[0]).'
+		              </select>
+		            </div>
+		          </div>
+
+		          <div class="form-group row">
+		            <div class="col-sm-12">
+		              <select id="monthly_transfer_branch" name="monthly_transfer_branch" class="form-control" required onchange="get_dashboard_monthly_transfer_line();">
+		                '.get_branch_option($holu_provinces[0], '0', true).'
+		              </select>
+		            </div>
+		          </div>
+
+		          <div class="form-group row">
+		            <div class="col-sm-12">
+		              <select id="monthly_transfer_currency" name="monthly_transfer_currency" class="form-control" required onchange="get_dashboard_monthly_transfer_line();">
+		                <option selected hidden value="">Select an option</option>
+		                '.get_currency_option($holu_currencies[0]).'
+		              </select>
+		            </div>
+		          </div>
+
+		          <div class="form-group row">
+		            <div class="col-sm-12">
+		              <select id="monthly_transfer_year" name="monthly_transfer_year" class="form-control" required onchange="get_dashboard_monthly_transfer_line();">
+		                <option selected hidden value="">Select an option</option>
+		                '.get_year_options(date("Y")).'
+		              </select>
+		            </div>
+		          </div>
+		          
+		        </div>
+		        <div class="col-9" id="container_monthly_transfer_line">
+			        <canvas id="canvas_monthly_transfer_line" ></canvas>
+			      </div>
+		      </div>
+				';
+
+				echo $result;
+			}break;
+
+			case 'get_dashboard_monthly_transfer_line': {
+
+    $month_labels = [];
+    $total_transfers = [];
+
+    $province = holu_escape($_POST['monthly_transfer_province'] ?? '');
+    $currency = holu_escape($_POST['monthly_transfer_currency'] ?? '');
+    $branch = holu_escape($_POST['monthly_transfer_branch'] ?? '0');
+
+    $year = isset($_POST['monthly_transfer_year']) ? (int) $_POST['monthly_transfer_year'] : 0;
+    if ($year < 1) {
+        $year = (int) date('Y');
+    }
+
+    $months = [
+        ['January', 1],
+        ['February', 2],
+        ['March', 3],
+        ['April', 4],
+        ['May', 5],
+        ['June', 6],
+        ['July', 7],
+        ['August', 8],
+        ['September', 9],
+        ['October', 10],
+        ['November', 11],
+        ['December', 12],
+    ];
+
+    foreach ($months as $month) {
+
+        $monthName = $month[0];
+        $monthNumber = (int) $month[1];
+
+        $days = cal_days_in_month(CAL_GREGORIAN, $monthNumber, $year);
+
+        $start_date = sprintf('%04d-%02d-01', $year, $monthNumber);
+        $end_date   = sprintf('%04d-%02d-%02d', $year, $monthNumber, $days);
+
+        $branch_filtering_data = "";
+        if($branch!='0'){
+            $branch_filtering_data = " AND (from_branch = '$branch' OR to_branch = '$branch') ";
+        }
+
+        $transfer_sq = $db->query("
+            SELECT SUM(transfer_amount) AS total_transfer
+            FROM transfers
+            WHERE deleted = '0'
+            AND currency = '$currency'
+            AND transfer_date BETWEEN '$start_date' AND '$end_date'
+            AND (from_province = '$province' OR to_province = '$province')
+            $branch_filtering_data
+            AND (from_province IN ($accessed_provinces) OR to_province IN ($accessed_provinces))
+        ");
+
+        $total = 0;
+
+        if ($transfer_sq && $transfer_sq->rowCount() > 0) {
+            $row = $transfer_sq->fetch();
+            $total = $row['total_transfer'] ?? 0;
+        }
+
+        $month_labels[] = $monthName;
+        $total_transfers[] = (float) $total;
+    }
+
+    $month_labels_js = '"' . implode('","', $month_labels) . '"';
+    $total_transfers_js = implode(',', $total_transfers);
+
+    echo '
+    <script>
+        $("#canvas_monthly_transfer_line").remove(); 
+        $("#container_monthly_transfer_line").append("<canvas id=\'canvas_monthly_transfer_line\'></canvas>");
+
+        var ctx = document.getElementById("canvas_monthly_transfer_line").getContext("2d");
+
+        new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: [' . $month_labels_js . '],
+                datasets: [{
+                    label: "Total Transfer",
+                    backgroundColor: window.chartColors.blue,
+                    borderColor: window.chartColors.blue,
+                    borderWidth: 3,
+                    fill: false,
+                    data: [' . $total_transfers_js . ']
                 }]
             },
             options: {
