@@ -2,6 +2,30 @@
 
   include("../lib/_configuration.php");
 
+  function transfer_is_accessible_to_user($transfer_id){
+  	global $db, $accessed_provinces, $holu_users_id;
+
+  	$transfer_access_sq = $db->prepare(
+  		"SELECT id
+  		FROM `transfers`
+  		WHERE deleted='0'
+  		AND id=:transfer_id
+  		AND (
+  			from_province IN ($accessed_provinces)
+  			OR to_province IN ($accessed_provinces)
+  			OR users_id=:holu_users_id
+  		)
+  		LIMIT 1"
+  	);
+
+  	$transfer_access_sq->execute([
+  		'transfer_id'=>$transfer_id,
+  		'holu_users_id'=>$holu_users_id
+  	]);
+
+  	return ($transfer_access_sq->rowCount()>0);
+  }
+
   if(isset($_POST['flag_request'])){
   	
   	$flag_request	= holu_escape($_POST['flag_request']);
@@ -34,9 +58,9 @@
             <div class="form-group row">
               <label class="col-sm-3 col-form-label" for="from_province">From Province</label>
               <div class="col-sm-6">
-                <select id="from_province" name="from_province" class="form-control" required onchange="get_branch_option(this.value, '0', 'from_branch');">
+                <select id="from_province" name="from_province" class="form-control" required onchange="get_branch_option(this.value, '0', 'from_branch', true);">
                   <option selected hidden value="">Select an option</option>
-                  <?php echo get_province_option("0"); ?>
+                  <?php echo get_all_province_option("0"); ?>
                 </select>
               </div>
             </div>
@@ -53,7 +77,7 @@
             <div class="form-group row">
               <label class="col-sm-3 col-form-label" for="to_province">To Province</label>
               <div class="col-sm-6">
-                <select id="to_province" name="to_province" class="form-control" required onchange="get_branch_option(this.value, '0', 'to_branch');">
+                <select id="to_province" name="to_province" class="form-control" required onchange="get_branch_option(this.value, '0', 'to_branch', true);">
                   <option selected hidden value="">Select an option</option>
                   <?php echo get_all_province_option("0"); ?>
                 </select>
@@ -133,6 +157,21 @@
 
 	      case "edit_transfer_form":
 
+	      	if(!transfer_is_accessible_to_user($data_id)){
+	      		?>
+	      		<div class="modal-header">
+			        <h4 class="modal-title">Not Allowed</h4>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+			      </div>
+			      <div class="modal-body">
+			        <h3 class="text-center">You are not allowed to view this transfer.</h3>
+			      </div>
+	      		<?php
+	      		break;
+	      	}
+
 		    	$transfer_sq = $db->prepare(
 		    		"SELECT * 
 		    		FROM `transfers` 
@@ -168,9 +207,9 @@
 		        	<div class="form-group row">
 		              <label class="col-sm-3 col-form-label" for="from_province">From Province</label>
 		              <div class="col-sm-6">
-		                <select id="from_province" name="from_province" class="form-control" required onchange="get_branch_option(this.value, '<?php echo $transfer_row['from_branch']; ?>', 'from_branch');">
+		                <select id="from_province" name="from_province" class="form-control" required onchange="get_branch_option(this.value, '<?php echo $transfer_row['from_branch']; ?>', 'from_branch', true);">
 		                  <option selected hidden value="">Select an option</option>
-		                  <?php echo get_province_option($transfer_row['from_province']); ?>
+		                  <?php echo get_all_province_option($transfer_row['from_province']); ?>
 		                </select>
 		              </div>
 		            </div>
@@ -179,7 +218,7 @@
                   <label class="col-sm-3 col-form-label" for="from_branch">From Branch</label>
                   <div class="col-sm-6">
                     <select id="from_branch" name="from_branch" class="form-control" required>
-                      <?php echo get_branch_option($transfer_row['from_province'], $transfer_row['from_branch']); ?>
+                      <?php echo get_branch_option($transfer_row['from_province'], $transfer_row['from_branch'], true); ?>
                     </select>
                   </div>
                 </div>
@@ -187,7 +226,7 @@
 			        	<div class="form-group row">
 		              <label class="col-sm-3 col-form-label" for="to_province">To Province</label>
 		              <div class="col-sm-6">
-		                <select id="to_province" name="to_province" class="form-control" required onchange="get_branch_option(this.value, '<?php echo $transfer_row['to_branch']; ?>', 'to_branch');">
+		                <select id="to_province" name="to_province" class="form-control" required onchange="get_branch_option(this.value, '<?php echo $transfer_row['to_branch']; ?>', 'to_branch', true);">
 		                  <option selected hidden value="">Select an option</option>
 		                  <?php echo get_all_province_option($transfer_row['to_province']); ?>
 		                </select>
@@ -198,7 +237,7 @@
                   <label class="col-sm-3 col-form-label" for="to_branch">To Branch</label>
                   <div class="col-sm-6">
                     <select id="to_branch" name="to_branch" class="form-control" required>
-                      <?php echo get_branch_option($transfer_row['to_province'], $transfer_row['to_branch']); ?>
+                      <?php echo get_branch_option($transfer_row['to_province'], $transfer_row['to_branch'], true); ?>
                     </select>
                   </div>
                 </div>
@@ -258,6 +297,21 @@
 	      break;
 
 	      case "delete_transfer_form":
+
+	      	if(!transfer_is_accessible_to_user($data_id)){
+	      		?>
+	      		<div class="modal-header">
+			        <h4 class="modal-title">Not Allowed</h4>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+			      </div>
+			      <div class="modal-body">
+			        <h3 class="text-center">You are not allowed to view this transfer.</h3>
+			      </div>
+	      		<?php
+	      		break;
+	      	}
 
 		    	
 	        ?>
@@ -355,9 +409,9 @@
 						<div class="form-group row">
 						<label class="col-sm-3 col-form-label" for="province">Province</label>
 						<div class="col-sm-6">
-						<select id="province" name="province" class="form-control" data-branch-target="branch" data-branch-value="0" onchange="get_branch_option(this.value, this.getAttribute('data-branch-value') || '0', this.getAttribute('data-branch-target') || 'branch', this); this.setAttribute('data-branch-value', '0');">
+						<select id="province" name="province" class="form-control" data-branch-target="branch" data-branch-value="0" onchange="get_branch_option(this.value, this.getAttribute('data-branch-value') || '0', this.getAttribute('data-branch-target') || 'branch', true); this.setAttribute('data-branch-value', '0');">
 							<option selected hidden value="">Select an option</option>
-							<?php echo get_province_option('0'); ?>
+							<?php echo get_all_province_option('0'); ?>
 						</select>
 						</div>
 					</div>
@@ -366,7 +420,7 @@
 						<label class="col-sm-3 col-form-label" for="branch">Branch</label>
 						<div class="col-sm-6">
 							<select id="branch" name="branch" class="form-control">
-								<?php echo get_branch_option('0', ''); ?>
+								<?php echo get_branch_option('0', '', true); ?>
 							</select>
 						</div>
 					</div>
@@ -410,9 +464,9 @@
 						<div class="form-group row">
 						<label class="col-sm-3 col-form-label" for="province">Province</label>
 						<div class="col-sm-6">
-						<select id="province" name="province" class="form-control" data-branch-target="branch" data-branch-value="0" onchange="get_branch_option(this.value, this.getAttribute('data-branch-value') || '0', this.getAttribute('data-branch-target') || 'branch', this); this.setAttribute('data-branch-value', '0');">
+						<select id="province" name="province" class="form-control" data-branch-target="branch" data-branch-value="0" onchange="get_branch_option(this.value, this.getAttribute('data-branch-value') || '0', this.getAttribute('data-branch-target') || 'branch', true); this.setAttribute('data-branch-value', '0');">
 							<option selected hidden value="">Select an option</option>
-							<?php echo get_province_option('0'); ?>
+							<?php echo get_all_province_option('0'); ?>
 						</select>
 						</div>
 					</div>
@@ -421,7 +475,7 @@
 						<label class="col-sm-3 col-form-label" for="branch">Branch</label>
 						<div class="col-sm-6">
 							<select id="branch" name="branch" class="form-control">
-								<?php echo get_branch_option('0', ''); ?>
+								<?php echo get_branch_option('0', '', true); ?>
 							</select>
 						</div>
 					</div>
@@ -451,6 +505,21 @@
 
 		  /*  Begin Case __ View Attachment __ Added By Mohsen __ 2021-04-04 */
 	      case "view_attachment":
+
+				if(!transfer_is_accessible_to_user($data_id)){
+					?>
+					<div class="modal-header">
+						<h4 class="modal-title">Not Allowed</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<h3 class="text-center">You are not allowed to view this transfer.</h3>
+					</div>
+					<?php
+					break;
+				}
 
 				$transfer_attachment_sq = $db->prepare(
 					"SELECT *
@@ -832,6 +901,10 @@
 	  			track_editions('edit_transfer', ['transfers_id'=>$_POST['data_id'], 'data_array'=>$_POST]);
 
 	  			$data_id = holu_escape(holu_decode($_POST['data_id']));
+	  			if(!transfer_is_accessible_to_user($data_id)){
+	  				header("location:".set_referer($_SERVER['HTTP_REFERER'])."error");
+	  				exit();
+	  			}
 			    $from_province = holu_escape($_POST['from_province']);
 			    $from_branch = holu_escape($_POST['from_branch']);
 			    $to_province = holu_escape($_POST['to_province']);
@@ -909,6 +982,12 @@
   			case "approve_transfer":
 
   			$data_id = holu_escape(holu_decode($_POST['data_id']));
+  			$approve_access_sq = $db->prepare("SELECT id FROM `transfers` WHERE deleted='0' AND id=:data_id AND to_province IN ($accessed_provinces) LIMIT 1");
+  			$approve_access_sq->execute(['data_id'=>$data_id]);
+  			if($approve_access_sq->rowCount()==0){
+  				header("location:".set_referer($_SERVER['HTTP_REFERER'])."error");
+  				exit();
+  			}
   			$approve_description = holu_escape($_POST['approve_description']);
 
   			$transfer_uq = $db->query("UPDATE `transfers` SET is_approved='1', approve_date='$holu_date', approve_time='$holu_time', approve_description='$approve_description', approved_by='$holu_users_id' WHERE id='$data_id' LIMIT 1");
@@ -929,6 +1008,10 @@
   			track_deletions('delete_transfer', ['transfers_id'=>$_POST['data_id']]);
 
   			$data_id = holu_escape(holu_decode($_POST['data_id']));
+  			if(!transfer_is_accessible_to_user($data_id)){
+  				header("location:".set_referer($_SERVER['HTTP_REFERER'])."error");
+  				exit();
+  			}
 
   			$transfer_dq = $db->prepare("UPDATE `transfers` SET 
   				deleted='1' 

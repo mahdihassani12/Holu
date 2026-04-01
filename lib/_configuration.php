@@ -1356,14 +1356,21 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	}
 
 	function get_all_province_option($province){
-		/*
-			Keep province dropdown behavior consistent across all forms:
-			if a user has access to only one province, show only that province.
-		*/
-		return get_province_option($province);
+		global $holu_provinces;
+		$province_options = "";
+		if($province=="0"){
+			foreach ($holu_provinces as $holu_province) {
+				$province_options .= '<option value="'.$holu_province.'">'.$holu_province.'</option>';
+			}
+		}else{
+			foreach ($holu_provinces as $holu_province) {
+				$province_options .= '<option '.(($holu_province==$province)?'selected':'').' value="'.$holu_province.'">'.$holu_province.'</option>';
+			}
+		}
+		return $province_options;
 	}
 
-	function get_branch_option($province, $branch){
+	function get_branch_option($province, $branch, $allow_all_branches=false){
 		global $db;
 		$branch_options = '<option selected hidden value="">Select an option</option>';
 
@@ -1399,7 +1406,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				for the province, restrict branch options to selected branches only.
 			*/
 			$branch_access_point = 'province_accessibility/'.$province.'/'.$branch_name.'/';
-			$can_access_branch = (!$has_branch_specific_access || check_access($branch_access_point)==1);
+			$can_access_branch = $allow_all_branches || (!$has_branch_specific_access || check_access($branch_access_point)==1);
 
 			if($can_access_branch){
 				$branch_options .= '<option '.(($branch_name==$branch)?'selected':'').' value="'.$branch_name.'">'.$branch_name.'</option>';

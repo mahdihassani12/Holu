@@ -168,7 +168,7 @@ function get_sub_category_option(sub_categories_id, categories_id, target_id){
   });
 }
 
-function get_branch_option(province, branch, target_ref){
+function get_branch_option(province, branch, target_ref, allow_all_branches){
   var $target = $();
 
   if(target_ref && target_ref.jquery){
@@ -193,7 +193,8 @@ function get_branch_option(province, branch, target_ref){
     data:{
       operation:'get_branch_option',
       province:province,
-      branch:branch
+      branch:branch,
+      allow_all_branches:(allow_all_branches ? '1' : '0')
     },
     success:function(result){
       $target.html(result);
@@ -383,5 +384,4 @@ function get_sub_cat_conf(){
 }
 
 //End of functions
-
 
