@@ -637,7 +637,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
               </div>
 
               <div id="logo">
-                <img src="assets/images/logo.png">
+                <img src="assets/images/blue-logo.png">
               </div>
             </section>
         </header>

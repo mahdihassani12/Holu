@@ -115,7 +115,7 @@
 
                   <div class='text-center w-80 m-auto'>
                     <a href='index-2.html'>
-                      <span class='logo-lg'><img src='www/assets/images/logo.png' alt=''></span>
+                      <span class='logo-lg'><img src='www/assets/images/blue-logo.png' alt=''></span>
                     </a>
 
                     <h4 class='text-muted mb-4 mt-3'>Verification Code</h4>
@@ -209,7 +209,7 @@
 
                   <div class="text-center w-80 m-auto">
                     <a href="index-2.html">
-                      <span class="logo-lg"><img src="www/assets/images/logo.png" alt=""></span>
+                      <span class="logo-lg"><img src="www/assets/images/blue-logo.png" alt=""></span>
                     </a>
 
                   </div>

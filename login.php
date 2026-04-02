@@ -80,7 +80,7 @@ if(isset($_POST['submit'])){
 
               <div class="text-center w-75 m-auto">
                 <a href="/">
-                  <span class="logo-lg"><img src="www/assets/images/logo.png" alt=""></span>
+                  <span class="logo-lg"><img src="www/assets/images/blue-logo.png" alt=""></span>
                 </a>
 
                 <p class="text-muted mb-4 mt-3">Enter your username and password to access admin panel.</p>

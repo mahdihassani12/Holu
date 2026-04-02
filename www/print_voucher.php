@@ -448,7 +448,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           <section class="header_details">
 
             <div id="logo">
-                <img src="assets/images/logo.png">
+                <img src="assets/images/blue-logo.png">
             </div>
 
             <div id="company">
@@ -975,7 +975,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           <section class="header_details">
 
             <div id="logo">
-                <img src="assets/images/logo.png">
+                <img src="assets/images/blue-logo.png">
             </div>
 
             <div id="company">
@@ -1486,7 +1486,7 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
           <section class="header_details">
 
             <div id="logo">
-                <img src="assets/images/logo.png">
+                <img src="assets/images/blue-logo.png">
             </div>
 
             <div id="company">
