@@ -370,14 +370,18 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         }
 
         #bank_details {
-          margin-top: 10px;
-          margin-bottom: 10px;
+          margin-top: 16px;
+          margin-bottom: 12px;
+          display: flex;
+          gap: 16px;
         }
 
         #client {
-          padding-left: 6px;
+          padding: 0 10px;
           border-left: 6px solid #2c5f59;
           float: left;
+          width: 50%;
+          line-height: 1.6;
         }
 
         #client .to {
@@ -419,7 +423,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
 
         table th,
         table td {
-          padding: 7px;
+          padding: 9px 7px;
           text-align: center;
           border-bottom: 1px solid #FFFFFF;
         }
@@ -551,15 +555,20 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           color: #2c5f59;
           font-weight: bolder;
           font-size: 18px;
-          display: inline-block;
-          padding: 5px 10px;
-          border-radius: 5px;
-          margin-left: 100px;
-          margin-top: 25px;
+          display: block;
+          text-align: right;
+          margin-top: 14px;
         }
-        #bank_details{
-          display:flex; 
-          margin-bottom: 30px;
+
+        .footer-title{
+          font-size: 30px;
+          line-height: 1.1;
+          margin-bottom: 8px;
+          font-weight: normal;
+        }
+
+        .footer-item{
+          margin-bottom: 4px;
         }
 
         .thead{
@@ -573,18 +582,6 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           border: 1px solid #2c5f59 !important;
           border-top: unset !important;
           text-align: center;
-        }
-        #client:first-child{
-          border-width: 20px;
-          width: auto;
-          margin-right: 15px;
-        }
-        #client:first-child i{
-          display: inline-block;
-          font-size: 15px;
-          margin-left: -6.5%;
-          margin-right: 15px;
-          color: #c1d1cf;
         }
         .header_img{
           position: absolute;
@@ -655,37 +652,23 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
 
           <div id="bank_details" class="clearfix">
 
-            <div id="client" style="line-height: 1.5;">
-              <h2 class="name">Contact Details</h2>
-              <div>
-                Main Office: <?php echo $main_office_address; ?>
-              </div>
-              <div>
-                Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?>
-              </div>
-              <div>
-                Finance Email: <?php echo $finance_email; ?>
-              </div>
-              <div>
-                Sales Email: <?php echo $sales_email; ?>
-              </div>
-              <div>
-                Support Email: <?php echo $support_email; ?>
-              </div>
-              <div>
-                Phone: <?php echo $finance_phone; ?>
-              </div>
-              <div>
-                Website: <?php echo $website; ?>
-              </div>
+            <div id="client">
+              <div class="footer-title">Contact Details</div>
+              <div class="footer-item">Main Office: <?php echo $main_office_address; ?></div>
+              <div class="footer-item">Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
+              <div class="footer-item">Finance Email: <?php echo $finance_email; ?></div>
+              <div class="footer-item">Sales Email: <?php echo $sales_email; ?></div>
+              <div class="footer-item">Support Email: <?php echo $support_email; ?></div>
+              <div class="footer-item">Phone: <?php echo $finance_phone; ?></div>
+              <div class="footer-item">Website: <?php echo $website; ?></div>
             </div>
 
-            <div id="client" style="line-height: 1.5;">
-              <h2 class="name">Bank Account Details</h2>
-              <div class="address">Bank Name: <?php echo $bank_name; ?></div>
-              <div class="address">Account Name: <?php echo $account_name; ?></div>
-              <div class="address">Account No-AFN: <?php echo $account_no_afn; ?></div>
-              <div class="address">Account No-USD: <?php echo $account_no_usd; ?></div>
+            <div id="client">
+              <div class="footer-title">Bank Account Details</div>
+              <div class="footer-item">Bank Name: <?php echo $bank_name; ?></div>
+              <div class="footer-item">Account Name: <?php echo $account_name; ?></div>
+              <div class="footer-item">Account No-AFN: <?php echo $account_no_afn; ?></div>
+              <div class="footer-item">Account No-USD: <?php echo $account_no_usd; ?></div>
               <div>
                 <strong class="sign">Receipt Signature</strong>
               </div>

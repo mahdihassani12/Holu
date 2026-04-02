@@ -250,7 +250,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
         table th,
         table td {
-          padding: 7px;
+          padding: 9px 7px;
           text-align: center;
           border-bottom: 1px solid #FFFFFF;
         }
@@ -429,19 +429,41 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         }
         .footer{
           font-size: 12px;
+          margin: 0 10px;
         }
 
         .footer-row{
-          display: table;
+          display: flex;
           width: 100%;
-          table-layout: fixed;
+          gap: 16px;
+          align-items: stretch;
         }
 
         .footer-col{
-          display: table-cell;
           width: 50%;
           vertical-align: top;
-          padding-right: 12px;
+          padding: 0 10px;
+          border-left: 6px solid #2c5f59;
+          line-height: 1.6;
+        }
+
+        .footer-title{
+          font-size: 30px;
+          line-height: 1.1;
+          margin-bottom: 8px;
+          font-weight: normal;
+        }
+
+        .footer-item{
+          margin-bottom: 4px;
+        }
+
+        .footer-signature{
+          color: #2c5f59;
+          text-align: right;
+          margin-top: 14px;
+          font-size: 18px;
+          font-weight: bold;
         }
 
         .footer i{
@@ -529,24 +551,25 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           <br/>
             
           <hr style="border: 2px solid #2c5f59;"/>
-            <section class="footer" style="margin: 0px 15px;">
+            <section class="footer">
               <div class="footer-row">
                 <div class="footer-col">
-                  <div><strong>Contact Details</strong></div>
-                  <div>Main Office: <?php echo $main_office_address; ?></div>
-                  <div>Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
-                  <div>Finance Email: <?php echo $finance_email; ?></div>
-                  <div>Sales Email: <?php echo $sales_email; ?></div>
-                  <div>Support Email: <?php echo $support_email; ?></div>
-                  <div>Phone: <?php echo $phone; ?></div>
-                  <div>Website: <?php echo $website; ?></div>
+                  <div class="footer-title">Contact Details</div>
+                  <div class="footer-item">Main Office: <?php echo $main_office_address; ?></div>
+                  <div class="footer-item">Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
+                  <div class="footer-item">Finance Email: <?php echo $finance_email; ?></div>
+                  <div class="footer-item">Sales Email: <?php echo $sales_email; ?></div>
+                  <div class="footer-item">Support Email: <?php echo $support_email; ?></div>
+                  <div class="footer-item">Phone: <?php echo $phone; ?></div>
+                  <div class="footer-item">Website: <?php echo $website; ?></div>
                 </div>
                 <div class="footer-col">
-                  <div><strong>Bank Account Details</strong></div>
-                  <div>Bank Name: <?php echo $bank_name; ?></div>
-                  <div>Account Name: <?php echo $account_name; ?></div>
-                  <div>Account No-AFN: <?php echo $account_no_afn; ?></div>
-                  <div>Account No-USD: <?php echo $account_no_usd; ?></div>
+                  <div class="footer-title">Bank Account Details</div>
+                  <div class="footer-item">Bank Name: <?php echo $bank_name; ?></div>
+                  <div class="footer-item">Account Name: <?php echo $account_name; ?></div>
+                  <div class="footer-item">Account No-AFN: <?php echo $account_no_afn; ?></div>
+                  <div class="footer-item">Account No-USD: <?php echo $account_no_usd; ?></div>
+                  <div class="footer-signature">Receipt Signature</div>
                 </div>
               </div>
             </section>
@@ -812,7 +835,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
         table th,
         table td {
-          padding: 7px;
+          padding: 9px 7px;
           text-align: center;
           border-bottom: 1px solid #FFFFFF;
         }
@@ -991,19 +1014,41 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         }
         .footer{
           font-size: 12px;
+          margin: 0 10px;
         }
 
         .footer-row{
-          display: table;
+          display: flex;
           width: 100%;
-          table-layout: fixed;
+          gap: 16px;
+          align-items: stretch;
         }
 
         .footer-col{
-          display: table-cell;
           width: 50%;
           vertical-align: top;
-          padding-right: 12px;
+          padding: 0 10px;
+          border-left: 6px solid #2c5f59;
+          line-height: 1.6;
+        }
+
+        .footer-title{
+          font-size: 30px;
+          line-height: 1.1;
+          margin-bottom: 8px;
+          font-weight: normal;
+        }
+
+        .footer-item{
+          margin-bottom: 4px;
+        }
+
+        .footer-signature{
+          color: #2c5f59;
+          text-align: right;
+          margin-top: 14px;
+          font-size: 18px;
+          font-weight: bold;
         }
         @media print{
           table {
@@ -1087,24 +1132,25 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           <br/>
             
           <hr style="border: 2px solid #2c5f59;"/>
-            <section class="footer" style="margin: 0px 15px;">
+            <section class="footer">
               <div class="footer-row">
                 <div class="footer-col">
-                  <div><strong>Contact Details</strong></div>
-                  <div>Main Office: <?php echo $main_office_address; ?></div>
-                  <div>Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
-                  <div>Finance Email: <?php echo $finance_email; ?></div>
-                  <div>Sales Email: <?php echo $sales_email; ?></div>
-                  <div>Support Email: <?php echo $support_email; ?></div>
-                  <div>Phone: <?php echo $phone; ?></div>
-                  <div>Website: <?php echo $website; ?></div>
+                  <div class="footer-title">Contact Details</div>
+                  <div class="footer-item">Main Office: <?php echo $main_office_address; ?></div>
+                  <div class="footer-item">Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
+                  <div class="footer-item">Finance Email: <?php echo $finance_email; ?></div>
+                  <div class="footer-item">Sales Email: <?php echo $sales_email; ?></div>
+                  <div class="footer-item">Support Email: <?php echo $support_email; ?></div>
+                  <div class="footer-item">Phone: <?php echo $phone; ?></div>
+                  <div class="footer-item">Website: <?php echo $website; ?></div>
                 </div>
                 <div class="footer-col">
-                  <div><strong>Bank Account Details</strong></div>
-                  <div>Bank Name: <?php echo $bank_name; ?></div>
-                  <div>Account Name: <?php echo $account_name; ?></div>
-                  <div>Account No-AFN: <?php echo $account_no_afn; ?></div>
-                  <div>Account No-USD: <?php echo $account_no_usd; ?></div>
+                  <div class="footer-title">Bank Account Details</div>
+                  <div class="footer-item">Bank Name: <?php echo $bank_name; ?></div>
+                  <div class="footer-item">Account Name: <?php echo $account_name; ?></div>
+                  <div class="footer-item">Account No-AFN: <?php echo $account_no_afn; ?></div>
+                  <div class="footer-item">Account No-USD: <?php echo $account_no_usd; ?></div>
+                  <div class="footer-signature">Receipt Signature</div>
                 </div>
               </div>
             </section>
@@ -1355,7 +1401,7 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
 
         table th,
         table td {
-          padding: 7px;
+          padding: 9px 7px;
           text-align: center;
           border-bottom: 1px solid #FFFFFF;
         }
@@ -1534,19 +1580,41 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
         }
         .footer{
           font-size: 12px;
+          margin: 0 10px;
         }
 
         .footer-row{
-          display: table;
+          display: flex;
           width: 100%;
-          table-layout: fixed;
+          gap: 16px;
+          align-items: stretch;
         }
 
         .footer-col{
-          display: table-cell;
           width: 50%;
           vertical-align: top;
-          padding-right: 12px;
+          padding: 0 10px;
+          border-left: 6px solid #2c5f59;
+          line-height: 1.6;
+        }
+
+        .footer-title{
+          font-size: 30px;
+          line-height: 1.1;
+          margin-bottom: 8px;
+          font-weight: normal;
+        }
+
+        .footer-item{
+          margin-bottom: 4px;
+        }
+
+        .footer-signature{
+          color: #2c5f59;
+          text-align: right;
+          margin-top: 14px;
+          font-size: 18px;
+          font-weight: bold;
         }
         @media print{
           table {
@@ -1629,24 +1697,25 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
           <br/>
             
           <hr style="border: 2px solid #2c5f59;"/>
-            <section class="footer" style="margin: 0px 15px;">
+            <section class="footer">
               <div class="footer-row">
                 <div class="footer-col">
-                  <div><strong>Contact Details</strong></div>
-                  <div>Main Office: <?php echo $main_office_address; ?></div>
-                  <div>Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
-                  <div>Finance Email: <?php echo $finance_email; ?></div>
-                  <div>Sales Email: <?php echo $sales_email; ?></div>
-                  <div>Support Email: <?php echo $support_email; ?></div>
-                  <div>Phone: <?php echo $phone; ?></div>
-                  <div>Website: <?php echo $website; ?></div>
+                  <div class="footer-title">Contact Details</div>
+                  <div class="footer-item">Main Office: <?php echo $main_office_address; ?></div>
+                  <div class="footer-item">Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
+                  <div class="footer-item">Finance Email: <?php echo $finance_email; ?></div>
+                  <div class="footer-item">Sales Email: <?php echo $sales_email; ?></div>
+                  <div class="footer-item">Support Email: <?php echo $support_email; ?></div>
+                  <div class="footer-item">Phone: <?php echo $phone; ?></div>
+                  <div class="footer-item">Website: <?php echo $website; ?></div>
                 </div>
                 <div class="footer-col">
-                  <div><strong>Bank Account Details</strong></div>
-                  <div>Bank Name: <?php echo $bank_name; ?></div>
-                  <div>Account Name: <?php echo $account_name; ?></div>
-                  <div>Account No-AFN: <?php echo $account_no_afn; ?></div>
-                  <div>Account No-USD: <?php echo $account_no_usd; ?></div>
+                  <div class="footer-title">Bank Account Details</div>
+                  <div class="footer-item">Bank Name: <?php echo $bank_name; ?></div>
+                  <div class="footer-item">Account Name: <?php echo $account_name; ?></div>
+                  <div class="footer-item">Account No-AFN: <?php echo $account_no_afn; ?></div>
+                  <div class="footer-item">Account No-USD: <?php echo $account_no_usd; ?></div>
+                  <div class="footer-signature">Receipt Signature</div>
                 </div>
               </div>
             </section>
