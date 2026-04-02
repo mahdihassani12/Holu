@@ -46,9 +46,10 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
 
     $invoices_id = $db->lastInsertId();
     $address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University';
+    $branch = 'Mahtab Qala Bus Stop, opposite the new road, inside Rasul Akram Mosque Alley.';
     $finance_phone = '0787506000';
     $bank_name = 'Azizi Bank';
-    $account_name = 'BENYAMIN HOPE INFORMATION';
+    $account_name = 'BENYAMIN HOPE INFORMATION TECHNOLOGY SERVICES';
     $account_no_usd = '000101215333739';
     $account_no_afn = '000101115085020';
 
@@ -653,19 +654,22 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
                 Address: <?php echo $address; ?>
               </div>
               <div>
-                Finance Email: billing@benyaminhome.af
+                Branch Office Dasht-e-Barchi: <?php echo $branch; ?>
               </div>
               <div>
-                Sales Email: sales@benyaminhome.af
+                Finance Email: billing@benyaminhope.af
               </div>
               <div>
-                Support Email: support@benyaminhome.af
+                Sales Email: sales@benyaminhope.af
+              </div>
+              <div>
+                Support Email: support@benyaminhope.af
               </div>
               <div>
                 Phone: <?php echo $finance_phone; ?>
               </div>
               <div>
-                Website: www.benyaminhome.af
+                Website: www.benyaminhope.af
               </div>
             </div>
 
