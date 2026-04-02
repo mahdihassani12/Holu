@@ -45,13 +45,17 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
     ]);
 
     $invoices_id = $db->lastInsertId();
-    $address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University';
-    $branch = 'Mahtab Qala Bus Stop, opposite the new road, inside Rasul Akram Mosque Alley.';
+    $main_office_address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University.';
+    $branch_office_address = 'Mahtab Qala Bus Stop, opposite the new road, inside Rasul Akram Mosque Alley.';
+    $finance_email = 'billing@benyaminhope.af';
+    $sales_email = 'sales@benyaminhope.af';
+    $support_email = 'support@benyaminhope.af';
     $finance_phone = '0787506000';
+    $website = 'www.benyaminhope.af';
     $bank_name = 'Azizi Bank';
     $account_name = 'BENYAMIN HOPE INFORMATION TECHNOLOGY SERVICES';
-    $account_no_usd = '000101215333739';
     $account_no_afn = '000101115085020';
+    $account_no_usd = '000101215333739';
 
     $customer_name_sq = $db->prepare(
       "SELECT value_info 
@@ -82,6 +86,9 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
     ]);
     $customer_id_row = $customer_id_sq->fetch();
     $customer_id = ($customer_id_row !== false && isset($customer_id_row['value_info'])) ? $customer_id_row['value_info'] : null;
+
+    $customer_name_html = !empty($customer_name) ? '<div class="address">Customer Name: '.htmlspecialchars($customer_name).'</div>' : '';
+    $customer_id_html = !empty($customer_id) ? '<div class="address">Customer ID: '.htmlspecialchars($customer_id).'</div>' : '';
 
     $bill_number = $income_row['check_number'];
     $bill_date = $income_row['income_date'];
@@ -630,8 +637,8 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
               <div>
                 <h2 class="name">Benyamin Hope</h2>
                 <h2 class="name">Customer Details</h2>
-                <div class="address">Customer Name: <?php echo $customer_name; ?></div>
-                <div class="address">Customer ID: <?php echo $customer_id; ?></div>
+                <?php echo $customer_name_html; ?>
+                <?php echo $customer_id_html; ?>
                 <h2 class="name"><?php echo $doc_header; ?></h2>
                 <div class="date">Number: <?php echo $bill_number; ?></div>
                 <div class="date">Date: <?php echo $bill_date; ?></div>
@@ -651,25 +658,25 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
             <div id="client" style="line-height: 1.5;">
               <h2 class="name">Contact Details</h2>
               <div>
-                Address: <?php echo $address; ?>
+                Main Office: <?php echo $main_office_address; ?>
               </div>
               <div>
-                Branch Office Dasht-e-Barchi: <?php echo $branch; ?>
+                Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?>
               </div>
               <div>
-                Finance Email: billing@benyaminhope.af
+                Finance Email: <?php echo $finance_email; ?>
               </div>
               <div>
-                Sales Email: sales@benyaminhope.af
+                Sales Email: <?php echo $sales_email; ?>
               </div>
               <div>
-                Support Email: support@benyaminhope.af
+                Support Email: <?php echo $support_email; ?>
               </div>
               <div>
                 Phone: <?php echo $finance_phone; ?>
               </div>
               <div>
-                Website: www.benyaminhope.af
+                Website: <?php echo $website; ?>
               </div>
             </div>
 
@@ -677,8 +684,8 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
               <h2 class="name">Bank Account Details</h2>
               <div class="address">Bank Name: <?php echo $bank_name; ?></div>
               <div class="address">Account Name: <?php echo $account_name; ?></div>
-              <div class="address">Account No-USD: <?php echo $account_no_usd; ?></div>
               <div class="address">Account No-AFN: <?php echo $account_no_afn; ?></div>
+              <div class="address">Account No-USD: <?php echo $account_no_usd; ?></div>
               <div>
                 <strong class="sign">Receipt Signature</strong>
               </div>

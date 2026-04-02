@@ -1,6 +1,28 @@
 <?php 
 include("../lib/_configuration.php");
 
+if(!function_exists('get_additional_info_value')){
+  function get_additional_info_value($db, $reference_type, $reference_id, $key_info){
+    $sq = $db->prepare(
+      "SELECT value_info       FROM `additional_informations`
+      WHERE deleted='0'
+      AND key_info=:key_info
+      AND reference_type=:reference_type
+      AND reference_id=:reference_id
+      LIMIT 1"
+    );
+
+    $sq->execute([
+      'key_info'=>$key_info,
+      'reference_type'=>$reference_type,
+      'reference_id'=>$reference_id
+    ]);
+
+    $row = $sq->fetch();
+    return ($row !== false && isset($row['value_info']) && !empty($row['value_info'])) ? $row['value_info'] : null;
+  }
+}
+
 if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
   $expenses_id = holu_escape(holu_decode($_GET['expenses_id']));
@@ -45,12 +67,22 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
     ]);
 
     $invoices_id = $db->lastInsertId();
-    $address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University';
+    $main_office_address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University.';
+    $branch_office_address = 'Mahtab Qala Bus Stop, opposite the new road, inside Rasul Akram Mosque Alley.';
+    $finance_email = 'billing@benyaminhope.af';
+    $sales_email = 'sales@benyaminhope.af';
+    $support_email = 'support@benyaminhope.af';
+    $website = 'www.benyaminhope.af';
     $phone = '0787506000';
     $bank_name = 'Azizi Bank';
-    $account_name = 'BENYAMIN HOPE INFORMATION';
-    $account_no_usd = '000101215333739';
+    $account_name = 'BENYAMIN HOPE INFORMATION TECHNOLOGY SERVICES';
     $account_no_afn = '000101115085020';
+    $account_no_usd = '000101215333739';
+
+    $customer_name = get_additional_info_value($db, 'Expense', $expenses_id, 'Customer Name');
+    $customer_id = get_additional_info_value($db, 'Expense', $expenses_id, 'Customer ID');
+    $customer_name_html = !empty($customer_name) ? '<div class="date">Customer Name: '.htmlspecialchars($customer_name).'</div>' : '';
+    $customer_id_html = !empty($customer_id) ? '<div class="date">Customer ID: '.htmlspecialchars($customer_id).'</div>' : '';
 
     $doc_header = "Voucher Payment";
     $bill_number = $expense_row['check_number'];
@@ -460,6 +492,8 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
                 </div>
                 <div class="date">Number: <?php echo $bill_number; ?></div>
                 <div class="date">Date: <?php echo $bill_date; ?></div>
+                <?php echo $customer_name_html; ?>
+                <?php echo $customer_id_html; ?>
             </div>
 
           </section>
@@ -489,22 +523,20 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
             
           <hr style="border: 2px solid #2c5f59;"/>
             <section class="footer" style="margin: 0px 15px;">
-              <div>
-                 <i class="fas fa-map-marker-alt"></i>
-                 <?php echo $address; ?>
-              </div>
-              <div>
-                  <i class="fab fa-internet-explorer"></i>
-                  www.benyaminhope.af
-              </div>
-              <div>
-                  <i class="far fa-envelope"></i>
-                  finance@benyaminhope.af
-              </div>
-              <div>
-                  <i class="fas fa-phone"></i>
-                  <?php echo $phone; ?>
-              </div>
+              <div><strong>Contact Details</strong></div>
+              <div>Main Office: <?php echo $main_office_address; ?></div>
+              <div>Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
+              <div>Finance Email: <?php echo $finance_email; ?></div>
+              <div>Sales Email: <?php echo $sales_email; ?></div>
+              <div>Support Email: <?php echo $support_email; ?></div>
+              <div>Phone: <?php echo $phone; ?></div>
+              <div>Website: <?php echo $website; ?></div>
+              <br/>
+              <div><strong>Bank Account Details</strong></div>
+              <div>Bank Name: <?php echo $bank_name; ?></div>
+              <div>Account Name: <?php echo $account_name; ?></div>
+              <div>Account No-AFN: <?php echo $account_no_afn; ?></div>
+              <div>Account No-USD: <?php echo $account_no_usd; ?></div>
             </section>
           <hr style="border: 2px solid #2c5f59;"/>
         </main>
@@ -583,12 +615,22 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
     ]);
 
     $invoices_id = $db->lastInsertId();
-    $address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University';
+    $main_office_address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University.';
+    $branch_office_address = 'Mahtab Qala Bus Stop, opposite the new road, inside Rasul Akram Mosque Alley.';
+    $finance_email = 'billing@benyaminhope.af';
+    $sales_email = 'sales@benyaminhope.af';
+    $support_email = 'support@benyaminhope.af';
+    $website = 'www.benyaminhope.af';
     $phone = '0787506000';
     $bank_name = 'Azizi Bank';
-    $account_name = 'BENYAMIN HOPE INFORMATION';
-    $account_no_usd = '000101215333739';
+    $account_name = 'BENYAMIN HOPE INFORMATION TECHNOLOGY SERVICES';
     $account_no_afn = '000101115085020';
+    $account_no_usd = '000101215333739';
+
+    $customer_name = get_additional_info_value($db, 'Purchase', $purchases_id, 'Customer Name');
+    $customer_id = get_additional_info_value($db, 'Purchase', $purchases_id, 'Customer ID');
+    $customer_name_html = !empty($customer_name) ? '<div class="date">Customer Name: '.htmlspecialchars($customer_name).'</div>' : '';
+    $customer_id_html = !empty($customer_id) ? '<div class="date">Customer ID: '.htmlspecialchars($customer_id).'</div>' : '';
 
     $doc_header = "Voucher Payment";
     $bill_number = $purchase_row['check_number'];
@@ -987,6 +1029,8 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
                 </div>
                 <div class="date">Number: <?php echo $bill_number; ?></div>
                 <div class="date">Date: <?php echo $bill_date; ?></div>
+                <?php echo $customer_name_html; ?>
+                <?php echo $customer_id_html; ?>
             </div>
 
           </section>
@@ -1016,22 +1060,20 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
             
           <hr style="border: 2px solid #2c5f59;"/>
             <section class="footer" style="margin: 0px 15px;">
-              <div>
-                 <i class="fas fa-map-marker-alt"></i>
-                 <?php echo $address; ?>
-              </div>
-              <div>
-                  <i class="fab fa-internet-explorer"></i>
-                  www.benyaminhope.af
-              </div>
-              <div>
-                  <i class="far fa-envelope"></i>
-                  finance@benyaminhope.af
-              </div>
-              <div>
-                  <i class="fas fa-phone"></i>
-                  <?php echo $phone; ?>
-              </div>
+              <div><strong>Contact Details</strong></div>
+              <div>Main Office: <?php echo $main_office_address; ?></div>
+              <div>Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
+              <div>Finance Email: <?php echo $finance_email; ?></div>
+              <div>Sales Email: <?php echo $sales_email; ?></div>
+              <div>Support Email: <?php echo $support_email; ?></div>
+              <div>Phone: <?php echo $phone; ?></div>
+              <div>Website: <?php echo $website; ?></div>
+              <br/>
+              <div><strong>Bank Account Details</strong></div>
+              <div>Bank Name: <?php echo $bank_name; ?></div>
+              <div>Account Name: <?php echo $account_name; ?></div>
+              <div>Account No-AFN: <?php echo $account_no_afn; ?></div>
+              <div>Account No-USD: <?php echo $account_no_usd; ?></div>
             </section>
           <hr style="border: 2px solid #2c5f59;"/>
         </main>
@@ -1111,12 +1153,22 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
     ]);
 
     $invoices_id = $db->lastInsertId();
-    $address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University';
+    $main_office_address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University.';
+    $branch_office_address = 'Mahtab Qala Bus Stop, opposite the new road, inside Rasul Akram Mosque Alley.';
+    $finance_email = 'billing@benyaminhope.af';
+    $sales_email = 'sales@benyaminhope.af';
+    $support_email = 'support@benyaminhope.af';
+    $website = 'www.benyaminhope.af';
     $phone = '0787506000';
     $bank_name = 'Azizi Bank';
-    $account_name = 'BENYAMIN HOPE INFORMATION';
-    $account_no_usd = '000101215333739';
+    $account_name = 'BENYAMIN HOPE INFORMATION TECHNOLOGY SERVICES';
     $account_no_afn = '000101115085020';
+    $account_no_usd = '000101215333739';
+
+    $customer_name = get_additional_info_value($db, 'Transfer', $transfer_id, 'Customer Name');
+    $customer_id = get_additional_info_value($db, 'Transfer', $transfer_id, 'Customer ID');
+    $customer_name_html = !empty($customer_name) ? '<div class="date">Customer Name: '.htmlspecialchars($customer_name).'</div>' : '';
+    $customer_id_html = !empty($customer_id) ? '<div class="date">Customer ID: '.htmlspecialchars($customer_id).'</div>' : '';
 
     $doc_header = "Voucher Payment";
     $bill_number = $transfer_row['check_number'];
@@ -1498,6 +1550,8 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
                 </div>
                 <div class="date">Number: <?php echo $bill_number; ?></div>
                 <div class="date">Date: <?php echo $bill_date; ?></div>
+                <?php echo $customer_name_html; ?>
+                <?php echo $customer_id_html; ?>
             </div>
 
           </section>
@@ -1527,22 +1581,20 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
             
           <hr style="border: 2px solid #2c5f59;"/>
             <section class="footer" style="margin: 0px 15px;">
-              <div>
-                 <i class="fas fa-map-marker-alt"></i>
-                 <?php echo $address; ?>
-              </div>
-              <div>
-                  <i class="fab fa-internet-explorer"></i>
-                  www.benyaminhope.af
-              </div>
-              <div>
-                  <i class="far fa-envelope"></i>
-                  finance@benyaminhope.af
-              </div>
-              <div>
-                  <i class="fas fa-phone"></i>
-                  <?php echo $phone; ?>
-              </div>
+              <div><strong>Contact Details</strong></div>
+              <div>Main Office: <?php echo $main_office_address; ?></div>
+              <div>Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
+              <div>Finance Email: <?php echo $finance_email; ?></div>
+              <div>Sales Email: <?php echo $sales_email; ?></div>
+              <div>Support Email: <?php echo $support_email; ?></div>
+              <div>Phone: <?php echo $phone; ?></div>
+              <div>Website: <?php echo $website; ?></div>
+              <br/>
+              <div><strong>Bank Account Details</strong></div>
+              <div>Bank Name: <?php echo $bank_name; ?></div>
+              <div>Account Name: <?php echo $account_name; ?></div>
+              <div>Account No-AFN: <?php echo $account_no_afn; ?></div>
+              <div>Account No-USD: <?php echo $account_no_usd; ?></div>
             </section>
           <hr style="border: 2px solid #2c5f59;"/>
         </main>
