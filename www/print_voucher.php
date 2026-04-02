@@ -428,13 +428,20 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           margin-left: 12%;
         }
         .footer{
-          display: flex;
-          justify-content: space-between;
           font-size: 12px;
         }
 
-        .footer > div {
-          max-width: 25%;
+        .footer-row{
+          display: table;
+          width: 100%;
+          table-layout: fixed;
+        }
+
+        .footer-col{
+          display: table-cell;
+          width: 50%;
+          vertical-align: top;
+          padding-right: 12px;
         }
 
         .footer i{
@@ -523,20 +530,25 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
             
           <hr style="border: 2px solid #2c5f59;"/>
             <section class="footer" style="margin: 0px 15px;">
-              <div><strong>Contact Details</strong></div>
-              <div>Main Office: <?php echo $main_office_address; ?></div>
-              <div>Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
-              <div>Finance Email: <?php echo $finance_email; ?></div>
-              <div>Sales Email: <?php echo $sales_email; ?></div>
-              <div>Support Email: <?php echo $support_email; ?></div>
-              <div>Phone: <?php echo $phone; ?></div>
-              <div>Website: <?php echo $website; ?></div>
-              <br/>
-              <div><strong>Bank Account Details</strong></div>
-              <div>Bank Name: <?php echo $bank_name; ?></div>
-              <div>Account Name: <?php echo $account_name; ?></div>
-              <div>Account No-AFN: <?php echo $account_no_afn; ?></div>
-              <div>Account No-USD: <?php echo $account_no_usd; ?></div>
+              <div class="footer-row">
+                <div class="footer-col">
+                  <div><strong>Contact Details</strong></div>
+                  <div>Main Office: <?php echo $main_office_address; ?></div>
+                  <div>Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
+                  <div>Finance Email: <?php echo $finance_email; ?></div>
+                  <div>Sales Email: <?php echo $sales_email; ?></div>
+                  <div>Support Email: <?php echo $support_email; ?></div>
+                  <div>Phone: <?php echo $phone; ?></div>
+                  <div>Website: <?php echo $website; ?></div>
+                </div>
+                <div class="footer-col">
+                  <div><strong>Bank Account Details</strong></div>
+                  <div>Bank Name: <?php echo $bank_name; ?></div>
+                  <div>Account Name: <?php echo $account_name; ?></div>
+                  <div>Account No-AFN: <?php echo $account_no_afn; ?></div>
+                  <div>Account No-USD: <?php echo $account_no_usd; ?></div>
+                </div>
+              </div>
             </section>
           <hr style="border: 2px solid #2c5f59;"/>
         </main>
@@ -977,6 +989,22 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         .header_details #company{
           margin-left: 12%;
         }
+        .footer{
+          font-size: 12px;
+        }
+
+        .footer-row{
+          display: table;
+          width: 100%;
+          table-layout: fixed;
+        }
+
+        .footer-col{
+          display: table-cell;
+          width: 50%;
+          vertical-align: top;
+          padding-right: 12px;
+        }
         @media print{
           table {
             -webkit-print-color-adjust: exact;
@@ -1060,20 +1088,25 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
             
           <hr style="border: 2px solid #2c5f59;"/>
             <section class="footer" style="margin: 0px 15px;">
-              <div><strong>Contact Details</strong></div>
-              <div>Main Office: <?php echo $main_office_address; ?></div>
-              <div>Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
-              <div>Finance Email: <?php echo $finance_email; ?></div>
-              <div>Sales Email: <?php echo $sales_email; ?></div>
-              <div>Support Email: <?php echo $support_email; ?></div>
-              <div>Phone: <?php echo $phone; ?></div>
-              <div>Website: <?php echo $website; ?></div>
-              <br/>
-              <div><strong>Bank Account Details</strong></div>
-              <div>Bank Name: <?php echo $bank_name; ?></div>
-              <div>Account Name: <?php echo $account_name; ?></div>
-              <div>Account No-AFN: <?php echo $account_no_afn; ?></div>
-              <div>Account No-USD: <?php echo $account_no_usd; ?></div>
+              <div class="footer-row">
+                <div class="footer-col">
+                  <div><strong>Contact Details</strong></div>
+                  <div>Main Office: <?php echo $main_office_address; ?></div>
+                  <div>Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
+                  <div>Finance Email: <?php echo $finance_email; ?></div>
+                  <div>Sales Email: <?php echo $sales_email; ?></div>
+                  <div>Support Email: <?php echo $support_email; ?></div>
+                  <div>Phone: <?php echo $phone; ?></div>
+                  <div>Website: <?php echo $website; ?></div>
+                </div>
+                <div class="footer-col">
+                  <div><strong>Bank Account Details</strong></div>
+                  <div>Bank Name: <?php echo $bank_name; ?></div>
+                  <div>Account Name: <?php echo $account_name; ?></div>
+                  <div>Account No-AFN: <?php echo $account_no_afn; ?></div>
+                  <div>Account No-USD: <?php echo $account_no_usd; ?></div>
+                </div>
+              </div>
             </section>
           <hr style="border: 2px solid #2c5f59;"/>
         </main>
@@ -1499,6 +1532,22 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
         .header_details #company{
           margin-left: 12%;
         }
+        .footer{
+          font-size: 12px;
+        }
+
+        .footer-row{
+          display: table;
+          width: 100%;
+          table-layout: fixed;
+        }
+
+        .footer-col{
+          display: table-cell;
+          width: 50%;
+          vertical-align: top;
+          padding-right: 12px;
+        }
         @media print{
           table {
             -webkit-print-color-adjust: exact;
@@ -1581,20 +1630,25 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
             
           <hr style="border: 2px solid #2c5f59;"/>
             <section class="footer" style="margin: 0px 15px;">
-              <div><strong>Contact Details</strong></div>
-              <div>Main Office: <?php echo $main_office_address; ?></div>
-              <div>Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
-              <div>Finance Email: <?php echo $finance_email; ?></div>
-              <div>Sales Email: <?php echo $sales_email; ?></div>
-              <div>Support Email: <?php echo $support_email; ?></div>
-              <div>Phone: <?php echo $phone; ?></div>
-              <div>Website: <?php echo $website; ?></div>
-              <br/>
-              <div><strong>Bank Account Details</strong></div>
-              <div>Bank Name: <?php echo $bank_name; ?></div>
-              <div>Account Name: <?php echo $account_name; ?></div>
-              <div>Account No-AFN: <?php echo $account_no_afn; ?></div>
-              <div>Account No-USD: <?php echo $account_no_usd; ?></div>
+              <div class="footer-row">
+                <div class="footer-col">
+                  <div><strong>Contact Details</strong></div>
+                  <div>Main Office: <?php echo $main_office_address; ?></div>
+                  <div>Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
+                  <div>Finance Email: <?php echo $finance_email; ?></div>
+                  <div>Sales Email: <?php echo $sales_email; ?></div>
+                  <div>Support Email: <?php echo $support_email; ?></div>
+                  <div>Phone: <?php echo $phone; ?></div>
+                  <div>Website: <?php echo $website; ?></div>
+                </div>
+                <div class="footer-col">
+                  <div><strong>Bank Account Details</strong></div>
+                  <div>Bank Name: <?php echo $bank_name; ?></div>
+                  <div>Account Name: <?php echo $account_name; ?></div>
+                  <div>Account No-AFN: <?php echo $account_no_afn; ?></div>
+                  <div>Account No-USD: <?php echo $account_no_usd; ?></div>
+                </div>
+              </div>
             </section>
           <hr style="border: 2px solid #2c5f59;"/>
         </main>
