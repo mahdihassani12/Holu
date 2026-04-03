@@ -91,6 +91,12 @@ if(isset($_POST['submit'])){
                   <p class="text-danger mb-4 mt-3">Wrong username or password! Try again.</p>
                   <?php
                 }
+
+                if(isset($_GET['password_changed'])){
+                  ?>
+                  <p class="text-success mb-4 mt-3">Password changed successfully. Please log in with your new password.</p>
+                  <?php
+                }
                 ?>
                 
               </div>
