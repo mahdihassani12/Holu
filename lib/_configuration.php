@@ -376,15 +376,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 							"path" => "system_accessibility/transaction/expense/ad_markup",
 							"subs" => array(),
 						),
-						array(
-							"type" => "operation",
-							"url" => "",
-							"label" => "Edit Check Number",
-							"icon" => '',
-							"location" => "edit_check_number/",
-							"path" => "system_accessibility/transaction/expense/edit_check_number/",
-							"subs" => array(),
-						),
 					),
 				),
 				array(
@@ -704,15 +695,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 							"icon" => '',
 							"location" => "edit_sib_number/",
 							"path" => "system_accessibility/report/report_transaction/edit_sib_number/",
-							"subs" => array(),
-						),
-						array(
-							"type" => "operation",
-							"url" => "",
-							"label" => "Edit Check Number",
-							"icon" => '',
-							"location" => "edit_check_nnumber/",
-							"path" => "system_accessibility/report/report_transaction/edit_check_number/",
 							"subs" => array(),
 						),
 						array(
