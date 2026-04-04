@@ -89,6 +89,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
 
     $customer_name_html = !empty($customer_name) ? '<div class="address">Customer Name: '.htmlspecialchars($customer_name).'</div>' : '';
     $customer_id_html = !empty($customer_id) ? '<div class="address">Customer ID: '.htmlspecialchars($customer_id).'</div>' : '';
+    $has_customer_details = !empty($customer_name_html) || !empty($customer_id_html);
 
     $bill_number = $income_row['check_number'];
     $bill_date = $income_row['income_date'];
@@ -633,12 +634,14 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
             <section class="header_details">
               <div>
                 <h2 class="name">Benyamin Hope</h2>
-                <h2 class="name">Customer Details</h2>
-                <?php echo $customer_name_html; ?>
-                <?php echo $customer_id_html; ?>
                 <h2 class="name"><?php echo $doc_header; ?></h2>
                 <div class="date">Number: <?php echo $bill_number; ?></div>
                 <div class="date">Date: <?php echo $bill_date; ?></div>
+                <?php if($has_customer_details){ ?>
+                  <h2 class="name">Customer Details</h2>
+                  <?php echo $customer_name_html; ?>
+                  <?php echo $customer_id_html; ?>
+                <?php } ?>
               </div>
 
               <div id="logo">
