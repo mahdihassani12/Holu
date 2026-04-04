@@ -526,6 +526,10 @@
                               case 'Purchase':{
                                 $operation_destination = 'controller_purchase.php';
                               }break;
+
+                              case 'Transfer':{
+                                $operation_destination = 'controller_transfer.php';
+                              }break;
                               
                               default:{
                                 $operation_destination = '';
