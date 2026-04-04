@@ -1153,9 +1153,7 @@
                             case 'Income':{
 
                               if($check_number!=""){
-                                $check_number_container = '
-                                <p>'.$check_number.'</p>
-                                ';
+                                $check_number_container = htmlspecialchars($check_number, ENT_QUOTES, 'UTF-8');
                               }
                               
                               if($has_customer_reference){
@@ -1180,14 +1178,7 @@
                             case 'Expense':{
 
                               if($check_number!=""){
-                                $check_number_container = '
-                                <p>'.$check_number.'</p>
-                                ';
-                              }
-                              if(check_access("system_accessibility/report/report_transaction/edit_check_number/")){
-                                $check_number_container .= '
-                                  <span onclick="edit_check_number(\''.$transaction_row['transaction_id'].'\', \'edit\');" class="badge badge-warning" style="cursor:pointer;"><i class="fas fa-edit"></i></span>
-                                ';
+                                $check_number_container = htmlspecialchars($check_number, ENT_QUOTES, 'UTF-8');
                               }
                               $operation_destination = 'controller_expense.php';
 
