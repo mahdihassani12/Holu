@@ -840,22 +840,6 @@
              );
             $total_exchange_row = $total_exchange_sq->fetch();
 
-            $total_purchase_sq = $db->query(
-							"SELECT 
-							SUM(CASE WHEN currency='AFN' THEN purchase_amount ELSE 0 END) as total_afn_purchase,
-							SUM(CASE WHEN currency='USD' THEN purchase_amount ELSE 0 END) as total_usd_purchase,
-							SUM(CASE WHEN currency='IRT' THEN purchase_amount ELSE 0 END) as total_irt_purchase
-	            FROM `purchases` 
-	            WHERE purchases.deleted='0' 
-				      AND purchases.is_approved='1'
-    					AND purchases.is_included='1'
-				      AND purchases.province IN ($accessed_provinces) 
-				      $purchase_filtering_data
-				      AND purchases.sub_categories_id IN ($accessed_sub_categories_purchase)
-				      AND logistic_cashes_id IN ($accessed_logistic_cashes)"
-            );
-            $total_purchase_row = $total_purchase_sq->fetch();
-
             $total_transfer_sq = $db->query(
 							"SELECT 
 							SUM(CASE WHEN currency='AFN' AND from_province='$province' THEN transfer_amount ELSE 0 END) as total_afn_transfer_out,
@@ -1113,11 +1097,6 @@
               <b onclick="load_data_for_report_component(\'Exchange\', \'\');">Exchange: </b>
               <span class="badge badge-warning">'.$total_exchange_row['total_afn_from_amount'].' AFN to '.$total_exchange_row['total_usd_to_amount'].' USD</span> - <span class="badge badge-warning">'.$total_exchange_row['total_usd_from_amount'].' USD to '.$total_exchange_row['total_afn_to_amount'].' AFN</span> - <span class="badge badge-warning">'.$total_exchange_row['total_afn_from_amount2'].' AFN to '.$total_exchange_row['total_irt_to_amount'].' IRT</span> - <span class="badge badge-warning">'.$total_exchange_row['total_irt_from_amount'].' IRT to '.$total_exchange_row['total_afn_to_amount2'].' AFN</span>
               <ul class="tree_view" id="ExchangeContainer"></ul>
-            </li>
-            <li>
-              <b onclick="load_data_for_report_component(\'Purchase\', \'\');">Purchase: </b>
-              <span class="badge badge-danger">'.$total_purchase_row['total_afn_purchase'].' AFN</span> - <span class="badge badge-danger">'.$total_purchase_row['total_usd_purchase'].' USD</span> - <span class="badge badge-danger">'.$total_purchase_row['total_irt_purchase'].' IRT</span>
-              <ul class="tree_view" id="PurchaseContainer"></ul>
             </li>
             <li>
               <b onclick="load_data_for_report_component(\'TransferIn\', \'\');">Transfer In: </b>
