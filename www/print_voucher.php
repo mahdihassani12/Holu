@@ -89,6 +89,9 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
     $bill_date = $expense_row['expense_date'];
     $to_date = $expense_row['expense_date'];
 
+    $additional_info_html = print_ai_labels(json_decode($expense_row['additional_informations'] ?? ''));
+    $has_additional_info = !empty(trim(strip_tags($additional_info_html)));
+
     $item_table = '
       <table border="0" cellspacing="0" cellpadding="0">
         <thead>
@@ -96,7 +99,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
             <th class="thead"><strong>#</strong></th>
             <th class="thead"><strong>Category</strong></th>
             <th class="thead"><strong>Description</strong></th>
-            <th class="thead"><strong>Additional Info</strong></th>
+            '.($has_additional_info ? '<th class="thead"><strong>Additional Info</strong></th>' : '').'
             <th class="thead"><strong>Currency</strong></th>
             <th class="thead"><strong>Amount</strong></th>
           </tr>
@@ -115,11 +118,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
             <td class="tbody" style="text-align:center;direction: rtl;">
                 <strong lang="fa">'.$expense_row['description'].'</strong>
             </td>
-            <td class="tbody">
-              <small>'
-                .print_ai_labels(json_decode($expense_row['additional_informations'] ?? '')).
-              '</small>
-            </td>
+            '.($has_additional_info ? '<td class="tbody"><small>'.$additional_info_html.'</small></td>' : '').'
             <td class="tbody"><strong>'.$expense_row['currency'].'</strong></td>
             <td class="tbody"><strong>'.$expense_row['expense_amount'].'</strong></td>
           </tr>
@@ -672,6 +671,9 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
     $bill_date = $purchase_row['purchase_date'];
     $to_date = $purchase_row['purchase_date'];
 
+    $additional_info_html = print_ai_labels(json_decode($purchase_row['additional_informations'] ?? ''));
+    $has_additional_info = !empty(trim(strip_tags($additional_info_html)));
+
     $item_table = '
       <table border="0" cellspacing="0" cellpadding="0">
         <thead>
@@ -679,7 +681,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
             <th class="thead"><strong>#</strong></th>
             <th class="thead"><strong>Category</strong></th>
             <th class="thead"><strong>Description</strong></th>
-            <th class="thead"><strong>Additional Info</strong></th>
+            '.($has_additional_info ? '<th class="thead"><strong>Additional Info</strong></th>' : '').'
             <th class="thead"><strong>Currency</strong></th>
             <th class="thead"><strong>Amount</strong></th>
           </tr>
@@ -700,11 +702,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
                   $purchase_row['description'].
                 '</strong>
             </td>
-            <td class="tbody">
-              <small>'
-                .print_ai_labels(json_decode($purchase_row['additional_informations'] ?? '')).
-              '</small>
-            </td>
+            '.($has_additional_info ? '<td class="tbody"><small>'.$additional_info_html.'</small></td>' : '').'
             <td class="tbody"><strong>'.$purchase_row['currency'].'</strong></td>
             <td class="tbody"><strong>'.$purchase_row['purchase_amount'].'</strong></td>
           </tr>
