@@ -1494,6 +1494,21 @@
 
   var transaction_components = <?php echo print_access_sub_categories(); ?>
 
+  function remove_purchase_components(components){
+    return components
+      .filter(function(component){
+        return component.id.indexOf('sub_category_accessibility/purchase/') !== 0;
+      })
+      .map(function(component){
+        if(component.children && component.children.length){
+          component.children = remove_purchase_components(component.children);
+        }
+        return component;
+      });
+  }
+
+  transaction_components = remove_purchase_components(transaction_components);
+
   var transaction_components_tree = new Tree('#transaction_components_container', {
     data: [{ id: 'transaction_components', text: 'Transaction Components', children: transaction_components }],
     closeDepth: 2,
