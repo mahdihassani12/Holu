@@ -24,12 +24,12 @@
 <div class="logo-box">
   <a href="home.php" class="logo text-center">
     <span class="logo-lg">
-      <img src="assets/images/blue-logo.png" alt="">
+      <img src="assets/images/white-logo.png" alt="">
       <!-- <span class="logo-lg-text-light">Xeria</span> -->
     </span>
     <span class="logo-sm">
       <!-- <span class="logo-sm-text-dark">X</span> -->
-      <img src="assets/images/blue-logo.png" alt="">
+      <img src="assets/images/white-logo.png" alt="">
     </span>
   </a>
 </div>
