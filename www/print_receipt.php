@@ -379,7 +379,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
 
         #client {
           padding: 0 10px;
-          border-left: 6px solid #2c5f59;
+          border-left: 1px solid #2c5f59;
           float: left;
           width: 50%;
           line-height: 1.6;
@@ -565,11 +565,28 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           font-size: 30px;
           line-height: 1.1;
           margin-bottom: 8px;
-          font-weight: normal;
+          font-weight: bold;
+          color: #2c5f59;
         }
 
         .footer-item{
           margin-bottom: 4px;
+          position: relative;
+          padding-left: 5px;
+        }
+
+        .footer-item::before {
+          content: "";
+          position: absolute;
+          left: -14px;
+          top: 6px;
+          width: 8px;
+          height: 8px;
+          background: #2c5f59;
+          transform: rotate(45deg);
+          border-radius: 1px;
+          print-color-adjust: exact;
+          -webkit-print-color-adjust: exact;
         }
 
         .thead{
@@ -596,6 +613,11 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           justify-content: space-between;
           margin-top: 1%;
         }
+
+        .header_details > div:first-child {
+          border-left: 6px solid #2c5f59;
+          padding-left: 10px
+        }
         
         @media print{
           table {
@@ -619,6 +641,10 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
             .sign{
               -webkit-print-color-adjust: exact;
               color: #2c5f59;
+            }
+            * {
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
             }
         }
         </style>
@@ -684,9 +710,9 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
       <script src="assets/libs/peity/jquery.peity.min.js"></script>
       <script type="text/javascript">
 
-        setTimeout(function () { 
-          window.print(); 
-        }, 300);
+        // setTimeout(function () { 
+        //   window.print(); 
+        // }, 300);
 
         window.onafterprint = function(){
           invoices_id = $("#invoices_id").val();
