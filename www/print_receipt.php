@@ -590,9 +590,13 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         }
 
         .thead{
-          background: #C1D1CF !important;
+          background: #2c5f59 !important;
           border-right: 1px solid #fff;
+          color: #fff;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
+
         .thead:last-child{
           border-right: 1px solid #2c5f59;
         }
@@ -626,7 +630,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
            }
            .thead{
               -webkit-print-color-adjust: exact;
-              background: #C1D1CF !important;
+              background: #2c5f59 !important;
               border-right: 1px solid #fff;
             }
             .thead:last-child{
@@ -710,9 +714,9 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
       <script src="assets/libs/peity/jquery.peity.min.js"></script>
       <script type="text/javascript">
 
-        // setTimeout(function () { 
-        //   window.print(); 
-        // }, 300);
+        setTimeout(function () { 
+          window.print(); 
+        }, 300);
 
         window.onafterprint = function(){
           invoices_id = $("#invoices_id").val();
