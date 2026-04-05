@@ -594,10 +594,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         .header_details{
           display: flex;
           justify-content: space-between;
-          margin-top: 5%;
-        }
-        .header_details div:first-child{
-            margin-left: 12%;
+          margin-top: 1%;
         }
         
         @media print{
@@ -630,7 +627,6 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
       <body>
         <input type="hidden" id="invoices_id" value="<?php echo $invoices_id; ?>">
         <header class="clearfix">
-            <img src="assets/images/header.png" class="header_img" />
             <section class="header_details">
               <div>
                 <h2 class="name">Benyamin Hope</h2>
@@ -656,22 +652,22 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           <div id="bank_details" class="clearfix">
 
             <div id="client">
-              <div class="footer-title">Contact Details</div>
-              <div class="footer-item">Main Office: <?php echo $main_office_address; ?></div>
-              <div class="footer-item">Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
-              <div class="footer-item">Finance Email: <?php echo $finance_email; ?></div>
-              <div class="footer-item">Sales Email: <?php echo $sales_email; ?></div>
-              <div class="footer-item">Support Email: <?php echo $support_email; ?></div>
-              <div class="footer-item">Phone: <?php echo $finance_phone; ?></div>
-              <div class="footer-item">Website: <?php echo $website; ?></div>
+              <div class="footer-title"><strong>Contact Details</strong></div>
+              <div class="footer-item"><strong>Main Office:</strong> <?php echo $main_office_address; ?></div>
+              <div class="footer-item"><strong>Branch Office Dasht-e-Barchi:</strong> <?php echo $branch_office_address; ?></div>
+              <div class="footer-item"><strong>Finance Email:</strong> <?php echo $finance_email; ?></div>
+              <div class="footer-item"><strong>Sales Email:</strong> <?php echo $sales_email; ?></div>
+              <div class="footer-item"><strong>Support Email:</strong> <?php echo $support_email; ?></div>
+              <div class="footer-item"><strong>Phone:</strong> <?php echo $finance_phone; ?></div>
+              <div class="footer-item"><strong>Website:</strong> <?php echo $website; ?></div>
             </div>
 
             <div id="client">
-              <div class="footer-title">Bank Account Details</div>
-              <div class="footer-item">Bank Name: <?php echo $bank_name; ?></div>
-              <div class="footer-item">Account Name: <?php echo $account_name; ?></div>
-              <div class="footer-item">Account No-AFN: <?php echo $account_no_afn; ?></div>
-              <div class="footer-item">Account No-USD: <?php echo $account_no_usd; ?></div>
+              <div class="footer-title"><strong>Bank Account Details</strong></div>
+              <div class="footer-item"><strong>Bank Name:</strong> <?php echo $bank_name; ?></div>
+              <div class="footer-item"><strong>Account Name:</strong> <?php echo $account_name; ?></div>
+              <div class="footer-item"><strong>Account No-AFN:</strong> <?php echo $account_no_afn; ?></div>
+              <div class="footer-item"><strong>Account No-USD:</strong> <?php echo $account_no_usd; ?></div>
               <div>
                 <strong class="sign">Receipt Signature</strong>
               </div>
