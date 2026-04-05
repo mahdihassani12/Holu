@@ -345,9 +345,9 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         }
 
         header {
-          padding: 10px 0;
-          margin-bottom: 10px;
-          border-bottom: 4px solid #2c5f59;
+          padding: 10px 0 12px 0;
+          margin-bottom: 12px;
+          border-bottom: 4px solid #1f4f69;
         }
 
         #logo {
@@ -371,18 +371,18 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         }
 
         #bank_details {
-          margin-top: 16px;
-          margin-bottom: 12px;
+          margin-top: 18px;
+          margin-bottom: 14px;
           display: flex;
-          gap: 16px;
+          gap: 20px;
         }
 
         #client {
-          padding: 0 10px;
-          border-left: 6px solid #2c5f59;
+          padding: 0 12px;
+          border-left: 2px solid #1f4f69;
           float: left;
           width: 50%;
-          line-height: 1.6;
+          line-height: 1.8;
         }
 
         #client .to {
@@ -418,15 +418,15 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           width: 100%;
           border-collapse: collapse;
           border-spacing: 0;
-          margin-bottom: 0px;
-          border: 1px solid #2c5f59;
+          margin-bottom: 0;
+          border: 2px solid #1f4f69;
         }
 
         table th,
         table td {
           padding: 9px 7px;
           text-align: center;
-          border-bottom: 1px solid #FFFFFF;
+          border: 2px solid #FFFFFF;
         }
 
         table th {
@@ -566,23 +566,38 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           line-height: 1.1;
           margin-bottom: 8px;
           font-weight: normal;
+          color: #1f4f69;
         }
 
         .footer-item{
-          margin-bottom: 4px;
+          margin-bottom: 2px;
+          font-size: 23px;
+          line-height: 1.35;
+        }
+
+        .footer-item::before{
+          content: "◆ ";
+          color: #1f4f69;
+          font-size: 14px;
         }
 
         .thead{
-          background: #C1D1CF !important;
-          border-right: 1px solid #fff;
+          background: #1f4f69 !important;
+          color: #fff;
+          border-right: 2px solid #fff;
+          font-size: 24px;
+          padding: 10px 8px;
         }
         .thead:last-child{
-          border-right: 1px solid #2c5f59;
+          border-right: 2px solid #1f4f69;
         }
         .tbody{
-          border: 1px solid #2c5f59 !important;
-          border-top: unset !important;
+          border: 2px solid #fff !important;
           text-align: center;
+          background: #aeb4c0;
+          color: #000;
+          font-size: 23px;
+          min-height: 40px;
         }
         .header_img{
           position: absolute;
@@ -604,21 +619,22 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
            }
            .thead{
               -webkit-print-color-adjust: exact;
-              background: #C1D1CF !important;
-              border-right: 1px solid #fff;
+              background: #1f4f69 !important;
+              color: #fff;
+              border-right: 2px solid #fff;
             }
             .thead:last-child{
               -webkit-print-color-adjust: exact;
-                border-right: 1px solid #2c5f59;
+                border-right: 2px solid #1f4f69;
               }
             .tbody{
               -webkit-print-color-adjust: exact;
-              border: 1px solid #2c5f59 !important;
-              border-top: unset !important;
+              border: 2px solid #fff !important;
+              background: #aeb4c0;
             }
             .sign{
               -webkit-print-color-adjust: exact;
-              color: #2c5f59;
+              color: #1f4f69;
             }
         }
         </style>
