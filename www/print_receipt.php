@@ -53,7 +53,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
     $finance_phone = '0787506000';
     $website = 'www.benyaminhope.af';
     $bank_name = 'Azizi Bank';
-    $account_name = 'BENYAMIN HOPE INFORMATION TECHNOLOGY SERVICES';
+    $account_name = 'Benyamin Hope IT Services';
     $account_no_afn = '000101115085020';
     $account_no_usd = '000101215333739';
 

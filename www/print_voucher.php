@@ -75,7 +75,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
     $website = 'www.benyaminhope.af';
     $phone = '0787506000';
     $bank_name = 'Azizi Bank';
-    $account_name = 'BENYAMIN HOPE INFORMATION TECHNOLOGY SERVICES';
+    $account_name = 'Benyamin Hope IT Services';
     $account_no_afn = '000101115085020';
     $account_no_usd = '000101215333739';
 
@@ -193,6 +193,8 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
         #company {
           float: left;
+          border-left: 6px solid #2c5f59;
+          padding-left: 10px;
         }
 
 
@@ -245,7 +247,6 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           border-collapse: collapse;
           border-spacing: 0;
           margin-bottom: 0px;
-          border: 1px solid #2c5f59;
         }
 
         table th,
@@ -399,9 +400,11 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         .thead{
           background: #2c5f59 !important;
           border-right: 1px solid #fff;
+          border-top: 1px solid #2c5f59;
           color: #fff;
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
+        }
+        .thead:first-child{
+          border-left: 1px solid #2c5f59;
         }
         .thead:last-child{
           border-right: 1px solid #2c5f59;
@@ -420,12 +423,17 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           object-fit: fill;
         }
         .header_details{
-          margin-top: 5%;
-          margin-bottom: 20%;
+          
         }
-        .header_details #company{
-          margin-left: 12%;
+
+        .header_details #company h1{
+          margin-bottom: 5px;
         }
+
+        .header_details #company h3{
+          margin: 0px;
+        }
+
         .footer{
           font-size: 12px;
           margin: 0 10px;
@@ -442,7 +450,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           width: 50%;
           vertical-align: top;
           padding: 0 10px;
-          border-left: 6px solid #2c5f59;
+          border-left: 2px solid #2c5f59;
           line-height: 1.6;
         }
 
@@ -456,6 +464,21 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
         .footer-item{
           margin-bottom: 4px;
+          position: relative;
+        }
+
+        .footer-item::before {
+          content: "";
+          position: absolute;
+          left: -15px;
+          top: 6px;
+          width: 8px;
+          height: 8px;
+          background: #2c5f59;
+          transform: rotate(45deg);
+          border-radius: 1px;
+          print-color-adjust: exact;
+          -webkit-print-color-adjust: exact;
         }
 
         .footer-signature{
@@ -479,8 +502,11 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
               -webkit-print-color-adjust: exact;
               background: #2c5f59 !important;
               border-right: 1px solid #fff;
-              color: #fff;
-              print-color-adjust: exact;
+              border-top: 1px solid #2c5f59;
+            }
+            .thead:first-child{
+              -webkit-print-color-adjust: exact;
+              border-left: 1px solid #2c5f59;
             }
             .thead:last-child{
               -webkit-print-color-adjust: exact;
@@ -495,6 +521,10 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
               -webkit-print-color-adjust: exact;
               color: #2c5f59;
             }
+            * {
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
         }
         </style>
         <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
@@ -502,7 +532,6 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
       <body>
         <input type="hidden" id="invoices_id" value="<?php echo $invoices_id; ?>">
         <header class="clearfix">
-          <img src="assets/images/header.png" class="header_img" />
           <section class="header_details">
 
             <div id="logo">
@@ -510,12 +539,12 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
             </div>
 
             <div id="company">
-                <div>
+                <h1>
                   <strong>Benyamin Hope Information</strong>
-                </div>
-                <div>
+                </h1>
+                <h3>
                   <strong><?php echo $doc_header; ?></strong>
-                </div>
+                </h3>
                 <div class="date">Number: <?php echo $bill_number; ?></div>
                 <div class="date">Date: <?php echo $bill_date; ?></div>
                 <?php echo $customer_name_html; ?>
@@ -552,20 +581,20 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
               <div class="footer-row">
                 <div class="footer-col">
                   <div class="footer-title">Contact Details</div>
-                  <div class="footer-item">Main Office: <?php echo $main_office_address; ?></div>
-                  <div class="footer-item">Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
-                  <div class="footer-item">Finance Email: <?php echo $finance_email; ?></div>
-                  <div class="footer-item">Sales Email: <?php echo $sales_email; ?></div>
-                  <div class="footer-item">Support Email: <?php echo $support_email; ?></div>
-                  <div class="footer-item">Phone: <?php echo $phone; ?></div>
-                  <div class="footer-item">Website: <?php echo $website; ?></div>
+                  <div class="footer-item"><strong>Main Office:</strong> <?php echo $main_office_address; ?></div>
+                  <div class="footer-item"><strong>Branch Office Dasht-e-Barchi:</strong> <?php echo $branch_office_address; ?></div>
+                  <div class="footer-item"><strong>Finance Email:</strong> <?php echo $finance_email; ?></div>
+                  <div class="footer-item"><strong>Sales Email:</strong> <?php echo $sales_email; ?></div>
+                  <div class="footer-item"><strong>Support Email:</strong> <?php echo $support_email; ?></div>
+                  <div class="footer-item"><strong>Phone:</strong> <?php echo $phone; ?></div>
+                  <div class="footer-item"><strong>Website:</strong> <?php echo $website; ?></div>
                 </div>
                 <div class="footer-col">
                   <div class="footer-title">Bank Account Details</div>
-                  <div class="footer-item">Bank Name: <?php echo $bank_name; ?></div>
-                  <div class="footer-item">Account Name: <?php echo $account_name; ?></div>
-                  <div class="footer-item">Account No-AFN: <?php echo $account_no_afn; ?></div>
-                  <div class="footer-item">Account No-USD: <?php echo $account_no_usd; ?></div>
+                  <div class="footer-item"><strong>Bank Name:</strong> <?php echo $bank_name; ?></div>
+                  <div class="footer-item"><strong>Account Name:</strong> <?php echo $account_name; ?></div>
+                  <div class="footer-item"><strong>Account No-AFN:</strong> <?php echo $account_no_afn; ?></div>
+                  <div class="footer-item"><strong>Account No-USD:</strong> <?php echo $account_no_usd; ?></div>
                   <div class="footer-signature">Receipt Signature</div>
                 </div>
               </div>
@@ -655,7 +684,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
     $website = 'www.benyaminhope.af';
     $phone = '0787506000';
     $bank_name = 'Azizi Bank';
-    $account_name = 'BENYAMIN HOPE INFORMATION TECHNOLOGY SERVICES';
+    $account_name = 'Benyamin Hope IT Services';
     $account_no_afn = '000101115085020';
     $account_no_usd = '000101215333739';
 
@@ -775,6 +804,8 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
         #company {
           float: left;
+          border-left: 6px solid #2c5f59;
+          padding-left: 10px;
         }
 
 
@@ -827,7 +858,6 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           border-collapse: collapse;
           border-spacing: 0;
           margin-bottom: 0px;
-          border: 1px solid #2c5f59;
         }
 
         table th,
@@ -981,9 +1011,11 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         .thead{
           background: #2c5f59 !important;
           border-right: 1px solid #fff;
+          border-top: 1px solid #2c5f59;
           color: #fff;
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
+        }
+        .thead:first-child{
+          border-left: 1px solid #2c5f59;
         }
         .thead:last-child{
           border-right: 1px solid #2c5f59;
@@ -1002,12 +1034,17 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           object-fit: fill;
         }
         .header_details{
-          margin-top: 5%;
-          margin-bottom: 20%;
+          
         }
-        .header_details #company{
-          margin-left: 12%;
+
+        .header_details #company h1{
+          margin-bottom: 5px;
         }
+
+        .header_details #company h3{
+          margin: 0px;
+        }
+
         .footer{
           font-size: 12px;
           margin: 0 10px;
@@ -1024,7 +1061,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           width: 50%;
           vertical-align: top;
           padding: 0 10px;
-          border-left: 6px solid #2c5f59;
+          border-left: 2px solid #2c5f59;
           line-height: 1.6;
         }
 
@@ -1038,6 +1075,21 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
         .footer-item{
           margin-bottom: 4px;
+          position: relative;
+        }
+
+        .footer-item::before {
+          content: "";
+          position: absolute;
+          left: -15px;
+          top: 6px;
+          width: 8px;
+          height: 8px;
+          background: #2c5f59;
+          transform: rotate(45deg);
+          border-radius: 1px;
+          print-color-adjust: exact;
+          -webkit-print-color-adjust: exact;
         }
 
         .footer-signature{
@@ -1056,8 +1108,11 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
               -webkit-print-color-adjust: exact;
               background: #2c5f59 !important;
               border-right: 1px solid #fff;
-              color: #fff;
-              print-color-adjust: exact;
+              border-top: 1px solid #2c5f59;
+            }
+            .thead:first-child{
+              -webkit-print-color-adjust: exact;
+              border-left: 1px solid #2c5f59;
             }
             .thead:last-child{
               -webkit-print-color-adjust: exact;
@@ -1072,6 +1127,10 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
               -webkit-print-color-adjust: exact;
               color: #2c5f59;
             }
+            * {
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
         }
 
         </style>
@@ -1080,7 +1139,6 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
       <body>
         <input type="hidden" id="invoices_id" value="<?php echo $invoices_id; ?>">
         <header class="clearfix">
-          <img src="assets/images/header.png" class="header_img" />
           <section class="header_details">
 
             <div id="logo">
@@ -1088,12 +1146,12 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
             </div>
 
             <div id="company">
-                <div>
+                <h1>
                   <strong>Benyamin Hope Information</strong>
-                </div>
-                <div>
+                </h1>
+                <h3>
                   <strong><?php echo $doc_header; ?></strong>
-                </div>
+                </h3>
                 <div class="date">Number: <?php echo $bill_number; ?></div>
                 <div class="date">Date: <?php echo $bill_date; ?></div>
                 <?php echo $customer_name_html; ?>
@@ -1130,20 +1188,20 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
               <div class="footer-row">
                 <div class="footer-col">
                   <div class="footer-title">Contact Details</div>
-                  <div class="footer-item">Main Office: <?php echo $main_office_address; ?></div>
-                  <div class="footer-item">Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
-                  <div class="footer-item">Finance Email: <?php echo $finance_email; ?></div>
-                  <div class="footer-item">Sales Email: <?php echo $sales_email; ?></div>
-                  <div class="footer-item">Support Email: <?php echo $support_email; ?></div>
-                  <div class="footer-item">Phone: <?php echo $phone; ?></div>
-                  <div class="footer-item">Website: <?php echo $website; ?></div>
+                  <div class="footer-item"><strong>Main Office:</strong> <?php echo $main_office_address; ?></div>
+                  <div class="footer-item"><strong>Branch Office Dasht-e-Barchi:</strong> <?php echo $branch_office_address; ?></div>
+                  <div class="footer-item"><strong>Finance Email:</strong> <?php echo $finance_email; ?></div>
+                  <div class="footer-item"><strong>Sales Email:</strong> <?php echo $sales_email; ?></div>
+                  <div class="footer-item"><strong>Support Email:</strong> <?php echo $support_email; ?></div>
+                  <div class="footer-item"><strong>Phone:</strong> <?php echo $phone; ?></div>
+                  <div class="footer-item"><strong>Website:</strong> <?php echo $website; ?></div>
                 </div>
                 <div class="footer-col">
                   <div class="footer-title">Bank Account Details</div>
-                  <div class="footer-item">Bank Name: <?php echo $bank_name; ?></div>
-                  <div class="footer-item">Account Name: <?php echo $account_name; ?></div>
-                  <div class="footer-item">Account No-AFN: <?php echo $account_no_afn; ?></div>
-                  <div class="footer-item">Account No-USD: <?php echo $account_no_usd; ?></div>
+                  <div class="footer-item"><strong>Bank Name:</strong> <?php echo $bank_name; ?></div>
+                  <div class="footer-item"><strong>Account Name:</strong> <?php echo $account_name; ?></div>
+                  <div class="footer-item"><strong>Account No-AFN:</strong> <?php echo $account_no_afn; ?></div>
+                  <div class="footer-item"><strong>Account No-USD:</strong> <?php echo $account_no_usd; ?></div>
                   <div class="footer-signature">Receipt Signature</div>
                 </div>
               </div>
@@ -1234,7 +1292,7 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
     $website = 'www.benyaminhope.af';
     $phone = '0787506000';
     $bank_name = 'Azizi Bank';
-    $account_name = 'BENYAMIN HOPE INFORMATION TECHNOLOGY SERVICES';
+    $account_name = 'Benyamin Hope IT Services';
     $account_no_afn = '000101115085020';
     $account_no_usd = '000101215333739';
 
@@ -1339,6 +1397,8 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
 
         #company {
           float: left;
+          border-left: 6px solid #2c5f59;
+          padding-left: 10px;
         }
 
 
@@ -1391,7 +1451,6 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
           border-collapse: collapse;
           border-spacing: 0;
           margin-bottom: 0px;
-          border: 1px solid #2c5f59;
         }
 
         table th,
@@ -1545,9 +1604,11 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
         .thead{
           background: #2c5f59 !important;
           border-right: 1px solid #fff;
+          border-top: 1px solid #2c5f59;
           color: #fff;
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
+        }
+        .thead:first-child{
+          border-left: 1px solid #2c5f59;
         }
         .thead:last-child{
           border-right: 1px solid #2c5f59;
@@ -1566,12 +1627,17 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
           object-fit: fill;
         }
         .header_details{
-          margin-top: 5%;
-          margin-bottom: 20%;
+          
         }
-        .header_details #company{
-          margin-left: 12%;
+
+        .header_details #company h1{
+          margin-bottom: 5px;
         }
+
+        .header_details #company h3{
+          margin: 0px;
+        }
+
         .footer{
           font-size: 12px;
           margin: 0 10px;
@@ -1588,7 +1654,7 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
           width: 50%;
           vertical-align: top;
           padding: 0 10px;
-          border-left: 6px solid #2c5f59;
+          border-left: 2px solid #2c5f59;
           line-height: 1.6;
         }
 
@@ -1602,6 +1668,21 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
 
         .footer-item{
           margin-bottom: 4px;
+          position: relative;
+        }
+
+        .footer-item::before {
+          content: "";
+          position: absolute;
+          left: -15px;
+          top: 6px;
+          width: 8px;
+          height: 8px;
+          background: #2c5f59;
+          transform: rotate(45deg);
+          border-radius: 1px;
+          print-color-adjust: exact;
+          -webkit-print-color-adjust: exact;
         }
 
         .footer-signature{
@@ -1620,8 +1701,11 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
               -webkit-print-color-adjust: exact;
               background: #2c5f59 !important;
               border-right: 1px solid #fff;
-              color: #fff;
-              print-color-adjust: exact;
+              border-top: 1px solid #2c5f59;
+            }
+            .thead:first-child{
+              -webkit-print-color-adjust: exact;
+              border-left: 1px solid #2c5f59;
             }
             .thead:last-child{
               -webkit-print-color-adjust: exact;
@@ -1636,6 +1720,10 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
               -webkit-print-color-adjust: exact;
               color: #2c5f59;
             }
+            * {
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
         }
         </style>
         <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
@@ -1643,7 +1731,6 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
       <body>
         <input type="hidden" id="invoices_id" value="<?php echo $invoices_id; ?>">
         <header class="clearfix">
-          <img src="assets/images/header.png" class="header_img" />
           <section class="header_details">
 
             <div id="logo">
@@ -1651,12 +1738,12 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
             </div>
 
             <div id="company">
-                <div>
+                <h1>
                   <strong>Benyamin Hope Information</strong>
-                </div>
-                <div>
+                </h1>
+                <h3>
                   <strong><?php echo $doc_header; ?></strong>
-                </div>
+                </h3>
                 <div class="date">Number: <?php echo $bill_number; ?></div>
                 <div class="date">Date: <?php echo $bill_date; ?></div>
                 <?php echo $customer_name_html; ?>
@@ -1693,20 +1780,20 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
               <div class="footer-row">
                 <div class="footer-col">
                   <div class="footer-title">Contact Details</div>
-                  <div class="footer-item">Main Office: <?php echo $main_office_address; ?></div>
-                  <div class="footer-item">Branch Office Dasht-e-Barchi: <?php echo $branch_office_address; ?></div>
-                  <div class="footer-item">Finance Email: <?php echo $finance_email; ?></div>
-                  <div class="footer-item">Sales Email: <?php echo $sales_email; ?></div>
-                  <div class="footer-item">Support Email: <?php echo $support_email; ?></div>
-                  <div class="footer-item">Phone: <?php echo $phone; ?></div>
-                  <div class="footer-item">Website: <?php echo $website; ?></div>
+                  <div class="footer-item"><strong>Main Office:</strong> <?php echo $main_office_address; ?></div>
+                  <div class="footer-item"><strong>Branch Office Dasht-e-Barchi:</strong> <?php echo $branch_office_address; ?></div>
+                  <div class="footer-item"><strong>Finance Email:</strong> <?php echo $finance_email; ?></div>
+                  <div class="footer-item"><strong>Sales Email:</strong> <?php echo $sales_email; ?></div>
+                  <div class="footer-item"><strong>Support Email:</strong> <?php echo $support_email; ?></div>
+                  <div class="footer-item"><strong>Phone:</strong> <?php echo $phone; ?></div>
+                  <div class="footer-item"><strong>Website:</strong> <?php echo $website; ?></div>
                 </div>
                 <div class="footer-col">
                   <div class="footer-title">Bank Account Details</div>
-                  <div class="footer-item">Bank Name: <?php echo $bank_name; ?></div>
-                  <div class="footer-item">Account Name: <?php echo $account_name; ?></div>
-                  <div class="footer-item">Account No-AFN: <?php echo $account_no_afn; ?></div>
-                  <div class="footer-item">Account No-USD: <?php echo $account_no_usd; ?></div>
+                  <div class="footer-item"><strong>Bank Name:</strong> <?php echo $bank_name; ?></div>
+                  <div class="footer-item"><strong>Account Name:</strong> <?php echo $account_name; ?></div>
+                  <div class="footer-item"><strong>Account No-AFN:</strong> <?php echo $account_no_afn; ?></div>
+                  <div class="footer-item"><strong>Account No-USD:</strong> <?php echo $account_no_usd; ?></div>
                   <div class="footer-signature">Receipt Signature</div>
                 </div>
               </div>
