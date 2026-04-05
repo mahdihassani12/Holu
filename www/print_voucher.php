@@ -1301,7 +1301,7 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
     $customer_name_html = !empty($customer_name) ? '<div class="date">Customer Name: '.htmlspecialchars($customer_name).'</div>' : '';
     $customer_id_html = !empty($customer_id) ? '<div class="date">Customer ID: '.htmlspecialchars($customer_id).'</div>' : '';
 
-    $doc_header = "Voucher Payment";
+    $doc_header = "Voucher Transfer";
     $bill_number = $transfer_row['check_number'];
     $bill_date = $transfer_row['transfer_date'];
     $to_date = $transfer_row['transfer_date'];
