@@ -245,6 +245,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           border-collapse: collapse;
           border-spacing: 0;
           margin-bottom: 0px;
+          border: 1px solid #2c5f59;
         }
 
         table th,
@@ -396,12 +397,11 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
             font-weight: bolder;
         }
         .thead{
-          background: #C1D1CF !important;
+          background: #2c5f59 !important;
           border-right: 1px solid #fff;
-          border-top: 1px solid #2c5f59;
-        }
-        .thead:first-child{
-          border-left: 1px solid #2c5f59;
+          color: #fff;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
         .thead:last-child{
           border-right: 1px solid #2c5f59;
@@ -450,7 +450,8 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           font-size: 30px;
           line-height: 1.1;
           margin-bottom: 8px;
-          font-weight: normal;
+          font-weight: bold;
+          color: #2c5f59;
         }
 
         .footer-item{
@@ -476,13 +477,10 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
            }
            .thead{
               -webkit-print-color-adjust: exact;
-              background: #C1D1CF !important;
+              background: #2c5f59 !important;
               border-right: 1px solid #fff;
-              border-top: 1px solid #2c5f59;
-            }
-            .thead:first-child{
-              -webkit-print-color-adjust: exact;
-              border-left: 1px solid #2c5f59;
+              color: #fff;
+              print-color-adjust: exact;
             }
             .thead:last-child{
               -webkit-print-color-adjust: exact;
@@ -829,6 +827,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           border-collapse: collapse;
           border-spacing: 0;
           margin-bottom: 0px;
+          border: 1px solid #2c5f59;
         }
 
         table th,
@@ -980,12 +979,11 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
             font-weight: bolder;
         }
         .thead{
-          background: #C1D1CF !important;
+          background: #2c5f59 !important;
           border-right: 1px solid #fff;
-          border-top: 1px solid #2c5f59;
-        }
-        .thead:first-child{
-          border-left: 1px solid #2c5f59;
+          color: #fff;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
         .thead:last-child{
           border-right: 1px solid #2c5f59;
@@ -1034,7 +1032,8 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           font-size: 30px;
           line-height: 1.1;
           margin-bottom: 8px;
-          font-weight: normal;
+          font-weight: bold;
+          color: #2c5f59;
         }
 
         .footer-item{
@@ -1055,13 +1054,10 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
            }
            .thead{
               -webkit-print-color-adjust: exact;
-              background: #C1D1CF !important;
+              background: #2c5f59 !important;
               border-right: 1px solid #fff;
-              border-top: 1px solid #2c5f59;
-            }
-            .thead:first-child{
-              -webkit-print-color-adjust: exact;
-              border-left: 1px solid #2c5f59;
+              color: #fff;
+              print-color-adjust: exact;
             }
             .thead:last-child{
               -webkit-print-color-adjust: exact;
@@ -1395,6 +1391,7 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
           border-collapse: collapse;
           border-spacing: 0;
           margin-bottom: 0px;
+          border: 1px solid #2c5f59;
         }
 
         table th,
@@ -1546,12 +1543,11 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
             font-weight: bolder;
         }
         .thead{
-          background: #C1D1CF !important;
+          background: #2c5f59 !important;
           border-right: 1px solid #fff;
-          border-top: 1px solid #2c5f59;
-        }
-        .thead:first-child{
-          border-left: 1px solid #2c5f59;
+          color: #fff;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
         .thead:last-child{
           border-right: 1px solid #2c5f59;
@@ -1600,7 +1596,8 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
           font-size: 30px;
           line-height: 1.1;
           margin-bottom: 8px;
-          font-weight: normal;
+          font-weight: bold;
+          color: #2c5f59;
         }
 
         .footer-item{
@@ -1621,13 +1618,10 @@ else if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
            }
            .thead{
               -webkit-print-color-adjust: exact;
-              background: #C1D1CF !important;
+              background: #2c5f59 !important;
               border-right: 1px solid #fff;
-              border-top: 1px solid #2c5f59;
-            }
-            .thead:first-child{
-              -webkit-print-color-adjust: exact;
-              border-left: 1px solid #2c5f59;
+              color: #fff;
+              print-color-adjust: exact;
             }
             .thead:last-child{
               -webkit-print-color-adjust: exact;
