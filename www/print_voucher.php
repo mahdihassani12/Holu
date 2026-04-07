@@ -435,63 +435,39 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         }
 
         .footer{
-          font-size: 12px;
-          margin: 0 10px;
+          margin: 0 0 6px 0;
+          background: #1f5a75;
+          color: #fff;
+          border: 1px solid #17455a;
+          padding: 10px 12px;
+          font-size: 13px;
+          line-height: 1.35;
         }
 
         .footer-row{
           display: flex;
-          width: 100%;
-          gap: 16px;
-          align-items: stretch;
-        }
-
-        .footer-col{
-          width: 50%;
-          vertical-align: top;
-          padding: 0 10px;
-          border-left: 2px solid #2c5f59;
-          line-height: 1.6;
-        }
-
-        .footer-title{
-          font-size: 30px;
-          line-height: 1.1;
-          margin-bottom: 8px;
-          font-weight: bold;
-          color: #2c5f59;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: center;
+          column-gap: 16px;
+          row-gap: 8px;
         }
 
         .footer-item{
-          margin-bottom: 4px;
-          position: relative;
+          display: inline-flex;
+          align-items: center;
+          font-weight: 600;
+          white-space: nowrap;
         }
 
-        .footer-item::before {
-          content: "";
-          position: absolute;
-          left: -15px;
-          top: 6px;
-          width: 8px;
-          height: 8px;
-          background: #2c5f59;
-          transform: rotate(45deg);
-          border-radius: 1px;
-          print-color-adjust: exact;
-          -webkit-print-color-adjust: exact;
+        .footer-item.address{
+          white-space: normal;
         }
 
-        .footer-signature{
-          color: #2c5f59;
-          text-align: right;
-          margin-top: 14px;
-          font-size: 18px;
-          font-weight: bold;
-        }
-
-        .footer i{
-          display: inline-block;
-          font-size: 17px;
+        .footer-icon{
+          font-size: 16px;
+          margin-right: 6px;
+          line-height: 1;
         }
         @media print{
           table {
@@ -577,28 +553,15 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           <br/>
             
           <hr style="border: 2px solid #2c5f59;"/>
-            <section class="footer">
-              <div class="footer-row">
-                <div class="footer-col">
-                  <div class="footer-title">Contact Details</div>
-                  <div class="footer-item"><strong>Main Office:</strong> <?php echo $main_office_address; ?></div>
-                  <div class="footer-item"><strong>Branch Office Dasht-e-Barchi:</strong> <?php echo $branch_office_address; ?></div>
-                  <div class="footer-item"><strong>Finance Email:</strong> <?php echo $finance_email; ?></div>
-                  <div class="footer-item"><strong>Sales Email:</strong> <?php echo $sales_email; ?></div>
-                  <div class="footer-item"><strong>Support Email:</strong> <?php echo $support_email; ?></div>
-                  <div class="footer-item"><strong>Phone:</strong> <?php echo $phone; ?></div>
-                  <div class="footer-item"><strong>Website:</strong> <?php echo $website; ?></div>
-                </div>
-                <div class="footer-col">
-                  <div class="footer-title">Bank Account Details</div>
-                  <div class="footer-item"><strong>Bank Name:</strong> <?php echo $bank_name; ?></div>
-                  <div class="footer-item"><strong>Account Name:</strong> <?php echo $account_name; ?></div>
-                  <div class="footer-item"><strong>Account No-AFN:</strong> <?php echo $account_no_afn; ?></div>
-                  <div class="footer-item"><strong>Account No-USD:</strong> <?php echo $account_no_usd; ?></div>
-                  <div class="footer-signature">Receipt Signature</div>
-                </div>
-              </div>
-            </section>
+          <section class="footer">
+            <div class="footer-row">
+              <div class="footer-item"><span class="footer-icon">☎</span>+93 (0)<?php echo $phone; ?></div>
+              <div class="footer-item"><span class="footer-icon">✉</span><?php echo $support_email; ?></div>
+              <div class="footer-item"><span class="footer-icon">🌐</span><?php echo $website; ?></div>
+              <div class="footer-item address"><span class="footer-icon">📍</span><?php echo $main_office_address; ?></div>
+              <div class="footer-item address"><span class="footer-icon">📍</span><?php echo $branch_office_address; ?></div>
+            </div>
+          </section>
           <hr style="border: 2px solid #2c5f59;"/>
         </main>
       </body>
