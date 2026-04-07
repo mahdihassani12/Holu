@@ -20,6 +20,20 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	$holu_time = date("H:i:s");
 
 	$holu_users_id = $_SESSION['holu_users_id'];
+	$holu_role = strtolower(trim((string)($_SESSION['holu_role'] ?? '')));
+	if($holu_role===''){
+		$user_role_sq = $db->prepare("SELECT role FROM `users` WHERE id=:id LIMIT 1");
+		$user_role_sq->execute([
+			'id' => $holu_users_id
+		]);
+
+		if($user_role_sq->rowCount()>0){
+			$user_role_row = $user_role_sq->fetch();
+			$holu_role = strtolower(trim((string)($user_role_row['role'] ?? '')));
+		}
+
+		$_SESSION['holu_role'] = $holu_role;
+	}
 
 	$holu_currencies = ['AFN', 'USD', 'IRT'];
 
@@ -1575,6 +1589,9 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	}
 
 	function check_access($access_path){
+		if(strtolower(trim((string)($_SESSION['holu_role'] ?? '')))==='admin'){
+			return 1;
+		}
 		
 		$holu_accessibilities = strtolower($_SESSION['holu_accessibilities']);
 		$access_path = strtolower($access_path);
