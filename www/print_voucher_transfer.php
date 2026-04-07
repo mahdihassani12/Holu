@@ -423,19 +423,21 @@ if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
 
         .footer{
           margin: 0 0 6px 0;
-          background: #1f5a75;
           color: #fff;
-          border: 1px solid #17455a;
-          padding: 10px 12px;
+          padding: 30px 15px;
           font-size: 13px;
           line-height: 1.35;
+          background-image: url('assets/images/footer-shape.png');
+          background-position: center center;
+          background-repeat: no-repeat;
+          background-size: cover;
         }
 
         .footer-row{
           display: flex;
           flex-wrap: wrap;
           align-items: center;
-          justify-content: center;
+          justify-content: flex-start;
           column-gap: 16px;
           row-gap: 8px;
         }
@@ -538,18 +540,61 @@ if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
           </table>
 
           <br/>
-            
-          <hr style="border: 2px solid #2c5f59;"/>
+    
           <section class="footer">
             <div class="footer-row">
-              <div class="footer-item"><span class="footer-icon">☎</span>+93 (0)<?php echo $phone; ?></div>
-              <div class="footer-item"><span class="footer-icon">✉</span><?php echo $support_email; ?></div>
-              <div class="footer-item"><span class="footer-icon">🌐</span><?php echo $website; ?></div>
-              <div class="footer-item address"><span class="footer-icon">📍</span><?php echo $main_office_address; ?></div>
-              <div class="footer-item address"><span class="footer-icon">📍</span><?php echo $branch_office_address; ?></div>
+              <div class="footer-item">
+                <span class="footer-icon">
+                  <!-- Phone -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M22 16.92V21a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h4.09a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.62a2 2 0 0 1-.45 2.11L9.09 9.91a16 16 0 0 0 6 6l1.46-1.23a2 2 0 0 1 2.11-.45c.84.29 1.72.5 2.62.62A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                </span>
+                +93 (0)<?php echo $phone; ?>
+              </div>
+
+              <div class="footer-item">
+                <span class="footer-icon">
+                  <!-- Email -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M4 4h16v16H4z"/>
+                    <path d="M22 6l-10 7L2 6"/>
+                  </svg>
+                </span>
+                <?php echo $support_email; ?>
+              </div>
+
+              <div class="footer-item">
+                <span class="footer-icon">
+                  <!-- Website / Globe -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M2 12h20"/>
+                    <path d="M12 2a15 15 0 0 1 0 20a15 15 0 0 1 0-20"/>
+                  </svg>
+                </span>
+                <?php echo $website; ?>
+              </div>
+              <div class="footer-item address">
+                <span class="footer-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 21s-6-4.35-6-10a6 6 0 1 1 12 0c0 5.65-6 10-6 10z"/>
+                    <circle cx="12" cy="11" r="2.5"/>
+                  </svg>
+                </span>
+                <?php echo $main_office_address; ?>
+              </div>
+              <div class="footer-item address">
+                <span class="footer-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 21s-6-4.35-6-10a6 6 0 1 1 12 0c0 5.65-6 10-6 10z"/>
+                    <circle cx="12" cy="11" r="2.5"/>
+                  </svg>
+                </span>
+                <?php echo $branch_office_address; ?>
+              </div>
             </div>
           </section>
-          <hr style="border: 2px solid #2c5f59;"/>
         </main>
       </body>
       <!-- Vendor js -->
