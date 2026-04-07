@@ -158,16 +158,6 @@
                                   ?>
                                   <!-- End Item -->
 
-                                  <?php
-                                  if(check_access("system_accessibility/logistic/list_purchase/print_voucher")){
-                                  ?>
-                                  <a class="dropdown-item" href="print_voucher.php?purchases_id=<?php echo holu_encode($purchase_row['id']); ?>" target=" _ "><i class="fas fa-print"></i> Print Voucher</a>
-                                  <?php
-                                  }
-                                  ?>
-
-                                  
-
                                 </div>
                               </div>
                             </td>
