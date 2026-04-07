@@ -26,7 +26,7 @@ if (isset($_GET['error'])) {
 }
 ?>
 
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" autocomplete="off">
 
     <div class="form-group mb-3">
         <input class="form-control remove_space" type="email" id="email" name="email" required="" placeholder="Email">
