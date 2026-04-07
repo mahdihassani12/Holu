@@ -1755,6 +1755,9 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	function print_access_points($holu_portions){
 		$access_points = "[";
 		foreach ($holu_portions as $holu_portion) {
+			if($holu_portion['label']=="TMS Markup"){
+				continue;
+			}
 			if(sizeof($holu_portion['subs'])>0){
 				$access_points .= '{ "id": "'.$holu_portion['path'].'", "text": "'.$holu_portion['label'].'", "children": '.print_access_points($holu_portion['subs']).' },';
 			}else{
@@ -1903,41 +1906,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			$access_points .= '{ "id": "sub_category_accessibility/exchange/", "text": "Exchange", "children": '.$exchange_category_access_points.' },';
 		}else{
 			$access_points .= '{ "id": "sub_category_accessibility/exchange/", "text": "Exchange"},';
-		}
-
-		$purchase_category_sq = $db->prepare("SELECT * FROM `categories`
-			WHERE deleted='0'
-			AND category_type='Purchase'
-		");
-		$purchase_category_sqx = $purchase_category_sq->execute([]);
-		if($purchase_category_sq->rowCount()>0){
-			$purchase_category_access_points = '[';
-			while($purchase_category_row = $purchase_category_sq->fetch()){
-
-				$sub_category_sq = $db->prepare("SELECT * FROM `sub_categories`
-					WHERE deleted='0'
-					AND categories_id=:categories_id
-				");
-				$sub_category_sqx = $sub_category_sq->execute([
-					'categories_id'=>$purchase_category_row['id']
-				]);
-				if($sub_category_sq->rowCount()>0){
-					$sub_category_access_points = '[';
-					while($sub_category_row = $sub_category_sq->fetch()){
-						
-						$sub_category_access_points .= '{ "id": "sub_category_accessibility/purchase/'.$purchase_category_row['id'].'/'.$sub_category_row['id'].'/", "text": "'.$sub_category_row['sub_category_name'].'" },';
-					}
-					$sub_category_access_points .= ']';
-					$purchase_category_access_points .= '{ "id": "sub_category_accessibility/purchase/'.$purchase_category_row['id'].'", "text": "'.$purchase_category_row['category_name'].'", "children": '.$sub_category_access_points.' },';
-				}else{
-					$purchase_category_access_points .= '{ "id": "sub_category_accessibility/purchase/'.$purchase_category_row['id'].'/", "text": "'.$purchase_category_row['category_name'].'"},';
-				}
-				
-			}
-			$purchase_category_access_points .= ']';
-			$access_points .= '{ "id": "sub_category_accessibility/purchase/", "text": "Purchase", "children": '.$purchase_category_access_points.' },';
-		}else{
-			$access_points .= '{ "id": "sub_category_accessibility/purchase/", "text": "Purchase"},';
 		}
 
 		$transfer_category_sq = $db->prepare("SELECT * FROM `categories`
