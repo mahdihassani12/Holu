@@ -18,7 +18,6 @@ if(isset($_POST['submit'])){
     $user_row = $user_sq->fetch();
     $_SESSION['holu_users_id'] = $user_row['id'];
     $_SESSION['holu_username'] = $user_row['username'];
-    $_SESSION['holu_role'] = strtolower(trim((string)($user_row['role'] ?? '')));
 
     $users_id = $_SESSION['holu_users_id'];
 
