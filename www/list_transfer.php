@@ -144,7 +144,7 @@
                                   <?php
                                   if(check_access("system_accessibility/transaction/transfer/print_voucher")==1){
                                   ?>
-                                  <a class="dropdown-item" href="print_voucher.php?transfer_id=<?php echo holu_encode($transfer_row['id']); ?>" target=" _ "><i class="fas fa-print"></i> Print Voucher</a>
+                                  <a class="dropdown-item" href="print_voucher_transfer.php?transfer_id=<?php echo holu_encode($transfer_row['id']); ?>" target=" _ "><i class="fas fa-print"></i> Print Voucher</a>
                                   <?php
                                   }
                                   ?>

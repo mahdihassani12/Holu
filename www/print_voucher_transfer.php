@@ -23,24 +23,24 @@ if(!function_exists('get_additional_info_value')){
   }
 }
 
-if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
+if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
+{
+  $transfer_id = holu_escape(holu_decode($_GET['transfer_id']));
 
-  $expenses_id = holu_escape(holu_decode($_GET['expenses_id']));
-
-  $expense_sq = $db->prepare(
+  $transfer_sq = $db->prepare(
     "SELECT * 
-    FROM `expenses`
-    WHERE id=:expenses_id
+    FROM `transfers`
+    WHERE id=:transfer_id
     LIMIT 1"
   );
 
-  $expense_sqx = $expense_sq->execute([
-    'expenses_id'=>$expenses_id
+  $transfer_sqx = $transfer_sq->execute([
+    'transfer_id'=>$transfer_id
   ]);
 
-  if($expense_sq->rowCount()>0){
-
-    $expense_row = $expense_sq->fetch();
+  if($transfer_sq->rowCount()>0)
+  {
+    $transfer_row = $transfer_sq->fetch();
 
     $invoice_iq = $db->prepare("INSERT INTO `invoices` (
       reference_type,
@@ -58,9 +58,9 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
       :holu_users_id
     )");
     $invoice_iqx = $invoice_iq->execute([
-      'reference_type'=>'Expense',
-      'reference_id'=>$expenses_id,
-      'province'=>$expense_row['province'],
+      'reference_type'=>'Transfer',
+      'reference_id'=>$transfer_id,
+      'province'=>$transfer_row['from_province'],
       'holu_date'=>$holu_date,
       'holu_time'=>$holu_time,
       'holu_users_id'=>$holu_users_id
@@ -79,56 +79,43 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
     $account_no_afn = '000101115085020';
     $account_no_usd = '000101215333739';
 
-    $customer_name = get_additional_info_value($db, 'Expense', $expenses_id, 'Customer Name');
-    $customer_id = get_additional_info_value($db, 'Expense', $expenses_id, 'Customer ID');
+    $customer_name = get_additional_info_value($db, 'Transfer', $transfer_id, 'Customer Name');
+    $customer_id = get_additional_info_value($db, 'Transfer', $transfer_id, 'Customer ID');
     $customer_name_html = !empty($customer_name) ? '<div class="date">Customer Name: '.htmlspecialchars($customer_name).'</div>' : '';
     $customer_id_html = !empty($customer_id) ? '<div class="date">Customer ID: '.htmlspecialchars($customer_id).'</div>' : '';
 
-    $doc_header = "Voucher Payment";
-    $bill_number = $expense_row['check_number'];
-    $bill_date = $expense_row['expense_date'];
-    $to_date = $expense_row['expense_date'];
-
-    $additional_info_html = print_ai_labels(json_decode($expense_row['additional_informations'] ?? ''));
-    $has_additional_info = !empty(trim(strip_tags($additional_info_html)));
+    $doc_header = "Voucher Transfer";
+    $bill_number = $transfer_row['check_number'];
+    $bill_date = $transfer_row['transfer_date'];
+    $to_date = $transfer_row['transfer_date'];
 
     $item_table = '
-      <table border="0" cellspacing="0" cellpadding="0">
-        <thead>
-          <tr>
-            <th class="thead"><strong>#</strong></th>
-            <th class="thead"><strong>Category</strong></th>
-            <th class="thead"><strong>Description</strong></th>
-            '.($has_additional_info ? '<th class="thead"><strong>Additional Info</strong></th>' : '').'
-            <th class="thead"><strong>Currency</strong></th>
-            <th class="thead"><strong>Amount</strong></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="tbody"><strong>1</strong></td>
-            <td class="tbody">
-              <strong>'.get_col('categories', 'category_name', 'id',
-                       get_col('sub_categories', 'categories_id', 'id',
-                                                 $expense_row['sub_categories_id'])).'<br/>'
-                      .get_col('sub_categories', 'sub_category_name', 'id', 
-                                                 $expense_row['sub_categories_id']).
-              '</strong>
-            </td>
-            <td class="tbody" style="text-align:center;direction: rtl;">
-                <strong lang="fa">'.$expense_row['description'].'</strong>
-            </td>
-            '.($has_additional_info ? '<td class="tbody"><small>'.$additional_info_html.'</small></td>' : '').'
-            <td class="tbody"><strong>'.$expense_row['currency'].'</strong></td>
-            <td class="tbody"><strong>'.$expense_row['expense_amount'].'</strong></td>
-          </tr>
+    <table border="0" cellspacing="0" cellpadding="0">
+      <thead>
+        <tr>
+          <th class="thead"><strong>#</strong></th>
+          <th class="thead"><strong>From Province</strong></th>
+          <th class="thead"><strong>To Province</strong></th>
+          <th class="thead"><strong>Description</strong></th>
+          <th class="thead"><strong>Currency</strong></th>
+          <th class="thead"><strong>Amount</strong></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tbody"><strong>1</strong></td>
+          <td class="tbody"><strong>'.$transfer_row['from_province'].'</strong></td>
+          <td class="tbody"><strong>'.$transfer_row['to_province'].'</strong></td>
+          <td class="tbody" style="text-align:center;direction: rtl;">
+            <strong lang="fa">'.$transfer_row['description'].'</strong></td>
+          <td class="tbody"><strong>'.$transfer_row['currency'].'</strong></td>
+          <td class="tbody"><strong>'.$transfer_row['transfer_amount'].'</strong></td>
+        </tr>
 
-        </tbody>
-      </table>
-    ';
-    
-    ?>
-
+      </tbody>
+    </table>
+  ';
+  ?>
     <!DOCTYPE html>
     <html lang="en">
       <head>
@@ -488,11 +475,6 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           font-size: 18px;
           font-weight: bold;
         }
-
-        .footer i{
-          display: inline-block;
-          font-size: 17px;
-        }
         @media print{
           table {
             -webkit-print-color-adjust: exact;
@@ -629,7 +611,6 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         
       </script>
     </html>
-
   <?php
   }
 }
