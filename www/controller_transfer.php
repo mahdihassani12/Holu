@@ -141,16 +141,42 @@
 
 	        </form>
         </div>
-		<!-- Begin __ Script __ Added By Mohsen __ 2021-04-05 -->
 		<script type="text/javascript">
-			$('.form-group').on('change', '#from_province', function(){
-				$('#to_province option').prop('disabled', false);
-				$('#to_province')
-					.find('option[value='+ $(this).val() +']')
-					.prop('disabled', true);
-			});
+			function update_transfer_to_branch_restriction(){
+				var fromProvince = $('#from_province').val();
+				var fromBranch = $('#from_branch').val();
+				var toProvince = $('#to_province').val();
+				var $toBranch = $('#to_branch');
+
+				if(!$toBranch.length){
+					return;
+				}
+
+				$toBranch.find('option').prop('disabled', false);
+
+				if(fromProvince!=='' && toProvince!=='' && fromBranch!=='' && fromProvince===toProvince){
+					$toBranch.find('option').filter(function(){
+						return $(this).val()===fromBranch;
+					}).prop('disabled', true);
+
+					if($toBranch.val()===fromBranch){
+						$toBranch.val('');
+					}
+				}
+			}
+
+			$(document)
+				.off('change.transferRestriction', '#from_province, #from_branch, #to_province')
+				.on('change.transferRestriction', '#from_province, #from_branch, #to_province', function(){
+					setTimeout(update_transfer_to_branch_restriction, 150);
+				});
+
+			$(document)
+				.off('change.transferRestrictionTarget', '#to_branch')
+				.on('change.transferRestrictionTarget', '#to_branch', update_transfer_to_branch_restriction);
+
+			setTimeout(update_transfer_to_branch_restriction, 150);
 		</script>
-		<!-- End -->
         <?php
 	      	
 	      break;
@@ -292,8 +318,44 @@
 
 			        </form>
 		        </div>
+		        <script type="text/javascript">
+		        	function update_transfer_to_branch_restriction(){
+		        		var fromProvince = $('#from_province').val();
+		        		var fromBranch = $('#from_branch').val();
+		        		var toProvince = $('#to_province').val();
+		        		var $toBranch = $('#to_branch');
+
+		        		if(!$toBranch.length){
+		        			return;
+		        		}
+
+		        		$toBranch.find('option').prop('disabled', false);
+
+		        		if(fromProvince!=='' && toProvince!=='' && fromBranch!=='' && fromProvince===toProvince){
+		        			$toBranch.find('option').filter(function(){
+		        				return $(this).val()===fromBranch;
+		        			}).prop('disabled', true);
+
+		        			if($toBranch.val()===fromBranch){
+		        				$toBranch.val('');
+		        			}
+		        		}
+		        	}
+
+		        	$(document)
+		        		.off('change.transferRestriction', '#from_province, #from_branch, #to_province')
+		        		.on('change.transferRestriction', '#from_province, #from_branch, #to_province', function(){
+		        			setTimeout(update_transfer_to_branch_restriction, 150);
+		        		});
+
+		        	$(document)
+		        		.off('change.transferRestrictionTarget', '#to_branch')
+		        		.on('change.transferRestrictionTarget', '#to_branch', update_transfer_to_branch_restriction);
+
+		        	setTimeout(update_transfer_to_branch_restriction, 150);
+		        </script>
 		        <?php
-	      	}
+	      		}
 	      break;
 
 	      case "delete_transfer_form":
