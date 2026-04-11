@@ -51,6 +51,8 @@
   $check_number = "";
 
   $excel_data = "";
+  $transfer_out_scope = "0";
+  $transfer_in_scope = "0";
 
   if(isset($_GET['flag_operation']) AND $_GET['flag_operation']=="report_transaction"){
 
@@ -499,6 +501,17 @@
       $excel_data .= "&check_number=".$check_number;
     }
 
+    if(!empty($branch)){
+      $transfer_out_scope = "from_branch='".$branch."'";
+      $transfer_in_scope = "to_branch='".$branch."'";
+    }else if(!empty($province) AND $province!="0"){
+      $transfer_out_scope = "from_province='".$province."'";
+      $transfer_in_scope = "to_province='".$province."'";
+    }else{
+      $transfer_out_scope = "1";
+      $transfer_in_scope = "0";
+    }
+
     
    
     set_pagination();
@@ -760,12 +773,12 @@
 
     $total_transfer_sq = $db->query(
       "SELECT 
-        SUM(CASE WHEN currency='AFN' AND from_province='$province' THEN transfer_amount ELSE 0 END) AS total_transfer_out_afn,
-        SUM(CASE WHEN currency='AFN' AND to_province='$province' THEN transfer_amount ELSE 0 END) AS total_transfer_in_afn,
-        SUM(CASE WHEN currency='USD' AND from_province='$province' THEN transfer_amount ELSE 0 END) AS total_transfer_out_usd,
-        SUM(CASE WHEN currency='USD' AND to_province='$province' THEN transfer_amount ELSE 0 END) AS total_transfer_in_usd,
-        SUM(CASE WHEN currency='IRT' AND from_province='$province' THEN transfer_amount ELSE 0 END) AS total_transfer_out_irt,
-        SUM(CASE WHEN currency='IRT' AND to_province='$province' THEN transfer_amount ELSE 0 END) AS total_transfer_in_irt
+        SUM(CASE WHEN currency='AFN' AND $transfer_out_scope THEN transfer_amount ELSE 0 END) AS total_transfer_out_afn,
+        SUM(CASE WHEN currency='AFN' AND $transfer_in_scope THEN transfer_amount ELSE 0 END) AS total_transfer_in_afn,
+        SUM(CASE WHEN currency='USD' AND $transfer_out_scope THEN transfer_amount ELSE 0 END) AS total_transfer_out_usd,
+        SUM(CASE WHEN currency='USD' AND $transfer_in_scope THEN transfer_amount ELSE 0 END) AS total_transfer_in_usd,
+        SUM(CASE WHEN currency='IRT' AND $transfer_out_scope THEN transfer_amount ELSE 0 END) AS total_transfer_out_irt,
+        SUM(CASE WHEN currency='IRT' AND $transfer_in_scope THEN transfer_amount ELSE 0 END) AS total_transfer_in_irt
       FROM `transfers`
       WHERE transfers.deleted='0' 
       AND transfers.is_approved='1'
@@ -862,12 +875,12 @@
 
     $closing_transfer_sq = $db->query(
       "SELECT 
-        SUM(CASE WHEN currency='AFN' AND from_province='$province' THEN transfer_amount ELSE 0 END) AS closing_transfer_out_afn,
-        SUM(CASE WHEN currency='AFN' AND to_province='$province' THEN transfer_amount ELSE 0 END) AS closing_transfer_in_afn,
-        SUM(CASE WHEN currency='USD' AND from_province='$province' THEN transfer_amount ELSE 0 END) AS closing_transfer_out_usd,
-        SUM(CASE WHEN currency='USD' AND to_province='$province' THEN transfer_amount ELSE 0 END) AS closing_transfer_in_usd,
-        SUM(CASE WHEN currency='IRT' AND from_province='$province' THEN transfer_amount ELSE 0 END) AS closing_transfer_out_irt,
-        SUM(CASE WHEN currency='IRT' AND to_province='$province' THEN transfer_amount ELSE 0 END) AS closing_transfer_in_irt
+        SUM(CASE WHEN currency='AFN' AND $transfer_out_scope THEN transfer_amount ELSE 0 END) AS closing_transfer_out_afn,
+        SUM(CASE WHEN currency='AFN' AND $transfer_in_scope THEN transfer_amount ELSE 0 END) AS closing_transfer_in_afn,
+        SUM(CASE WHEN currency='USD' AND $transfer_out_scope THEN transfer_amount ELSE 0 END) AS closing_transfer_out_usd,
+        SUM(CASE WHEN currency='USD' AND $transfer_in_scope THEN transfer_amount ELSE 0 END) AS closing_transfer_in_usd,
+        SUM(CASE WHEN currency='IRT' AND $transfer_out_scope THEN transfer_amount ELSE 0 END) AS closing_transfer_out_irt,
+        SUM(CASE WHEN currency='IRT' AND $transfer_in_scope THEN transfer_amount ELSE 0 END) AS closing_transfer_in_irt
       FROM `transfers`
       WHERE transfers.deleted='0' 
       AND transfers.is_approved='1'
