@@ -13,10 +13,11 @@
   set_filtering_data('income_amount');
 
   set_pagination();
+  $income_access_condition = set_province_branch_portion('province', 'branch');
 
-  $income_sq = $db->query("SELECT * FROM `incomes` WHERE deleted='0' $holu_filtering_data AND province IN ($accessed_provinces) AND sub_categories_id IN ($accessed_sub_categories_income) ORDER BY id DESC limit $holu_to OFFSET $holu_from");
+  $income_sq = $db->query("SELECT * FROM `incomes` WHERE deleted='0' $holu_filtering_data AND $income_access_condition AND sub_categories_id IN ($accessed_sub_categories_income) ORDER BY id DESC limit $holu_to OFFSET $holu_from");
 
-  $Pagenation = $db->query("SELECT count(id) as record FROM `incomes` WHERE deleted='0' $holu_filtering_data AND province IN ($accessed_provinces) AND sub_categories_id IN ($accessed_sub_categories_income)");
+  $Pagenation = $db->query("SELECT count(id) as record FROM `incomes` WHERE deleted='0' $holu_filtering_data AND $income_access_condition AND sub_categories_id IN ($accessed_sub_categories_income)");
   extract($Pagenation->fetch());
 
   

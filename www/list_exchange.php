@@ -7,12 +7,13 @@
   set_filtering_data('exchange_date');
 
   set_pagination();
+  $exchange_access_condition = set_province_branch_portion('province', 'branch');
 
   
 
-  $exchange_sq = $db->query("SELECT * FROM `exchanges` WHERE deleted='0' $holu_filtering_data AND province IN ($accessed_provinces) ORDER BY id DESC limit $holu_to OFFSET $holu_from");
+  $exchange_sq = $db->query("SELECT * FROM `exchanges` WHERE deleted='0' $holu_filtering_data AND $exchange_access_condition ORDER BY id DESC limit $holu_to OFFSET $holu_from");
 
-  $Pagenation = $db->query("SELECT count(id) as record FROM `exchanges` WHERE deleted='0' $holu_filtering_data AND province IN ($accessed_provinces)");
+  $Pagenation = $db->query("SELECT count(id) as record FROM `exchanges` WHERE deleted='0' $holu_filtering_data AND $exchange_access_condition");
   extract($Pagenation->fetch());
 
   

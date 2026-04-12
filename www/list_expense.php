@@ -12,10 +12,11 @@
   set_filtering_data('expense_amount');
 
   set_pagination();
+  $expense_access_condition = set_province_branch_portion('province', 'branch');
 
-  $expense_sq = $db->query("SELECT * FROM `expenses` WHERE deleted='0' $holu_filtering_data AND province IN ($accessed_provinces) AND sub_categories_id IN ($accessed_sub_categories_expense) ORDER BY id DESC limit $holu_to OFFSET $holu_from");
+  $expense_sq = $db->query("SELECT * FROM `expenses` WHERE deleted='0' $holu_filtering_data AND $expense_access_condition AND sub_categories_id IN ($accessed_sub_categories_expense) ORDER BY id DESC limit $holu_to OFFSET $holu_from");
 
-  $Pagenation = $db->query("SELECT count(id) as record FROM `expenses` WHERE deleted='0' $holu_filtering_data AND province IN ($accessed_provinces) AND sub_categories_id IN ($accessed_sub_categories_expense)");
+  $Pagenation = $db->query("SELECT count(id) as record FROM `expenses` WHERE deleted='0' $holu_filtering_data AND $expense_access_condition AND sub_categories_id IN ($accessed_sub_categories_expense)");
   extract($Pagenation->fetch());
 
   
