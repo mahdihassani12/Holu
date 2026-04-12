@@ -381,8 +381,15 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           padding: 0 10px;
           border-left: 1px solid #2c5f59;
           float: left;
-          width: 50%;
           line-height: 1.6;
+        }
+
+        #client:first-child {
+          width: 65%;
+        }
+
+        #client:last-child {
+          width: 35%;
         }
 
         #client .to {
@@ -557,12 +564,12 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           font-weight: bolder;
           font-size: 18px;
           display: block;
-          text-align: right;
+          text-align: center;
           margin-top: 14px;
         }
 
         .footer-title{
-          font-size: 30px;
+          font-size: 25px;
           line-height: 1.1;
           margin-bottom: 8px;
           font-weight: bold;
@@ -703,8 +710,6 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
               </div>
             </div>
           </div>
-
-          <hr style="border: 2px solid #2c5f59;"/>
 
         </main>
       </body>
