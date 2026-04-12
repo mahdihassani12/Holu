@@ -1769,13 +1769,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	function print_access_provinces($holu_provinces){
 		global $db;
 		$access_points = "[";
-		$holu_accessibilities = strtolower($_SESSION['holu_accessibilities'] ?? '');
 		foreach ($holu_provinces as $holu_province) {
-			$province_access_point = 'province_accessibility/'.$holu_province.'/';
-			if(check_access($province_access_point)!=1){
-				continue;
-			}
-
 			$branch_sq = $db->prepare(
 				"SELECT branches.name
 				FROM `branches`
@@ -1787,21 +1781,11 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				'province'=>$holu_province
 			]);
 
-			$has_branch_specific_access = false;
-			$province_slug = preg_quote(strtolower($holu_province), '/');
-			if(preg_match('/province_accessibility\/'.$province_slug.'\/[^\/]+\/+/', $holu_accessibilities)){
-				$has_branch_specific_access = true;
-			}
-
 			if($branch_sq->rowCount()>0){
 				$branch_access_points = "[";
 				while($branch_row = $branch_sq->fetch()){
 					$branch_name = $branch_row['name'];
-					$branch_access_point = 'province_accessibility/'.$holu_province.'/'.$branch_name.'/';
-					$can_access_branch = (!$has_branch_specific_access || check_access($branch_access_point)==1);
-					if($can_access_branch){
-						$branch_access_points .= '{ "id": "'.$branch_access_point.'", "text": "'.$branch_name.'" },';
-					}
+					$branch_access_points .= '{ "id": "province_accessibility/'.$holu_province.'/'.$branch_name.'/", "text": "'.$branch_name.'" },';
 				}
 				$branch_access_points .= "]";
 				$access_points .= '{ "id": "province_accessibility/'.$holu_province.'/", "text": "'.$holu_province.'", "children": '.$branch_access_points.' },';

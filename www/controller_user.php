@@ -678,24 +678,9 @@ if (isset($_POST['flag_request'])) {
 
 				$data_id = holu_escape(holu_decode($_POST['data_id']));
 				$flag = 1;
-				$raw_province_access_points = isset($_POST['province_access_points']) ? $_POST['province_access_points'] : [];
-				$province_access_points = [];
-				if (is_array($raw_province_access_points)) {
-					foreach ($raw_province_access_points as $province_access_point) {
-						$province_access_point = holu_escape($province_access_point);
-						if (strpos($province_access_point, 'province_accessibility/') !== 0) {
-							continue;
-						}
-
-						if (check_access($province_access_point) == 1) {
-							$province_access_points[] = $province_access_point;
-						}
-					}
-				}
-
 				$accessibility_groups = [
 					'system_accessibility/' => isset($_POST['system_access_points']) ? $_POST['system_access_points'] : [],
-					'province_accessibility/' => $province_access_points,
+					'province_accessibility/' => isset($_POST['province_access_points']) ? $_POST['province_access_points'] : [],
 					'sub_category_accessibility/' => isset($_POST['sub_category_access_points']) ? $_POST['sub_category_access_points'] : []
 				];
 
