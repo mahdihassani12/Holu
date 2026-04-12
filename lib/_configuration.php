@@ -2467,6 +2467,65 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		return $result;
 	}
 
+	function set_province_branch_portion($province_column, $branch_column){
+		global $db, $holu_provinces;
+
+		$holu_accessibilities = strtolower($_SESSION['holu_accessibilities'] ?? '');
+		$result_conditions = array();
+
+		foreach($holu_provinces as $holu_province){
+			$province_access_point = 'province_accessibility/'.$holu_province.'/';
+			if(check_access($province_access_point)!=1){
+				continue;
+			}
+
+			$escaped_province = str_replace("'", "\\'", $holu_province);
+			$province_slug = preg_quote(strtolower($holu_province), '/');
+			$has_branch_specific_access = preg_match('/province_accessibility\/'.$province_slug.'\/[^\/]+\/+/', $holu_accessibilities)===1;
+
+			/*
+				Backward compatibility:
+				If no branch-level access entries are configured for a province, keep
+				allowing all branches inside that province (legacy behavior).
+			*/
+			if(!$has_branch_specific_access){
+				$result_conditions[] = "($province_column='".$escaped_province."')";
+				continue;
+			}
+
+			$branch_sq = $db->prepare(
+				"SELECT branches.name
+				FROM `branches`
+				LEFT JOIN `provinces` ON provinces.id=branches.province_id
+				WHERE provinces.name=:province
+				ORDER BY branches.name ASC"
+			);
+
+			$branch_sqx = $branch_sq->execute([
+				'province'=>$holu_province
+			]);
+
+			$allowed_branches = array();
+			while($branch_row = $branch_sq->fetch()){
+				$branch_name = $branch_row['name'];
+				$branch_access_point = 'province_accessibility/'.$holu_province.'/'.$branch_name.'/';
+				if(check_access($branch_access_point)==1){
+					$allowed_branches[] = "'".str_replace("'", "\\'", $branch_name)."'";
+				}
+			}
+
+			if(count($allowed_branches)>0){
+				$result_conditions[] = "($province_column='".$escaped_province."' AND $branch_column IN (".implode(",", $allowed_branches)."))";
+			}
+		}
+
+		if(count($result_conditions)==0){
+			return "0";
+		}
+
+		return "(".implode(" OR ", $result_conditions).")";
+	}
+
 	function set_sub_category_portion($category_type){
 		global $db;
 		$result = "";

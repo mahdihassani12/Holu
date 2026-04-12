@@ -7,12 +7,14 @@
   set_filtering_data('transfer_date');
 
   set_pagination();
+  $transfer_from_access_condition = set_province_branch_portion('from_province', 'from_branch');
+  $transfer_to_access_condition = set_province_branch_portion('to_province', 'to_branch');
 
   
 
-  $transfer_sq = $db->query("SELECT * FROM `transfers` WHERE deleted='0' $holu_filtering_data AND ((from_province IN ($accessed_provinces) OR to_province IN ($accessed_provinces)) OR users_id='$holu_users_id') ORDER BY id DESC limit $holu_to OFFSET $holu_from");
+  $transfer_sq = $db->query("SELECT * FROM `transfers` WHERE deleted='0' $holu_filtering_data AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR users_id='$holu_users_id') ORDER BY id DESC limit $holu_to OFFSET $holu_from");
 
-  $Pagenation = $db->query("SELECT count(id) as record FROM `transfers` WHERE deleted='0' $holu_filtering_data AND ((from_province IN ($accessed_provinces) OR to_province IN ($accessed_provinces)) OR users_id='$holu_users_id')");
+  $Pagenation = $db->query("SELECT count(id) as record FROM `transfers` WHERE deleted='0' $holu_filtering_data AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR users_id='$holu_users_id')");
   extract($Pagenation->fetch());
 
   
