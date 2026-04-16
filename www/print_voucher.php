@@ -428,7 +428,6 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
         .header_details #company h1{
           margin-bottom: 5px;
-          font-size: 2em;
           font-weight: 800;
           font-size: 2em;
         }
@@ -577,7 +576,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
                     <path d="M22 6l-10 7L2 6"/>
                   </svg>
                 </span>
-                <?php echo $support_email; ?>
+                <?php echo $finance_email; ?>
               </div>
 
               <div class="footer-item">

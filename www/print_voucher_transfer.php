@@ -69,7 +69,7 @@ if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
     $invoices_id = $db->lastInsertId();
     $main_office_address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University.';
     $branch_office_address = 'Mahtab Qala Bus Stop, opposite the new road, inside Rasul Akram Mosque Alley.';
-    $finance_email = 'billing@benyaminhope.af';
+    $finance_email = 'finance@benyaminhope.af';
     $sales_email = 'sales@benyaminhope.af';
     $support_email = 'support@benyaminhope.af';
     $website = 'www.benyaminhope.af';
@@ -166,7 +166,7 @@ if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
         header {
           padding: 10px 0;
           margin-bottom: 10px;
-          border-bottom: 4px solid #2c5f59;
+          border-bottom: 4px solid #194a63;
         }
 
         #logo {
@@ -180,7 +180,7 @@ if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
 
         #company {
           float: left;
-          border-left: 6px solid #2c5f59;
+          border-left: 6px solid #194a63;
           padding-left: 10px;
         }
 
@@ -378,26 +378,26 @@ if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
           font-family: 'Avenir';
         }
         .reciept_head{
-            color: #2c5f59;
+            color: #194a63;
             font-size: 18px;
             padding: 5px 10px;
             border-radius: 5px;
             font-weight: bolder;
         }
         .thead{
-          background: #2c5f59 !important;
+          background: #194a63 !important;
           border-right: 1px solid #fff;
-          border-top: 1px solid #2c5f59;
+          border-top: 1px solid #194a63;
           color: #fff;
         }
         .thead:first-child{
-          border-left: 1px solid #2c5f59;
+          border-left: 1px solid #194a63;
         }
         .thead:last-child{
-          border-right: 1px solid #2c5f59;
+          border-right: 1px solid #194a63;
         }
         .tbody{
-          border: 1px solid #2c5f59 !important;
+          border: 1px solid #194a63 !important;
           border-top: unset !important;
           text-align: center;
         }
@@ -415,6 +415,8 @@ if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
 
         .header_details #company h1{
           margin-bottom: 5px;
+          font-weight: 800;
+          font-size: 2em;
         }
 
         .header_details #company h3{
@@ -461,30 +463,30 @@ if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
         @media print{
           table {
             -webkit-print-color-adjust: exact;
-              border: 1px solid #2c5f59;
+              border: 1px solid #194a63;
            }
            .thead{
               -webkit-print-color-adjust: exact;
-              background: #2c5f59 !important;
+              background: #194a63 !important;
               border-right: 1px solid #fff;
-              border-top: 1px solid #2c5f59;
+              border-top: 1px solid #194a63;
             }
             .thead:first-child{
               -webkit-print-color-adjust: exact;
-              border-left: 1px solid #2c5f59;
+              border-left: 1px solid #194a63;
             }
             .thead:last-child{
               -webkit-print-color-adjust: exact;
-              border-right: 1px solid #2c5f59;
+              border-right: 1px solid #194a63;
             }
             .tbody{
               -webkit-print-color-adjust: exact;
-              border: 1px solid #2c5f59 !important;
+              border: 1px solid #194a63 !important;
               border-top: unset !important;
             }
             .reciept_head{
               -webkit-print-color-adjust: exact;
-              color: #2c5f59;
+              color: #194a63;
             }
             * {
               -webkit-print-color-adjust: exact;
@@ -505,7 +507,7 @@ if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
 
             <div id="company">
                 <h1>
-                  <strong>Benyamin Hope Information</strong>
+                  Benyamin Hope
                 </h1>
                 <h3>
                   <strong><?php echo $doc_header; ?></strong>
@@ -561,7 +563,7 @@ if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
                     <path d="M22 6l-10 7L2 6"/>
                   </svg>
                 </span>
-                <?php echo $support_email; ?>
+                <?php echo $finance_email; ?>
               </div>
 
               <div class="footer-item">
@@ -603,9 +605,9 @@ if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
       <script src="assets/libs/peity/jquery.peity.min.js"></script>
       <script type="text/javascript">
       
-        setTimeout(function () { 
-          window.print(); 
-        }, 300);
+        // setTimeout(function () { 
+        //   window.print(); 
+        // }, 300);
 
         window.onafterprint = function(){
           invoices_id = $("#invoices_id").val();
