@@ -71,7 +71,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
     $branch_office_address = 'Mahtab Qala Bus Stop, opposite the new road, inside Rasul Akram Mosque Alley.';
     $finance_email = 'billing@benyaminhope.af';
     $sales_email = 'sales@benyaminhope.af';
-    $support_email = 'support@benyaminhope.af';
+    $support_email = 'finance@benyaminhope.af';
     $website = 'www.benyaminhope.af';
     $phone = '0787506000';
     $bank_name = 'Azizi Bank';
@@ -179,7 +179,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         header {
           padding: 10px 0;
           margin-bottom: 10px;
-          border-bottom: 4px solid #2c5f59;
+          border-bottom: 4px solid #194a63;
         }
 
         #logo {
@@ -193,7 +193,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
         #company {
           float: left;
-          border-left: 6px solid #2c5f59;
+          border-left: 18px solid #194a63;
           padding-left: 10px;
         }
 
@@ -391,26 +391,26 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           font-family: 'Avenir';
         }
         .reciept_head{
-            color: #2c5f59;
+            color: #194a63;
             font-size: 18px;
             padding: 5px 10px;
             border-radius: 5px;
             font-weight: bolder;
         }
         .thead{
-          background: #2c5f59 !important;
+          background: #194a63 !important;
           border-right: 1px solid #fff;
-          border-top: 1px solid #2c5f59;
+          border-top: 1px solid #194a63;
           color: #fff;
         }
         .thead:first-child{
-          border-left: 1px solid #2c5f59;
+          border-left: 1px solid #194a63;
         }
         .thead:last-child{
-          border-right: 1px solid #2c5f59;
+          border-right: 1px solid #194a63;
         }
         .tbody{
-          border: 1px solid #2c5f59 !important;
+          border: 1px solid #194a63 !important;
           border-top: unset !important;
           text-align: center;
         }
@@ -428,6 +428,9 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
         .header_details #company h1{
           margin-bottom: 5px;
+          font-size: 2em;
+          font-weight: 800;
+          font-size: 2em;
         }
 
         .header_details #company h3{
@@ -474,30 +477,30 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         @media print{
           table {
             -webkit-print-color-adjust: exact;
-              border: 1px solid #2c5f59;
+              border: 1px solid #194a63;
            }
            .thead{
               -webkit-print-color-adjust: exact;
-              background: #2c5f59 !important;
+              background: #194a63 !important;
               border-right: 1px solid #fff;
-              border-top: 1px solid #2c5f59;
+              border-top: 1px solid #194a63;
             }
             .thead:first-child{
               -webkit-print-color-adjust: exact;
-              border-left: 1px solid #2c5f59;
+              border-left: 1px solid #194a63;
             }
             .thead:last-child{
               -webkit-print-color-adjust: exact;
-              border-right: 1px solid #2c5f59;
+              border-right: 1px solid #194a63;
             }
             .tbody{
               -webkit-print-color-adjust: exact;
-              border: 1px solid #2c5f59 !important;
+              border: 1px solid #194a63 !important;
               border-top: unset !important;
             }
             .reciept_head{
               -webkit-print-color-adjust: exact;
-              color: #2c5f59;
+              color: #194a63;
             }
             * {
               -webkit-print-color-adjust: exact;
@@ -518,7 +521,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
             <div id="company">
                 <h1>
-                  <strong>Benyamin Hope Information</strong>
+                  Benyamin Hope
                 </h1>
                 <h3>
                   <strong><?php echo $doc_header; ?></strong>
