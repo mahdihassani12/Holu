@@ -69,9 +69,9 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
     $invoices_id = $db->lastInsertId();
     $main_office_address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University.';
     $branch_office_address = 'Mahtab Qala Bus Stop, opposite the new road, inside Rasul Akram Mosque Alley.';
-    $finance_email = 'billing@benyaminhope.af';
+    $finance_email = 'finance@benyaminhope.af';
     $sales_email = 'sales@benyaminhope.af';
-    $support_email = 'finance@benyaminhope.af';
+    $support_email = 'support@benyaminhope.af';
     $website = 'www.benyaminhope.af';
     $phone = '0787506000';
     $bank_name = 'Azizi Bank';
