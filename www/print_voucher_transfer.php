@@ -605,9 +605,9 @@ if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
       <script src="assets/libs/peity/jquery.peity.min.js"></script>
       <script type="text/javascript">
       
-        // setTimeout(function () { 
-        //   window.print(); 
-        // }, 300);
+        setTimeout(function () { 
+          window.print(); 
+        }, 300);
 
         window.onafterprint = function(){
           invoices_id = $("#invoices_id").val();
