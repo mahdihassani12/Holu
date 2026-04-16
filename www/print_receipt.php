@@ -347,7 +347,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         header {
           padding: 10px 0;
           margin-bottom: 10px;
-          border-bottom: 4px solid #2c5f59;
+          border-bottom: 4px solid #194a63;
         }
 
         #logo {
@@ -379,17 +379,17 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
 
         #client {
           padding: 0 10px;
-          border-left: 1px solid #2c5f59;
+          border-left: 1px solid #194a63;
           float: left;
           line-height: 1.6;
         }
 
         #client:first-child {
-          width: 65%;
+          width: 60%;
         }
 
         #client:last-child {
-          width: 35%;
+          width: 40%;
         }
 
         #client .to {
@@ -400,6 +400,11 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           font-size: 1.4em;
           font-weight: normal;
           margin: 0;
+        }
+
+        h2.name.company-name {
+          font-weight: 800;
+          font-size: 2em;
         }
 
         #invoice {
@@ -426,7 +431,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           border-collapse: collapse;
           border-spacing: 0;
           margin-bottom: 0px;
-          border: 1px solid #2c5f59;
+          border: 1px solid #194a63;
         }
 
         table th,
@@ -560,7 +565,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           font-family: 'Avenir';
         }
         .sign{
-          color: #2c5f59;
+          color: #194a63;
           font-weight: bolder;
           font-size: 18px;
           display: block;
@@ -573,13 +578,13 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           line-height: 1.1;
           margin-bottom: 8px;
           font-weight: bold;
-          color: #2c5f59;
+          color: #194a63;
         }
 
         .footer-item{
-          margin-bottom: 4px;
           position: relative;
           padding-left: 5px;
+          font-size: 13px;
         }
 
         .footer-item::before {
@@ -589,7 +594,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           top: 6px;
           width: 8px;
           height: 8px;
-          background: #2c5f59;
+          background: #194a63;
           transform: rotate(45deg);
           border-radius: 1px;
           print-color-adjust: exact;
@@ -597,7 +602,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         }
 
         .thead{
-          background: #2c5f59 !important;
+          background: #194a63 !important;
           border-right: 1px solid #fff;
           color: #fff;
           -webkit-print-color-adjust: exact;
@@ -605,10 +610,10 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         }
 
         .thead:last-child{
-          border-right: 1px solid #2c5f59;
+          border-right: 1px solid #194a63;
         }
         .tbody{
-          border: 1px solid #2c5f59 !important;
+          border: 1px solid #194a63 !important;
           border-top: unset !important;
           text-align: center;
         }
@@ -626,32 +631,32 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         }
 
         .header_details > div:first-child {
-          border-left: 6px solid #2c5f59;
+          border-left: 18px solid #194a63;
           padding-left: 10px
         }
         
         @media print{
           table {
-              border: 1px solid #2c5f59;
+              border: 1px solid #194a63;
               -webkit-print-color-adjust: exact;
            }
            .thead{
               -webkit-print-color-adjust: exact;
-              background: #2c5f59 !important;
+              background: #194a63 !important;
               border-right: 1px solid #fff;
             }
             .thead:last-child{
               -webkit-print-color-adjust: exact;
-                border-right: 1px solid #2c5f59;
+                border-right: 1px solid #194a63;
               }
             .tbody{
               -webkit-print-color-adjust: exact;
-              border: 1px solid #2c5f59 !important;
+              border: 1px solid #194a63 !important;
               border-top: unset !important;
             }
             .sign{
               -webkit-print-color-adjust: exact;
-              color: #2c5f59;
+              color: #194a63;
             }
             * {
               -webkit-print-color-adjust: exact;
@@ -666,7 +671,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         <header class="clearfix">
             <section class="header_details">
               <div>
-                <h2 class="name">Benyamin Hope</h2>
+                <h2 class="name company-name">Benyamin Hope</h2>
                 <h2 class="name"><?php echo $doc_header; ?></h2>
                 <div class="date">Number: <?php echo $bill_number; ?></div>
                 <div class="date">Date: <?php echo $bill_date; ?></div>
@@ -690,13 +695,13 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
 
             <div id="client">
               <div class="footer-title"><strong>Contact Details</strong></div>
+              <div class="footer-item"><strong>Phone:</strong> <?php echo $finance_phone; ?></div>
+              <div class="footer-item"><strong>Sales Email:</strong> <?php echo $sales_email; ?></div>
+              <div class="footer-item"><strong>Finance Email:</strong> <?php echo $finance_email; ?></div>
+              <div class="footer-item"><strong>Support Email:</strong> <?php echo $support_email; ?></div>
+              <div class="footer-item"><strong>Website:</strong> <?php echo $website; ?></div>
               <div class="footer-item"><strong>Main Office:</strong> <?php echo $main_office_address; ?></div>
               <div class="footer-item"><strong>Branch Office Dasht-e-Barchi:</strong> <?php echo $branch_office_address; ?></div>
-              <div class="footer-item"><strong>Finance Email:</strong> <?php echo $finance_email; ?></div>
-              <div class="footer-item"><strong>Sales Email:</strong> <?php echo $sales_email; ?></div>
-              <div class="footer-item"><strong>Support Email:</strong> <?php echo $support_email; ?></div>
-              <div class="footer-item"><strong>Phone:</strong> <?php echo $finance_phone; ?></div>
-              <div class="footer-item"><strong>Website:</strong> <?php echo $website; ?></div>
             </div>
 
             <div id="client">
