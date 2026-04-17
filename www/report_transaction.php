@@ -537,7 +537,9 @@
     incomes.additional_informations AS transaction_additional_informations,
     '' AS transaction_approve_description,
     '' AS transaction_from_province,
-    '' AS transaction_to_province
+    '' AS transaction_to_province,
+    '' AS transaction_from_branch,
+    '' AS transaction_to_branch
     FROM `incomes`
     WHERE incomes.deleted='0' 
     AND incomes.province IN ($accessed_provinces) 
@@ -564,7 +566,9 @@
     expenses.additional_informations AS transaction_additional_informations,
     '' AS transaction_approve_description,
     '' AS transaction_from_province,
-    '' AS transaction_to_province
+    '' AS transaction_to_province,
+    '' AS transaction_from_branch,
+    '' AS transaction_to_branch
     FROM `expenses`
     WHERE expenses.deleted='0' 
     AND expenses.province IN ($accessed_provinces) 
@@ -591,7 +595,9 @@
     '' AS transaction_additional_informations,
     '' AS transaction_approve_description,
     '' AS transaction_from_province,
-    '' AS transaction_to_province
+    '' AS transaction_to_province,
+    '' AS transaction_from_branch,
+    '' AS transaction_to_branch
     FROM `exchanges`
     WHERE exchanges.deleted='0' 
     AND exchanges.province IN ($accessed_provinces) 
@@ -618,7 +624,9 @@
     '' AS transaction_additional_informations,
     '' AS transaction_approve_description,
     '' AS transaction_from_province,
-    '' AS transaction_to_province
+    '' AS transaction_to_province,
+    '' AS transaction_from_branch,
+    '' AS transaction_to_branch
     FROM `purchases`
     WHERE purchases.deleted='0' 
     AND purchases.is_approved='1'
@@ -648,7 +656,9 @@
     '' AS transaction_additional_informations,
     transfers.approve_description AS transaction_approve_description,
     transfers.from_province AS transaction_from_province,
-    transfers.to_province AS transaction_to_province
+    transfers.to_province AS transaction_to_province,
+    transfers.from_branch AS transaction_from_branch,
+    transfers.to_branch AS transaction_to_branch
     FROM `transfers`
     WHERE transfers.deleted='0' 
     AND transfers.is_approved='1'
@@ -1242,10 +1252,29 @@
                           }
 
                           $transaction_description = $transaction_row['transaction_description'];
-                          if($transaction_type=='Transfer' && $province!="0"){
+                          if($transaction_type=='Transfer' && $province!="0" && !empty($branch)){
+                            if(
+                              $province==$transaction_row['transaction_to_province'] &&
+                              $branch==$transaction_row['transaction_to_branch'] &&
+                              $transaction_row['transaction_approve_description']!=""
+                            ){
+                              $transaction_description = $transaction_row['transaction_approve_description'];
+                            }elseif(
+                              $province==$transaction_row['transaction_from_province'] &&
+                              $branch==$transaction_row['transaction_from_branch']
+                            ){
+                              $transaction_description = $transaction_row['transaction_description'];
+                            }
+                          }elseif($transaction_type=='Transfer' && $province!="0"){
                             if($province==$transaction_row['transaction_to_province'] && $transaction_row['transaction_approve_description']!=""){
                               $transaction_description = $transaction_row['transaction_approve_description'];
                             }elseif($province==$transaction_row['transaction_from_province']){
+                              $transaction_description = $transaction_row['transaction_description'];
+                            }
+                          }elseif($transaction_type=='Transfer' && !empty($branch)){
+                            if($branch==$transaction_row['transaction_to_branch'] && $transaction_row['transaction_approve_description']!=""){
+                              $transaction_description = $transaction_row['transaction_approve_description'];
+                            }elseif($branch==$transaction_row['transaction_from_branch']){
                               $transaction_description = $transaction_row['transaction_description'];
                             }
                           }
