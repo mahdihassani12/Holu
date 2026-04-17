@@ -390,7 +390,11 @@
         incomes.sib_markup AS transaction_sib_markup,
         incomes.ad_markup AS transaction_ad_markup,
         incomes.additional_informations AS transaction_additional_informations,
-        '' AS transaction_approve_description
+        '' AS transaction_approve_description,
+        '' AS transaction_from_province,
+        '' AS transaction_to_province,
+        '' AS transaction_from_branch,
+        '' AS transaction_to_branch
         FROM `incomes`
         WHERE incomes.deleted='0' 
         AND incomes.province IN ($accessed_provinces) 
@@ -415,7 +419,11 @@
         expenses.sib_markup AS transaction_sib_markup,
         expenses.ad_markup AS transaction_ad_markup,
         expenses.additional_informations AS transaction_additional_informations,
-        '' AS transaction_approve_description
+        '' AS transaction_approve_description,
+        '' AS transaction_from_province,
+        '' AS transaction_to_province,
+        '' AS transaction_from_branch,
+        '' AS transaction_to_branch
         FROM `expenses`
         WHERE expenses.deleted='0' 
         AND expenses.province IN ($accessed_provinces) 
@@ -440,7 +448,11 @@
         exchanges.sib_markup AS transaction_sib_markup,
         exchanges.ad_markup AS transaction_ad_markup,
         '' AS transaction_additional_informations,
-        '' AS transaction_approve_description
+        '' AS transaction_approve_description,
+        '' AS transaction_from_province,
+        '' AS transaction_to_province,
+        '' AS transaction_from_branch,
+        '' AS transaction_to_branch
         FROM `exchanges`
         WHERE exchanges.deleted='0' 
         AND exchanges.province IN ($accessed_provinces) 
@@ -465,7 +477,11 @@
         purchases.sib_markup AS transaction_sib_markup,
         purchases.ad_markup AS transaction_ad_markup,
         '' AS transaction_additional_informations,
-        '' AS transaction_approve_description
+        '' AS transaction_approve_description,
+        '' AS transaction_from_province,
+        '' AS transaction_to_province,
+        '' AS transaction_from_branch,
+        '' AS transaction_to_branch
         FROM `purchases`
         WHERE purchases.deleted='0' 
         AND purchases.is_approved='1'
@@ -493,7 +509,11 @@
         transfers.sib_markup AS transaction_sib_markup,
         transfers.ad_markup AS transaction_ad_markup,
         '' AS transaction_additional_informations,
-        transfers.approve_description AS transaction_approve_description
+        transfers.approve_description AS transaction_approve_description,
+        transfers.from_province AS transaction_from_province,
+        transfers.to_province AS transaction_to_province,
+        transfers.from_branch AS transaction_from_branch,
+        transfers.to_branch AS transaction_to_branch
         FROM `transfers`
         WHERE transfers.deleted='0' 
         AND transfers.is_approved='1'
@@ -552,6 +572,33 @@
 
             $transaction_row['transaction__sub_categories'] = $transaction_row['transaction_sub_categories_id']!="" ? get_col('sub_categories', 'sub_category_name', 'id', $transaction_row['transaction_sub_categories_id']) : '';
             $transaction_sib_number = $transaction_row['transaction_sib_number'];
+            $transaction_description = $transaction_row['transaction_description'];
+            if($transaction_row['transaction_type']=='Transfer' && $province!="0" && !empty($branch)){
+              if(
+                $province==$transaction_row['transaction_to_province'] &&
+                $branch==$transaction_row['transaction_to_branch'] &&
+                $transaction_row['transaction_approve_description']!=""
+              ){
+                $transaction_description = $transaction_row['transaction_approve_description'];
+              }elseif(
+                $province==$transaction_row['transaction_from_province'] &&
+                $branch==$transaction_row['transaction_from_branch']
+              ){
+                $transaction_description = $transaction_row['transaction_description'];
+              }
+            }elseif($transaction_row['transaction_type']=='Transfer' && $province!="0"){
+              if($province==$transaction_row['transaction_to_province'] && $transaction_row['transaction_approve_description']!=""){
+                $transaction_description = $transaction_row['transaction_approve_description'];
+              }elseif($province==$transaction_row['transaction_from_province']){
+                $transaction_description = $transaction_row['transaction_description'];
+              }
+            }elseif($transaction_row['transaction_type']=='Transfer' && !empty($branch)){
+              if($branch==$transaction_row['transaction_to_branch'] && $transaction_row['transaction_approve_description']!=""){
+                $transaction_description = $transaction_row['transaction_approve_description'];
+              }elseif($branch==$transaction_row['transaction_from_branch']){
+                $transaction_description = $transaction_row['transaction_description'];
+              }
+            }
             if(
               $transaction_row['transaction_type'] === 'Income' &&
               !has_customer_reference_for_sib($transaction_row['transaction_additional_informations'] ?? '')
@@ -561,7 +608,7 @@
 
             $writer->addRow([
               $count++,
-              $transaction_row['transaction_description'],
+              $transaction_description,
               $transaction_row['transaction_amount'],
               $transaction_row['transaction_currency'],
               $transaction_row['transaction_type'],
