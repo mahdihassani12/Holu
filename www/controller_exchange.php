@@ -304,6 +304,36 @@
 	      break;
 
 	      case "view_full_info":
+	      	$old_data_rows = [];
+	      	$new_data_rows = [];
+
+	      	$transaction_edition_sq = $db->prepare("SELECT old_data, new_data FROM `transaction_editions` WHERE reference_type='Exchange' AND reference_id=:data_id ORDER BY id DESC LIMIT 1");
+	      	$transaction_edition_sq->execute([
+	      		'data_id'=>$data_id
+	      	]);
+
+	      	if($transaction_edition_sq->rowCount()>0){
+	      		$transaction_edition_row = $transaction_edition_sq->fetch();
+	      		foreach(explode('###', $transaction_edition_row['old_data']) as $old_data_item){
+	      			$old_data_item_array = explode('=>', $old_data_item);
+	      			if(sizeof($old_data_item_array)>1){
+	      				$old_data_rows[] = [
+	      					'key'=>str_replace('`', '', $old_data_item_array[0]),
+	      					'value'=>str_replace('`', '', $old_data_item_array[1])
+	      				];
+	      			}
+	      		}
+
+	      		foreach(explode('###', $transaction_edition_row['new_data']) as $new_data_item){
+	      			$new_data_item_array = explode('=>', $new_data_item);
+	      			if(sizeof($new_data_item_array)>1){
+	      				$new_data_rows[] = [
+	      					'key'=>str_replace('`', '', $new_data_item_array[0]),
+	      					'value'=>str_replace('`', '', $new_data_item_array[1])
+	      				];
+	      			}
+	      		}
+	      	}
 
 	        ?>
 
@@ -318,9 +348,15 @@
 
 	        	<ul class="nav nav-pills navtab-bg nav-justified">
               <li class="nav-item">
-                <a href="#basic_info" data-toggle="tab" aria-expanded="true" class="nav-link active">
+                <a href="#old_data" data-toggle="tab" aria-expanded="true" class="nav-link active">
                   <span class="d-inline-block d-sm-none"><i class="fas fa-home"></i></span>
-                  <span class="d-none d-sm-inline-block">Basic Info</span>   
+                  <span class="d-none d-sm-inline-block">Old Data</span>   
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#new_data" data-toggle="tab" aria-expanded="false" class="nav-link">
+                  <span class="d-inline-block d-sm-none"><i class="fas fa-home"></i></span>
+                  <span class="d-none d-sm-inline-block">New Data</span>   
                 </a>
               </li>
               <li class="nav-item">
@@ -333,7 +369,7 @@
 
             <div class="tab-content">
 
-              <div class="tab-pane fade show active" id="basic_info">
+              <div class="tab-pane fade show active" id="old_data">
 			        	<div class="item form-group"  >
 				          <label class="control-label col-md-2 col-sm-2 col-xs-8"></label>
 				          <div class="col-md-12 col-sm-12 col-xs-12">
@@ -342,58 +378,59 @@
 		                  <table class="table table-bordered table-sm mb-0">
 		                    <thead>
 		                      <tr>
-		                        <th colspan="2" class="text-center">Basic Info</th>
+		                        <th colspan="2" class="text-center">Old Data</th>
 		                      </tr>
 		                    </thead>
 		                    <tbody>
 		                    	<?php
-						          		$exchange_sq = $db->prepare("SELECT * FROM `exchanges` WHERE id=:data_id LIMIT 1");
-										    	$exchange_sqx = $exchange_sq->execute([
-										    		'data_id'=>$data_id
-										    	]);
-
-										    	if($exchange_sq->rowCount()>0){
-										    		$exchange_row = $exchange_sq->fetch();
+													if(sizeof($old_data_rows)>0){
+														foreach($old_data_rows as $old_data_row){
 						          			?>
 	                      		<tr>
-			                        <th>Province</th>
-			                        <td><?php echo $exchange_row['province']; ?></td>
-			                      </tr>
-			                      <tr>
-			                        <th>Branch</th>
-			                        <td><?php echo $exchange_row['branch']; ?></td>
-			                      </tr>
-			                      <tr>
-			                        <th>Date</th>
-			                        <td><?php echo $exchange_row['exchange_date']; ?></td>
-			                      </tr>
-			                      <tr>
-			                        <th>From Amount</th>
-			                        <td><?php echo $exchange_row['from_amount']; ?></td>
-			                      </tr>
-			                      <tr>
-			                        <th>From Currency</th>
-			                        <td><?php echo $exchange_row['from_currency']; ?></td>
-			                      </tr>
-			                      <tr>
-			                        <th>To Amount</th>
-			                        <td><?php echo $exchange_row['to_amount']; ?></td>
-			                      </tr>
-			                      <tr>
-			                        <th>To Currency</th>
-			                        <td><?php echo $exchange_row['to_currency']; ?></td>
-			                      </tr>
-			                      <tr>
-			                        <th>Description</th>
-			                        <td><?php echo $exchange_row['description']; ?></td>
+			                        <th><?php echo $old_data_row['key']; ?></th>
+			                        <td><?php echo $old_data_row['value']; ?></td>
 			                      </tr>
 		                      	<?php
+														}
+													}else{
+													?>
+													<tr>
+			                        <th colspan="2" class="text-center">No old data found</th>
+			                      </tr>
+													<?php
 													}
 							            ?>
 		                    </tbody>
 		                  </table>
 		                </div> <!-- end table-responsive-->
 				              	
+				          </div>
+				        </div>
+				      </div>
+				      <div class="tab-pane fade show" id="new_data">
+			        	<div class="item form-group"  >
+				          <label class="control-label col-md-2 col-sm-2 col-xs-8"></label>
+				          <div class="col-md-12 col-sm-12 col-xs-12">
+				          	<div class="table-responsive">
+		                  <table class="table table-bordered table-sm mb-0">
+		                    <thead><tr><th colspan="2" class="text-center">New Data</th></tr></thead>
+		                    <tbody>
+		                    	<?php
+													if(sizeof($new_data_rows)>0){
+														foreach($new_data_rows as $new_data_row){
+													?>
+													<tr><th><?php echo $new_data_row['key']; ?></th><td><?php echo $new_data_row['value']; ?></td></tr>
+													<?php
+														}
+													}else{
+													?>
+													<tr><th colspan="2" class="text-center">No new data found</th></tr>
+													<?php
+													}
+		                    	?>
+		                    </tbody>
+		                  </table>
+		                </div>
 				          </div>
 				        </div>
 				      </div>
