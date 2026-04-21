@@ -36,6 +36,13 @@ if(isset($_POST['flag_request'])){
           </div>
 
           <div class="form-group row">
+            <label class="col-sm-3 col-form-label" for="abbreviation">Abbreviation</label>
+            <div class="col-sm-6">
+              <input type="text" id="abbreviation" name="abbreviation" class="form-control" placeholder="Type here...">
+            </div>
+          </div>
+
+          <div class="form-group row">
             <label class="col-sm-3 col-form-label" for="province_id">Province</label>
             <div class="col-sm-6">
               <select id="province_id" name="province_id" class="form-control" required>
@@ -84,6 +91,13 @@ if(isset($_POST['flag_request'])){
                 <label class="col-sm-3 col-form-label" for="name">Branch Name</label>
                 <div class="col-sm-6">
                   <input type="text" id="name" name="name" class="form-control" placeholder="Type here..." required value="<?php echo $branch_row['name']; ?>">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label" for="abbreviation">Abbreviation</label>
+                <div class="col-sm-6">
+                  <input type="text" id="abbreviation" name="abbreviation" class="form-control" placeholder="Type here..." value="<?php echo htmlspecialchars($branch_row['abbreviation'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 </div>
               </div>
 
@@ -167,6 +181,7 @@ if(isset($_POST['flag_request'])){
       case "add_branch":
 
         $name = trim(holu_escape($_POST['name']));
+        $abbreviation = trim(holu_escape($_POST['abbreviation'] ?? ''));
         $province_id = (int) holu_escape($_POST['province_id'] ?? 0);
 
         if($name==='' || $province_id<=0){
@@ -195,11 +210,20 @@ if(isset($_POST['flag_request'])){
           exit();
         }
 
-        $branch_iq = $db->prepare("INSERT INTO `branches` (name, province_id) VALUES (:name, :province_id)");
-        $branch_iqx = $branch_iq->execute([
-          'name'=>$name,
-          'province_id'=>$province_id
-        ]);
+        if(does_table_column_exist('branches', 'abbreviation')){
+          $branch_iq = $db->prepare("INSERT INTO `branches` (name, province_id, abbreviation) VALUES (:name, :province_id, :abbreviation)");
+          $branch_iqx = $branch_iq->execute([
+            'name'=>$name,
+            'province_id'=>$province_id,
+            'abbreviation'=>$abbreviation
+          ]);
+        }else{
+          $branch_iq = $db->prepare("INSERT INTO `branches` (name, province_id) VALUES (:name, :province_id)");
+          $branch_iqx = $branch_iq->execute([
+            'name'=>$name,
+            'province_id'=>$province_id
+          ]);
+        }
 
         if($branch_iqx){
           header("location:list_branch.php?success");
@@ -215,6 +239,7 @@ if(isset($_POST['flag_request'])){
 
         $data_id = (int) holu_escape($_POST['data_id']);
         $name = trim(holu_escape($_POST['name']));
+        $abbreviation = trim(holu_escape($_POST['abbreviation'] ?? ''));
         $province_id = (int) holu_escape($_POST['province_id'] ?? 0);
 
         if($name==='' || $province_id<=0 || $data_id<=0){
@@ -244,12 +269,22 @@ if(isset($_POST['flag_request'])){
           exit();
         }
 
-        $branch_uq = $db->prepare("UPDATE `branches` SET name=:name, province_id=:province_id WHERE id=:id LIMIT 1");
-        $branch_uqx = $branch_uq->execute([
-          'name'=>$name,
-          'province_id'=>$province_id,
-          'id'=>$data_id
-        ]);
+        if(does_table_column_exist('branches', 'abbreviation')){
+          $branch_uq = $db->prepare("UPDATE `branches` SET name=:name, province_id=:province_id, abbreviation=:abbreviation WHERE id=:id LIMIT 1");
+          $branch_uqx = $branch_uq->execute([
+            'name'=>$name,
+            'province_id'=>$province_id,
+            'abbreviation'=>$abbreviation,
+            'id'=>$data_id
+          ]);
+        }else{
+          $branch_uq = $db->prepare("UPDATE `branches` SET name=:name, province_id=:province_id WHERE id=:id LIMIT 1");
+          $branch_uqx = $branch_uq->execute([
+            'name'=>$name,
+            'province_id'=>$province_id,
+            'id'=>$data_id
+          ]);
+        }
 
         if($branch_uqx){
           header("location:list_branch.php?success");

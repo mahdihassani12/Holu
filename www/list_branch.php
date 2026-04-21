@@ -51,6 +51,7 @@
                         <th class="text-center">#</th>
                         <th>Branch Name</th>
                         <th>Province</th>
+                        <th>Abbreviation</th>
                         <th class="text-center">Operation</th>
                       </tr>
                     </thead>
@@ -63,6 +64,7 @@
                         <th class="text-center"><?php echo $holu_count++; ?></th>
                         <td><?php echo $branch_row['name']; ?></td>
                         <td><?php echo $branch_row['province_name'] ?? '-'; ?></td>
+                        <td><?php echo htmlspecialchars($branch_row['abbreviation'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
                         <td class="text-center">
                           <div class="dropdown mt-1 opertation_container">
                             <button type="button" class="btn btn-primary dropdown-toggle waves-effect waves-light operation_button" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-cog"></i></button>

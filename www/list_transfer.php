@@ -90,6 +90,7 @@
                         <th>Date</th>
                         <th>Amount</th>
                         <th>Currency</th>
+                        <th>Check Number</th>
                         <th>Description</th>
                         <th>Added By</th>
                         <th class="text-center">Operation</th>
@@ -109,6 +110,7 @@
                             <td><?php echo $transfer_row['transfer_date']; ?></td>
                             <td><?php echo $transfer_row['transfer_amount']; ?></td>
                             <td><?php echo $transfer_row['currency']; ?></td>
+                            <td><?php echo htmlspecialchars($transfer_row['check_number'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
                             <td class="text-right"><p lang="fa" dir="rtl"><?php echo $transfer_row['description']; ?></p></td>
                             <td><?php echo get_col('users', 'username', 'id', $transfer_row['users_id']); ?></td>
                             <td class="text-center">
