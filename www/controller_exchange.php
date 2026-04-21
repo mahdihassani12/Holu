@@ -561,33 +561,7 @@
 			    $to_currency = holu_escape($_POST['to_currency']);
 			    $description = holu_escape($_POST['description']);
 
-			    $exchange_iq = $db->prepare("INSERT INTO `exchanges` (
-			    	province, 
-			    	branch,
-			    	exchange_date, 
-			    	from_amount, 
-			    	from_currency, 
-			    	to_amount, 
-			    	to_currency, 
-			    	description, 
-			    	insertion_date, 
-			    	insertion_time, 
-			    	users_id
-			    ) VALUES (
-				    :province, 
-				    :branch,
-				    :exchange_date, 
-				    :from_amount, 
-				    :from_currency, 
-				    :to_amount, 
-				    :to_currency, 
-				    :description, 
-				    :holu_date, 
-				    :holu_time,
-				    :holu_users_id
-				  )");
-
-			    $exchange_iqx = $exchange_iq->execute([
+			    $exchange_params = [
 			    	'province'=>$province,
 			    	'branch'=>$branch,
 			    	'exchange_date'=>$exchange_date,
@@ -599,7 +573,74 @@
 			    	'holu_date'=>$holu_date,
 			    	'holu_time'=>$holu_time,
 			    	'holu_users_id'=>$holu_users_id
-			    ]);
+			    ];
+
+			    if(does_table_column_exist('exchanges', 'check_number')){
+			    	$num_exchange_sq = $db->prepare("SELECT count(id) as record FROM `exchanges` WHERE province=:province AND branch=:branch");
+			    	$num_exchange_sq->execute([
+			    		'province'=>$province,
+			    		'branch'=>$branch
+			    	]);
+			    	$num_exchange_row = $num_exchange_sq->fetch();
+			    	$check_number = generate_check_number('exchange', $province, $branch, ((int)($num_exchange_row['record'] ?? 0))+1);
+
+			    	$exchange_iq = $db->prepare("INSERT INTO `exchanges` (
+			    		province, 
+			    		branch,
+			    		exchange_date, 
+			    		from_amount, 
+			    		from_currency, 
+			    		to_amount, 
+			    		to_currency, 
+			    		check_number,
+			    		description, 
+			    		insertion_date, 
+			    		insertion_time, 
+			    		users_id
+			    	) VALUES (
+				    	:province, 
+				    	:branch,
+				    	:exchange_date, 
+				    	:from_amount, 
+				    	:from_currency, 
+				    	:to_amount, 
+				    	:to_currency, 
+				    	:check_number,
+				    	:description, 
+				    	:holu_date, 
+				    	:holu_time,
+				    	:holu_users_id
+				  	)");
+				  	$exchange_params['check_number'] = $check_number;
+			    }else{
+			    	$exchange_iq = $db->prepare("INSERT INTO `exchanges` (
+			    		province, 
+			    		branch,
+			    		exchange_date, 
+			    		from_amount, 
+			    		from_currency, 
+			    		to_amount, 
+			    		to_currency, 
+			    		description, 
+			    		insertion_date, 
+			    		insertion_time, 
+			    		users_id
+			    	) VALUES (
+				    	:province, 
+				    	:branch,
+				    	:exchange_date, 
+				    	:from_amount, 
+				    	:from_currency, 
+				    	:to_amount, 
+				    	:to_currency, 
+				    	:description, 
+				    	:holu_date, 
+				    	:holu_time,
+				    	:holu_users_id
+				  	)");
+			    }
+
+			    $exchange_iqx = $exchange_iq->execute($exchange_params);
 
 			    if($exchange_iqx){
 			      header("location:".set_referer($_SERVER['HTTP_REFERER'])."success");

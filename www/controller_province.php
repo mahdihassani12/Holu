@@ -34,6 +34,13 @@ if(isset($_POST['flag_request'])){
           </div>
 
           <div class="form-group row">
+            <label class="col-sm-3 col-form-label" for="abbreviation">Abbreviation</label>
+            <div class="col-sm-6">
+              <input type="text" id="abbreviation" name="abbreviation" class="form-control" placeholder="Type here...">
+            </div>
+          </div>
+
+          <div class="form-group row">
             <label class="col-sm-3 col-form-label" for="submit"></label>
             <div class="col-sm-6">
               <button type="submit" id="submit" name="submit" class="btn success_btn waves-effect waves-light mr-1"><i class="fa fa-save"></i> Register</button>
@@ -69,6 +76,13 @@ if(isset($_POST['flag_request'])){
                 <label class="col-sm-3 col-form-label" for="name">Province Name</label>
                 <div class="col-sm-6">
                   <input type="text" id="name" name="name" class="form-control" placeholder="Type here..." required value="<?php echo $province_row['name']; ?>">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label" for="abbreviation">Abbreviation</label>
+                <div class="col-sm-6">
+                  <input type="text" id="abbreviation" name="abbreviation" class="form-control" placeholder="Type here..." value="<?php echo htmlspecialchars($province_row['abbreviation'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 </div>
               </div>
 
@@ -141,6 +155,7 @@ if(isset($_POST['flag_request'])){
       case "add_province":
 
         $name = trim(holu_escape($_POST['name']));
+        $abbreviation = trim(holu_escape($_POST['abbreviation'] ?? ''));
         if($name===''){
           header("location:list_province.php?error");
           exit();
@@ -156,10 +171,18 @@ if(isset($_POST['flag_request'])){
           exit();
         }
 
-        $province_iq = $db->prepare("INSERT INTO `provinces` (name) VALUES (:name)");
-        $province_iqx = $province_iq->execute([
-          'name'=>$name
-        ]);
+        if(does_table_column_exist('provinces', 'abbreviation')){
+          $province_iq = $db->prepare("INSERT INTO `provinces` (name, abbreviation) VALUES (:name, :abbreviation)");
+          $province_iqx = $province_iq->execute([
+            'name'=>$name,
+            'abbreviation'=>$abbreviation
+          ]);
+        }else{
+          $province_iq = $db->prepare("INSERT INTO `provinces` (name) VALUES (:name)");
+          $province_iqx = $province_iq->execute([
+            'name'=>$name
+          ]);
+        }
 
         if($province_iqx){
           header("location:list_province.php?success");
@@ -175,6 +198,7 @@ if(isset($_POST['flag_request'])){
 
         $data_id = holu_escape($_POST['data_id']);
         $name = trim(holu_escape($_POST['name']));
+        $abbreviation = trim(holu_escape($_POST['abbreviation'] ?? ''));
         if($name===''){
           header("location:list_province.php?error");
           exit();
@@ -191,11 +215,20 @@ if(isset($_POST['flag_request'])){
           exit();
         }
 
-        $province_uq = $db->prepare("UPDATE `provinces` SET name=:name WHERE id=:id LIMIT 1");
-        $province_uqx = $province_uq->execute([
-          'name'=>$name,
-          'id'=>$data_id
-        ]);
+        if(does_table_column_exist('provinces', 'abbreviation')){
+          $province_uq = $db->prepare("UPDATE `provinces` SET name=:name, abbreviation=:abbreviation WHERE id=:id LIMIT 1");
+          $province_uqx = $province_uq->execute([
+            'name'=>$name,
+            'abbreviation'=>$abbreviation,
+            'id'=>$data_id
+          ]);
+        }else{
+          $province_uq = $db->prepare("UPDATE `provinces` SET name=:name WHERE id=:id LIMIT 1");
+          $province_uqx = $province_uq->execute([
+            'name'=>$name,
+            'id'=>$data_id
+          ]);
+        }
 
         if($province_uqx){
           header("location:list_province.php?success");

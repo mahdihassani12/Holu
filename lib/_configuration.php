@@ -1251,6 +1251,11 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 
 
 	function get_province_code($province){
+		$province_abbreviation = get_province_abbreviation($province);
+		if($province_abbreviation!==""){
+			return $province_abbreviation;
+		}
+
 		$clean_province = strtoupper(preg_replace('/[^a-zA-Z]/', '', $province));
 		if($clean_province==""){
 			return 'XXX';
@@ -1259,6 +1264,11 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	}
 
 	function get_branch_code($branch){
+		$branch_abbreviation = get_branch_abbreviation("", $branch);
+		if($branch_abbreviation!==""){
+			return $branch_abbreviation;
+		}
+
 		$clean_branch = strtoupper(preg_replace('/[^a-zA-Z]/', '', $branch));
 		if($clean_branch==""){
 			return 'XXX';
@@ -1272,6 +1282,8 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				return 'I';
 			case 'expense':
 				return 'X';
+			case 'exchange':
+				return 'E';
 			case 'purchase':
 				return 'P';
 			case 'transfer':
@@ -1288,10 +1300,86 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	function generate_check_number($transaction_type, $province, $branch, $sequence){
 		$prefix = get_transaction_prefix($transaction_type);
 		$province_code = get_province_code($province);
-		$branch_code = get_branch_code($branch);
+		$branch_abbreviation = get_branch_abbreviation($province, $branch);
+		$branch_code = ($branch_abbreviation!=="") ? $branch_abbreviation : get_branch_code($branch);
 		$sequence = max(1, (int)$sequence);
 
 		return $prefix.'-'.$province_code.'-'.$branch_code.'-'.str_pad((string)$sequence, 8, '0', STR_PAD_LEFT);
+	}
+
+	function does_table_column_exist($table_name, $column_name){
+		global $db;
+		static $table_columns_cache = [];
+
+		$cache_key = $table_name.'.'.$column_name;
+		if(isset($table_columns_cache[$cache_key])){
+			return $table_columns_cache[$cache_key];
+		}
+
+		$column_check_sq = $db->prepare("
+			SELECT COUNT(*) AS total
+			FROM information_schema.COLUMNS
+			WHERE TABLE_SCHEMA=DATABASE()
+			AND TABLE_NAME=:table_name
+			AND COLUMN_NAME=:column_name
+		");
+		$column_check_sq->execute([
+			'table_name'=>$table_name,
+			'column_name'=>$column_name
+		]);
+		$column_check_row = $column_check_sq->fetch();
+
+		$table_columns_cache[$cache_key] = ((int)($column_check_row['total'] ?? 0) > 0);
+		return $table_columns_cache[$cache_key];
+	}
+
+	function get_province_abbreviation($province){
+		global $db;
+
+		if(trim((string)$province)==="" || !does_table_column_exist('provinces', 'abbreviation')){
+			return '';
+		}
+
+		$province_sq = $db->prepare("
+			SELECT abbreviation
+			FROM `provinces`
+			WHERE name=:name
+			LIMIT 1
+		");
+		$province_sq->execute([
+			'name'=>$province
+		]);
+		$province_row = $province_sq->fetch();
+		return trim((string)($province_row['abbreviation'] ?? ''));
+	}
+
+	function get_branch_abbreviation($province, $branch){
+		global $db;
+
+		if(trim((string)$branch)==="" || !does_table_column_exist('branches', 'abbreviation')){
+			return '';
+		}
+
+		$query = "
+			SELECT branches.abbreviation
+			FROM `branches`
+			LEFT JOIN `provinces` ON provinces.id=branches.province_id
+			WHERE branches.name=:branch
+		";
+		$params = [
+			'branch'=>$branch
+		];
+
+		if(trim((string)$province)!==""){
+			$query .= " AND provinces.name=:province ";
+			$params['province'] = $province;
+		}
+
+		$query .= " ORDER BY branches.id ASC LIMIT 1 ";
+		$branch_sq = $db->prepare($query);
+		$branch_sq->execute($params);
+		$branch_row = $branch_sq->fetch();
+		return trim((string)($branch_row['abbreviation'] ?? ''));
 	}
 
 	function map_tms_province_to_holu_province($tms_province){
