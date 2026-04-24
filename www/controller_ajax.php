@@ -509,7 +509,7 @@
 			    }break;
 			    case 'Customer ID':{
 			      $input_field = '
-			      	<input type="number" id="value_'.$selector.'_'.$counter.'" name="value_infos[]" class="form-control" placeholder="Type here..." autocomplete="off">
+			      	<input type="text" id="value_'.$selector.'_'.$counter.'" name="value_infos[]" class="form-control" placeholder="Type here..." autocomplete="off" onkeyup="suggest_data(this, \'additional_information_customer_id\');">
 			      ';
 			    }break;
 			    case 'Package':{
@@ -612,17 +612,19 @@
 					}break;
 
 					case 'additional_information_customer_id':{
-						$data_sq = $db->prepare(
-							"SELECT DISTINCT(value_info) FROM (SELECT * FROM additional_informations ORDER BY id DESC LIMIT 20000) AS additional_informations 
-							WHERE key_info='Customer ID'
-							AND value_info LIKE :input
-							LIMIT 5"
-						);
-						$data_sqx = $data_sq->execute([
-							'input'=>'%'.$input.'%'
-						]);
+						if(strlen($input)>=2){
+							$data_sq = $db->prepare(
+								"SELECT DISTINCT(value_info) FROM (SELECT * FROM additional_informations ORDER BY id DESC LIMIT 20000) AS additional_informations 
+								WHERE key_info='Customer ID'
+								AND value_info LIKE :input
+								LIMIT 5"
+							);
+							$data_sqx = $data_sq->execute([
+								'input'=>'%'.$input.'%'
+							]);
+						}
 
-						if($data_sq->rowCount()>0 AND $input!=""){
+						if(isset($data_sq) AND $data_sq->rowCount()>0){
 							$result .= '
 							<div class="holu_auto_suggest_container" id="holu_auto_suggest_container">
 		      			<ul>
