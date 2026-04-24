@@ -487,8 +487,16 @@ if (isset($_POST['flag_request'])) {
 							sub_category_access_points: sub_category_tree.values
 						},
 						success: function(data) {
-							if ($.trim(data) === "1") {
+							var response = $.trim(data);
+
+							if (response === "self") {
 								window.location.href = "_logout.php";
+							} else if (response === "other") {
+								button.prop("disabled", false);
+								$(".modal").modal("hide");
+								if (typeof load_data_table === "function") {
+									load_data_table();
+								}
 							} else {
 								button.prop("disabled", false);
 								alert("Could not save accessibility. Please try again.");
@@ -743,7 +751,11 @@ if (isset($_POST['flag_request'])) {
 				]);
 
 				if ($flag == 1) {
-					echo "1";
+					if ((int)$data_id === (int)$holu_users_id) {
+						echo "self";
+					} else {
+						echo "other";
+					}
 					exit();
 				} else {
 					echo "0";
