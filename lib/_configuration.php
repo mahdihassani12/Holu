@@ -4588,6 +4588,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
                    class="form-control" 
                    placeholder="Type here..." 
                    autocomplete="off"
+                   onkeyup="suggest_data(this, \'additional_information_customer_id\');"
                    required value="'.$default_value.'">
           </div>
         </div>
