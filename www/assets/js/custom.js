@@ -336,6 +336,11 @@ function suggest_data(input_field, type){
   var input = $(input_field).val();
   var field_id = $(input_field).attr('id');
   $("#holu_auto_suggest_container").remove();
+
+  if(type === 'additional_information_customer_id' && input.length < 2){
+    return;
+  }
+
   $.ajax({
     url:'controller_ajax.php',
     method:'post',
@@ -384,4 +389,3 @@ function get_sub_cat_conf(){
 }
 
 //End of functions
-
