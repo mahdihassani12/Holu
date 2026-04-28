@@ -584,7 +584,7 @@ if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
                     <circle cx="12" cy="11" r="2.5"/>
                   </svg>
                 </span>
-                <?php echo $main_office_address; ?>
+                <strong>Main Office: </strong> <?php echo $main_office_address; ?>
               </div>
               <div class="footer-item address">
                 <span class="footer-icon">
@@ -593,7 +593,7 @@ if(isset($_GET['transfer_id']) AND !empty($_GET['transfer_id']))
                     <circle cx="12" cy="11" r="2.5"/>
                   </svg>
                 </span>
-                <?php echo $branch_office_address; ?>
+                <strong>Branch Office Dasht-e-Barchi: </strong> <?php echo $branch_office_address; ?>
               </div>
             </div>
           </section>
