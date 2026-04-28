@@ -3184,9 +3184,21 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
     	array_push($key_infos, 'Other Services');
     	array_push($value_infos, holu_escape($post['other_services']));
     }
-    if(!empty($post['employee'])){
-    	array_push($key_infos, 'Employee');
-    	array_push($value_infos, holu_escape($post['employee']));
+    if(!empty($post['vendor_name'])){
+    	array_push($key_infos, 'Vendor Name');
+    	array_push($value_infos, holu_escape($post['vendor_name']));
+    }
+    if(!empty($post['vendor_id'])){
+    	array_push($key_infos, 'Vendor ID');
+    	array_push($value_infos, holu_escape($post['vendor_id']));
+    }
+    if(!empty($post['employee_name'])){
+    	array_push($key_infos, 'Employee Name');
+    	array_push($value_infos, holu_escape($post['employee_name']));
+    }
+    if(!empty($post['employee_id'])){
+    	array_push($key_infos, 'Employee ID');
+    	array_push($value_infos, holu_escape($post['employee_id']));
     }
 
    
@@ -3444,9 +3456,21 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
     	array_push($key_infos, 'Other Services');
     	array_push($value_infos, holu_escape($post['other_services']));
     }
-    if(!empty($post['employee'])){
-    	array_push($key_infos, 'Employee');
-    	array_push($value_infos, holu_escape($post['employee']));
+    if(!empty($post['vendor_name'])){
+    	array_push($key_infos, 'Vendor Name');
+    	array_push($value_infos, holu_escape($post['vendor_name']));
+    }
+    if(!empty($post['vendor_id'])){
+    	array_push($key_infos, 'Vendor ID');
+    	array_push($value_infos, holu_escape($post['vendor_id']));
+    }
+    if(!empty($post['employee_name'])){
+    	array_push($key_infos, 'Employee Name');
+    	array_push($value_infos, holu_escape($post['employee_name']));
+    }
+    if(!empty($post['employee_id'])){
+    	array_push($key_infos, 'Employee ID');
+    	array_push($value_infos, holu_escape($post['employee_id']));
     }
     
 
@@ -3919,9 +3943,21 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		    	array_push($key_infos, 'Other Services');
 		    	array_push($value_infos, holu_escape($operation_array['data_array']['other_services']));
 		    }
-		    if(!empty($_POST['employee'])){
-		    	array_push($key_infos, 'Employee');
-		    	array_push($value_infos, holu_escape($operation_array['data_array']['employee']));
+		    if(!empty($_POST['vendor_name'])){
+		    	array_push($key_infos, 'Vendor Name');
+		    	array_push($value_infos, holu_escape($operation_array['data_array']['vendor_name']));
+		    }
+		    if(!empty($_POST['vendor_id'])){
+		    	array_push($key_infos, 'Vendor ID');
+		    	array_push($value_infos, holu_escape($operation_array['data_array']['vendor_id']));
+		    }
+		    if(!empty($_POST['employee_name'])){
+		    	array_push($key_infos, 'Employee Name');
+		    	array_push($value_infos, holu_escape($operation_array['data_array']['employee_name']));
+		    }
+		    if(!empty($_POST['employee_id'])){
+		    	array_push($key_infos, 'Employee ID');
+		    	array_push($value_infos, holu_escape($operation_array['data_array']['employee_id']));
 		    }
 		    
 
@@ -4038,9 +4074,21 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		    	array_push($key_infos, 'Other Services');
 		    	array_push($value_infos, holu_escape($operation_array['data_array']['other_services']));
 		    }
-		    if(!empty($_POST['employee'])){
-		    	array_push($key_infos, 'Employee');
-		    	array_push($value_infos, holu_escape($operation_array['data_array']['employee']));
+		    if(!empty($_POST['vendor_name'])){
+		    	array_push($key_infos, 'Vendor Name');
+		    	array_push($value_infos, holu_escape($operation_array['data_array']['vendor_name']));
+		    }
+		    if(!empty($_POST['vendor_id'])){
+		    	array_push($key_infos, 'Vendor ID');
+		    	array_push($value_infos, holu_escape($operation_array['data_array']['vendor_id']));
+		    }
+		    if(!empty($_POST['employee_name'])){
+		    	array_push($key_infos, 'Employee Name');
+		    	array_push($value_infos, holu_escape($operation_array['data_array']['employee_name']));
+		    }
+		    if(!empty($_POST['employee_id'])){
+		    	array_push($key_infos, 'Employee ID');
+		    	array_push($value_infos, holu_escape($operation_array['data_array']['employee_id']));
 		    }
 		    
 
@@ -4659,12 +4707,45 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			case '8':{
 				$result .= '
 				<div class="form-group row">
-          <label class="col-sm-3 col-form-label" for="employee">Employee</label>
+          <label class="col-sm-3 col-form-label" for="vendor_name">Vendor Name</label>
           <div class="col-sm-6">
-            <select id="employee" name="employee" class="form-control select2" required>
-              <option selected hidden value="">Select an option</option>
-              '.get_employee_option($default_value).'
-            </select>
+            <input type="text" id="vendor_name" name="vendor_name" class="form-control" placeholder="Type here..." required value="'.$default_value.'" autocomplete="off">
+          </div>
+        </div>
+        ';
+
+			}break;
+
+			case '9':{
+				$result .= '
+				<div class="form-group row">
+          <label class="col-sm-3 col-form-label" for="vendor_id">Vendor ID</label>
+          <div class="col-sm-6">
+            <input type="text" id="vendor_id" name="vendor_id" class="form-control" placeholder="Type here..." required value="'.$default_value.'" autocomplete="off">
+          </div>
+        </div>
+        ';
+
+			}break;
+
+			case '10':{
+				$result .= '
+				<div class="form-group row">
+          <label class="col-sm-3 col-form-label" for="employee_name">Employee Name</label>
+          <div class="col-sm-6">
+            <input type="text" id="employee_name" name="employee_name" class="form-control" placeholder="Type here..." required value="'.$default_value.'" autocomplete="off">
+          </div>
+        </div>
+        ';
+
+			}break;
+
+			case '11':{
+				$result .= '
+				<div class="form-group row">
+          <label class="col-sm-3 col-form-label" for="employee_id">Employee ID</label>
+          <div class="col-sm-6">
+            <input type="text" id="employee_id" name="employee_id" class="form-control" placeholder="Type here..." required value="'.$default_value.'" autocomplete="off">
           </div>
         </div>
         ';

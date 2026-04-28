@@ -1196,9 +1196,21 @@
 				    	array_push($key_infos, 'Other Services');
 				    	array_push($value_infos, holu_escape($_POST['other_services']));
 				    }
-				    if(!empty($_POST['employee'])){
-				    	array_push($key_infos, 'Employee');
-				    	array_push($value_infos, holu_escape($_POST['employee']));
+				    if(!empty($_POST['vendor_name'])){
+				    	array_push($key_infos, 'Vendor Name');
+				    	array_push($value_infos, holu_escape($_POST['vendor_name']));
+				    }
+				    if(!empty($_POST['vendor_id'])){
+				    	array_push($key_infos, 'Vendor ID');
+				    	array_push($value_infos, holu_escape($_POST['vendor_id']));
+				    }
+				    if(!empty($_POST['employee_name'])){
+				    	array_push($key_infos, 'Employee Name');
+				    	array_push($value_infos, holu_escape($_POST['employee_name']));
+				    }
+				    if(!empty($_POST['employee_id'])){
+				    	array_push($key_infos, 'Employee ID');
+				    	array_push($value_infos, holu_escape($_POST['employee_id']));
 				    }
 				    $num_income_sq = $db->prepare(
 				    	"SELECT 
@@ -1542,9 +1554,21 @@
 				    	array_push($key_infos, 'Other Services');
 				    	array_push($value_infos, holu_escape($_POST['other_services']));
 				    }
-				    if(!empty($_POST['employee'])){
-				    	array_push($key_infos, 'Employee');
-				    	array_push($value_infos, holu_escape($_POST['employee']));
+				    if(!empty($_POST['vendor_name'])){
+				    	array_push($key_infos, 'Vendor Name');
+				    	array_push($value_infos, holu_escape($_POST['vendor_name']));
+				    }
+				    if(!empty($_POST['vendor_id'])){
+				    	array_push($key_infos, 'Vendor ID');
+				    	array_push($value_infos, holu_escape($_POST['vendor_id']));
+				    }
+				    if(!empty($_POST['employee_name'])){
+				    	array_push($key_infos, 'Employee Name');
+				    	array_push($value_infos, holu_escape($_POST['employee_name']));
+				    }
+				    if(!empty($_POST['employee_id'])){
+				    	array_push($key_infos, 'Employee ID');
+				    	array_push($value_infos, holu_escape($_POST['employee_id']));
 				    }
 	
 		  			$income_uq = $db->prepare(
@@ -1730,9 +1754,21 @@
 				    	array_push($key_infos, 'Other Services');
 				    	array_push($value_infos, holu_escape($_POST['other_services']));
 				    }
-				    if(!empty($_POST['employee'])){
-				    	array_push($key_infos, 'Employee');
-				    	array_push($value_infos, holu_escape($_POST['employee']));
+				    if(!empty($_POST['vendor_name'])){
+				    	array_push($key_infos, 'Vendor Name');
+				    	array_push($value_infos, holu_escape($_POST['vendor_name']));
+				    }
+				    if(!empty($_POST['vendor_id'])){
+				    	array_push($key_infos, 'Vendor ID');
+				    	array_push($value_infos, holu_escape($_POST['vendor_id']));
+				    }
+				    if(!empty($_POST['employee_name'])){
+				    	array_push($key_infos, 'Employee Name');
+				    	array_push($value_infos, holu_escape($_POST['employee_name']));
+				    }
+				    if(!empty($_POST['employee_id'])){
+				    	array_push($key_infos, 'Employee ID');
+				    	array_push($value_infos, holu_escape($_POST['employee_id']));
 				    }
 				    $num_income_sq = $db->prepare(
 				    	"SELECT 
