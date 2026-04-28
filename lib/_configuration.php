@@ -3336,7 +3336,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 					    	$char = "other_services";
 					    }break;
 					    default:{
-					    	$char = "default";
+					    	$char = "other";
 					    }break;
 			    	}
 
@@ -3611,7 +3611,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 					    	$char = "other_services";
 					    }break;
 					    default:{
-					    	$char = "default";
+					    	$char = "other";
 					    }break;
 			    	}
 
