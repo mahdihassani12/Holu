@@ -3310,6 +3310,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		
 		    	$key_info = holu_escape($key_infos[$i]);
 		    	$value_info = holu_escape($value_infos[$i]);
+		    	$additional_informations_counter = $additional_informations_counter+1;
 
 		    	if($key_info!=""){
 		    		switch ($key_info) {
@@ -3351,9 +3352,9 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			            reference_type = 'Income' 
 			            AND key_info = '".$key_info."'
 			            AND value_info = '".$value_info."'
-					    ) AS ".$char."_additional_informations"; 
+					    ) AS ".$char."_additional_informations".$additional_informations_counter." "; 
 
-						$condition_portion .= " AND incomes.id = ".$char."_additional_informations.reference_id ";
+						$condition_portion .= " AND incomes.id = ".$char."_additional_informations".$additional_informations_counter.".reference_id ";
 		    	}
 
 		    	
@@ -3585,6 +3586,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		
 		    	$key_info = holu_escape($key_infos[$i]);
 		    	$value_info = holu_escape($value_infos[$i]);
+		    	$additional_informations_counter = $additional_informations_counter+1;
 
 		    	if($key_info!=""){
 		    		switch ($key_info) {
@@ -3626,9 +3628,9 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			            reference_type = 'Expense' 
 			            AND key_info = '".$key_info."'
 			            AND value_info = '".$value_info."'
-					    ) AS ".$char."_additional_informations"; 
+					    ) AS ".$char."_additional_informations".$additional_informations_counter." "; 
 
-						$condition_portion .= " AND expenses.id = ".$char."_additional_informations.reference_id ";
+						$condition_portion .= " AND expenses.id = ".$char."_additional_informations".$additional_informations_counter.".reference_id ";
 		    	}
 
 		    	
