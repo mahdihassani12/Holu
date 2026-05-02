@@ -90,7 +90,7 @@
                         <th>To Amount</th>
                         <th>To Currency</th>
                         <th>Description</th>
-                        <th>Added By</th>
+                        <th>Created By</th>
                         <th class="text-center">Operation</th>
                       </tr>
                     </thead>

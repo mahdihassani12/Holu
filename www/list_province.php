@@ -48,6 +48,7 @@
                         <th class="text-center">#</th>
                         <th>Province Name</th>
                         <th>Abbreviation</th>
+                        <th>Created By</th>
                         <th class="text-center">Operation</th>
                       </tr>
                     </thead>
@@ -60,6 +61,7 @@
                         <th class="text-center"><?php echo $holu_count++; ?></th>
                         <td><?php echo $province_row['name']; ?></td>
                         <td><?php echo htmlspecialchars($province_row['abbreviation'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td><?php echo isset($province_row['users_id']) ? get_col('users', 'username', 'id', $province_row['users_id']) : '-'; ?></td>
                         <td class="text-center">
                           <div class="dropdown mt-1 opertation_container">
                             <button type="button" class="btn btn-primary dropdown-toggle waves-effect waves-light operation_button" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-cog"></i></button>

@@ -62,6 +62,7 @@
                         <th>Category</th>
                         <th>Sub Category Name</th>
                         <th>Description</th>
+                        <th>Created By</th>
                         <th class="text-center">Operation</th>
                       </tr>
                     </thead>
@@ -76,6 +77,7 @@
                             <td><?php echo get_col('categories', 'category_name', 'id', $sub_category_row['categories_id']); ?></td>
                             <td><?php echo $sub_category_row['sub_category_name']; ?></td>
                             <td><?php echo $sub_category_row['description']; ?></td>
+                            <td><?php echo isset($sub_category_row['users_id']) ? get_col('users', 'username', 'id', $sub_category_row['users_id']) : '-'; ?></td>
                             <td class="text-center">
                               <div class="dropdown mt-1 opertation_container">
                                 <button type="button" class="btn btn-primary dropdown-toggle waves-effect waves-light operation_button" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-cog"></i></button>
