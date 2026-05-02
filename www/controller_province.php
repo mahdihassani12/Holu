@@ -171,7 +171,20 @@ if(isset($_POST['flag_request'])){
           exit();
         }
 
-        if(does_table_column_exist('provinces', 'abbreviation')){
+        if(does_table_column_exist('provinces', 'users_id') && does_table_column_exist('provinces', 'abbreviation')){
+          $province_iq = $db->prepare("INSERT INTO `provinces` (name, abbreviation, users_id) VALUES (:name, :abbreviation, :users_id)");
+          $province_iqx = $province_iq->execute([
+            'name'=>$name,
+            'abbreviation'=>$abbreviation,
+            'users_id'=>$holu_users_id
+          ]);
+        }else if(does_table_column_exist('provinces', 'users_id')){
+          $province_iq = $db->prepare("INSERT INTO `provinces` (name, users_id) VALUES (:name, :users_id)");
+          $province_iqx = $province_iq->execute([
+            'name'=>$name,
+            'users_id'=>$holu_users_id
+          ]);
+        }else if(does_table_column_exist('provinces', 'abbreviation')){
           $province_iq = $db->prepare("INSERT INTO `provinces` (name, abbreviation) VALUES (:name, :abbreviation)");
           $province_iqx = $province_iq->execute([
             'name'=>$name,
