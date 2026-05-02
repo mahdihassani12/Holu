@@ -266,7 +266,7 @@
   			$sub_category_name = holu_escape($_POST['sub_category_name']);
   			$description = holu_escape($_POST['description']);
 
-  			$sub_category_uq = $db->query("UPDATE `sub_categories` SET categories_id='$categories_id', sub_category_name='$sub_category_name', description='$description' WHERE id='$data_id' LIMIT 1");
+  			$sub_category_uq = $db->query("UPDATE `sub_categories` SET categories_id='$categories_id', sub_category_name='$sub_category_name', description='$description', users_id='$holu_users_id' WHERE id='$data_id' LIMIT 1");
 
   			$sub_category_aii_uq = $db->query("UPDATE `sub_category_aiis` SET deleted='1' WHERE sub_categories_id='$data_id'");
 

@@ -284,7 +284,24 @@ if(isset($_POST['flag_request'])){
           exit();
         }
 
-        if(does_table_column_exist('branches', 'abbreviation')){
+        if(does_table_column_exist('branches', 'users_id') && does_table_column_exist('branches', 'abbreviation')){
+          $branch_uq = $db->prepare("UPDATE `branches` SET name=:name, province_id=:province_id, abbreviation=:abbreviation, users_id=:users_id WHERE id=:id LIMIT 1");
+          $branch_uqx = $branch_uq->execute([
+            'name'=>$name,
+            'province_id'=>$province_id,
+            'abbreviation'=>$abbreviation,
+            'users_id'=>$holu_users_id,
+            'id'=>$data_id
+          ]);
+        }else if(does_table_column_exist('branches', 'users_id')){
+          $branch_uq = $db->prepare("UPDATE `branches` SET name=:name, province_id=:province_id, users_id=:users_id WHERE id=:id LIMIT 1");
+          $branch_uqx = $branch_uq->execute([
+            'name'=>$name,
+            'province_id'=>$province_id,
+            'users_id'=>$holu_users_id,
+            'id'=>$data_id
+          ]);
+        }else if(does_table_column_exist('branches', 'abbreviation')){
           $branch_uq = $db->prepare("UPDATE `branches` SET name=:name, province_id=:province_id, abbreviation=:abbreviation WHERE id=:id LIMIT 1");
           $branch_uqx = $branch_uq->execute([
             'name'=>$name,

@@ -222,7 +222,7 @@
   			$category_name = holu_escape($_POST['category_name']);
   			$description = holu_escape($_POST['description']);
 
-  			$category_uq = $db->query("UPDATE `categories` SET category_type='$category_type', category_name='$category_name', description='$description' WHERE id='$data_id' LIMIT 1");
+  			$category_uq = $db->query("UPDATE `categories` SET category_type='$category_type', category_name='$category_name', description='$description', users_id='$holu_users_id' WHERE id='$data_id' LIMIT 1");
 
   			if($category_uq){
   				header("location:list_category.php?success");

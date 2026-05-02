@@ -228,7 +228,22 @@ if(isset($_POST['flag_request'])){
           exit();
         }
 
-        if(does_table_column_exist('provinces', 'abbreviation')){
+        if(does_table_column_exist('provinces', 'users_id') && does_table_column_exist('provinces', 'abbreviation')){
+          $province_uq = $db->prepare("UPDATE `provinces` SET name=:name, abbreviation=:abbreviation, users_id=:users_id WHERE id=:id LIMIT 1");
+          $province_uqx = $province_uq->execute([
+            'name'=>$name,
+            'abbreviation'=>$abbreviation,
+            'users_id'=>$holu_users_id,
+            'id'=>$data_id
+          ]);
+        }else if(does_table_column_exist('provinces', 'users_id')){
+          $province_uq = $db->prepare("UPDATE `provinces` SET name=:name, users_id=:users_id WHERE id=:id LIMIT 1");
+          $province_uqx = $province_uq->execute([
+            'name'=>$name,
+            'users_id'=>$holu_users_id,
+            'id'=>$data_id
+          ]);
+        }else if(does_table_column_exist('provinces', 'abbreviation')){
           $province_uq = $db->prepare("UPDATE `provinces` SET name=:name, abbreviation=:abbreviation WHERE id=:id LIMIT 1");
           $province_uqx = $province_uq->execute([
             'name'=>$name,
