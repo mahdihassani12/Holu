@@ -100,7 +100,7 @@
                           <th>Check Number</th>
                           <th>Description</th>
                           <th>Additional Information</th>
-                          <th>Added By</th>
+                          <th>Created By</th>
                           <th class="text-center">Operation</th>
                         </tr>
                       </thead>
