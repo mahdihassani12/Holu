@@ -210,7 +210,22 @@ if(isset($_POST['flag_request'])){
           exit();
         }
 
-        if(does_table_column_exist('branches', 'abbreviation')){
+        if(does_table_column_exist('branches', 'users_id') && does_table_column_exist('branches', 'abbreviation')){
+          $branch_iq = $db->prepare("INSERT INTO `branches` (name, province_id, abbreviation, users_id) VALUES (:name, :province_id, :abbreviation, :users_id)");
+          $branch_iqx = $branch_iq->execute([
+            'name'=>$name,
+            'province_id'=>$province_id,
+            'abbreviation'=>$abbreviation,
+            'users_id'=>$holu_users_id
+          ]);
+        }else if(does_table_column_exist('branches', 'users_id')){
+          $branch_iq = $db->prepare("INSERT INTO `branches` (name, province_id, users_id) VALUES (:name, :province_id, :users_id)");
+          $branch_iqx = $branch_iq->execute([
+            'name'=>$name,
+            'province_id'=>$province_id,
+            'users_id'=>$holu_users_id
+          ]);
+        }else if(does_table_column_exist('branches', 'abbreviation')){
           $branch_iq = $db->prepare("INSERT INTO `branches` (name, province_id, abbreviation) VALUES (:name, :province_id, :abbreviation)");
           $branch_iqx = $branch_iq->execute([
             'name'=>$name,
