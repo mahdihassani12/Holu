@@ -885,25 +885,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		array(
 			"type" => "sidebar",
 			"url" => "",
-			"label" => "Dashboards",
-			"icon" => 'fas fa-chart-line',
-			"location" => "dashboard/",
-			"path" => "system_accessibility/dashboard/",
-			"subs" => array(
-				array(
-					"type" => "sidebar",
-					"url" => "dashboard_transactions.php",
-					"label" => "Transactions",
-					"icon" => '',
-					"location" => "transactions/",
-					"path" => "system_accessibility/dashboard/transactions/",
-					"subs" => array(),
-				),
-			),
-		),
-		array(
-			"type" => "sidebar",
-			"url" => "",
 			"label" => "Management",
 			"icon" => 'fas fa-vector-square',
 			"location" => "management/",
