@@ -582,6 +582,35 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		array(
 			"type" => "sidebar",
 			"url" => "",
+			"label" => "Dashboards",
+			"icon" => 'fas fa-tachometer-alt',
+			"location" => "dashboard/",
+			"path" => "system_accessibility/dashboard/",
+			"subs" => array(
+				array(
+					"type" => "sidebar",
+					"url" => "dashboard_transactions.php",
+					"label" => "Transactions",
+					"icon" => '',
+					"location" => "dashboard_transactions/",
+					"path" => "system_accessibility/dashboard/dashboard_transactions/",
+					"subs" => array(
+						array(
+							"type" => "operation",
+							"url" => "",
+							"label" => "Index",
+							"icon" => '',
+							"location" => "index/",
+							"path" => "system_accessibility/dashboard/dashboard_transactions/index/",
+							"subs" => array(),
+						),
+					),
+				),
+			),
+		),
+		array(
+			"type" => "sidebar",
+			"url" => "",
 			"label" => "Requests",
 			"icon" => 'fas fa-question-circle',
 			"location" => "request/",
