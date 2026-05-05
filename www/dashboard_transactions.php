@@ -7,21 +7,13 @@ $holu_page_paths = ["Dashboards", "Transactions"];
 <head>
   <?php include("_head.php"); ?>
   <style>
-    .dashboard-summary-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .dashboard-summary-item {
-      flex: 1 1 calc(16.666% - 12px);
-      min-width: 210px;
-    }
     .dashboard-summary-card {
       background-color: #2fa9c0;
       border-radius: 8px;
       color: #fff;
       padding: 12px 14px;
       min-height: 112px;
+      margin-bottom: 16px;
     }
     .dashboard-summary-title {
       font-weight: 700;
@@ -45,8 +37,8 @@ $holu_page_paths = ["Dashboards", "Transactions"];
         <div class="container-fluid">
           <div class="row"><?php include("_page_title.php"); ?></div>
 
-          <div class="dashboard-summary-grid">
-            <div class="dashboard-summary-item">
+          <div class="row">
+            <div class="col-lg-2 col-md-4 col-sm-6">
               <div class="dashboard-summary-card">
                 <div class="dashboard-summary-title">Income:</div>
                 <div class="dashboard-summary-lines">35,000,000 AFN</div>
@@ -54,7 +46,7 @@ $holu_page_paths = ["Dashboards", "Transactions"];
                 <div class="dashboard-summary-lines">90 IRT</div>
               </div>
             </div>
-            <div class="dashboard-summary-item">
+            <div class="col-lg-2 col-md-4 col-sm-6">
               <div class="dashboard-summary-card">
                 <div class="dashboard-summary-title">Expense:</div>
                 <div class="dashboard-summary-lines">35,000,000 AFN</div>
@@ -62,7 +54,7 @@ $holu_page_paths = ["Dashboards", "Transactions"];
                 <div class="dashboard-summary-lines">90 IRT</div>
               </div>
             </div>
-            <div class="dashboard-summary-item">
+            <div class="col-lg-2 col-md-4 col-sm-6">
               <div class="dashboard-summary-card">
                 <div class="dashboard-summary-title">Exchange:</div>
                 <div class="dashboard-summary-lines">35,000,000 AFN to 30,000 USD</div>
@@ -70,7 +62,7 @@ $holu_page_paths = ["Dashboards", "Transactions"];
                 <div class="dashboard-summary-lines">90 IRT to 0999 AFN</div>
               </div>
             </div>
-            <div class="dashboard-summary-item">
+            <div class="col-lg-2 col-md-4 col-sm-6">
               <div class="dashboard-summary-card">
                 <div class="dashboard-summary-title">Transfer:</div>
                 <div class="dashboard-summary-lines">35,000,000 AFN</div>
@@ -78,7 +70,7 @@ $holu_page_paths = ["Dashboards", "Transactions"];
                 <div class="dashboard-summary-lines">90 IRT</div>
               </div>
             </div>
-            <div class="dashboard-summary-item">
+            <div class="col-lg-2 col-md-4 col-sm-6">
               <div class="dashboard-summary-card">
                 <div class="dashboard-summary-title">Total:</div>
                 <div class="dashboard-summary-lines">35,000,000 AFN</div>
@@ -86,7 +78,7 @@ $holu_page_paths = ["Dashboards", "Transactions"];
                 <div class="dashboard-summary-lines">90 IRT</div>
               </div>
             </div>
-            <div class="dashboard-summary-item">
+            <div class="col-lg-2 col-md-4 col-sm-6">
               <div class="dashboard-summary-card">
                 <div class="dashboard-summary-title">Total With Closing:</div>
                 <div class="dashboard-summary-lines">35,000,000 AFN</div>
@@ -101,43 +93,5 @@ $holu_page_paths = ["Dashboards", "Transactions"];
       <?php include("_footer.php"); ?>
     </div>
   </div>
-  <script>
-    (function () {
-      var sideMenu = document.getElementById('side-menu');
-      if (!sideMenu) { return; }
-      var menuLinks = sideMenu.querySelectorAll('a');
-      var currentPage = window.location.pathname.split('/').pop();
-      if (!currentPage) { return; }
-      var currentLink = null;
-      for (var i = 0; i < menuLinks.length; i++) {
-        var href = menuLinks[i].getAttribute('href');
-        if (href === currentPage) {
-          currentLink = menuLinks[i];
-          break;
-        }
-      }
-      var openItems = sideMenu.querySelectorAll('li.mm-active');
-      for (var j = 0; j < openItems.length; j++) {
-        openItems[j].classList.remove('mm-active');
-      }
-      var shownMenus = sideMenu.querySelectorAll('ul.mm-show');
-      for (var k = 0; k < shownMenus.length; k++) {
-        shownMenus[k].classList.remove('mm-show');
-      }
-      if (!currentLink) { return; }
-      currentLink.classList.add('active');
-      var parentItem = currentLink.closest('li');
-      while (parentItem) {
-        parentItem.classList.add('mm-active');
-        var parentMenu = parentItem.parentElement;
-        if (parentMenu && parentMenu.classList.contains('nav-second-level')) {
-          parentMenu.classList.add('mm-show');
-          parentItem = parentMenu.closest('li');
-        } else {
-          break;
-        }
-      }
-    })();
-  </script>
 </body>
 </html>
