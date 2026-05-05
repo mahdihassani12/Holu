@@ -892,7 +892,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			"subs" => array(
 				array(
 					"type" => "sidebar",
-					"url" => "report_transaction.php",
+					"url" => "dashboard_transactions.php",
 					"label" => "Transactions",
 					"icon" => '',
 					"location" => "transactions/",
