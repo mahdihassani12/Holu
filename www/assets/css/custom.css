@@ -261,6 +261,12 @@ a{
 	z-index: 10;
 }
 
+.dashboard-transactions-header .adder_button,
+.dashboard-date-range-toggle{
+	height: 38px !important;
+	min-height: 38px !important;
+}
+
 .dashboard-date-range-dropdown{
 	display: inline-block !important;
 	float: right !important;
@@ -269,19 +275,50 @@ a{
 }
 
 .dashboard-date-range-toggle{
-	background-color: #fff !important;
-	border-color: #fff !important;
-	color: #36b8cb !important;
-	min-width: 205px;
-	padding: 3px 24px 3px 8px !important;
-	text-align: center;
+	align-items: center;
+	background: linear-gradient(135deg, #ffffff 0%, #effbfc 100%) !important;
+	border: 1px solid rgba(255, 255, 255, 0.95) !important;
+	border-radius: 4px !important;
+	box-shadow: 0 4px 12px rgba(31, 114, 128, 0.16);
+	color: #258fa0 !important;
+	display: inline-flex !important;
+	justify-content: flex-start;
+	min-width: 255px;
+	padding: 4px 28px 4px 11px !important;
+	position: relative;
+	text-align: left;
+}
+
+.dashboard-date-range-toggle:hover,
+.dashboard-date-range-toggle:focus{
+	background: #fff !important;
+	box-shadow: 0 6px 18px rgba(31, 114, 128, 0.24);
+	color: #1f8392 !important;
 }
 
 .dashboard-date-range-toggle::after{
 	position: absolute;
-	right: 8px;
+	right: 10px;
 	top: 50%;
 	color: #36b8cb;
+}
+
+.dashboard-date-range-icon{
+	align-items: center;
+	background: #36b8cb;
+	border-radius: 50%;
+	color: #fff;
+	display: inline-flex;
+	font-size: 12px;
+	height: 24px;
+	justify-content: center;
+	margin-right: 8px;
+	width: 24px;
+}
+
+.dashboard-date-range-copy{
+	display: block;
+	min-width: 0;
 }
 
 .dashboard-date-range-dates,
@@ -292,52 +329,154 @@ a{
 
 .dashboard-date-range-dates{
 	font-size: 11px;
-	font-weight: 600;
+	font-weight: 700;
+	max-width: 185px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .dashboard-date-range-label{
 	font-size: 9px;
-	font-weight: 700;
+	font-weight: 800;
+	letter-spacing: .02em;
+	text-transform: uppercase;
 }
 
 .dashboard-date-range-menu{
-	border: 1px solid #36b8cb !important;
-	min-width: 205px;
-	padding: 6px 0 !important;
+	border: 0 !important;
+	border-radius: 12px !important;
+	box-shadow: 0 16px 42px rgba(38, 73, 87, 0.2);
+	min-width: 340px;
+	overflow: hidden;
+	padding: 0 !important;
 }
 
-.dashboard-date-range-menu .dropdown-item{
-	background-color: #fff !important;
-	color: #36b8cb !important;
-	font-weight: 500 !important;
-	height: auto !important;
-	line-height: 1.4 !important;
-	padding: 3px 12px !important;
+.dashboard-date-range-menu-heading{
+	background: linear-gradient(135deg, #36b8cb 0%, #2f8f9d 100%);
+	color: #fff;
+	padding: 13px 16px 12px;
 }
 
-.dashboard-date-range-menu .dropdown-item:hover,
-.dashboard-date-range-menu .dropdown-item.active{
-	background-color: #e8fbfd !important;
+.dashboard-date-range-menu-heading strong,
+.dashboard-date-range-menu-heading span{
+	display: block;
+}
+
+.dashboard-date-range-menu-heading strong{
+	font-size: 14px;
+}
+
+.dashboard-date-range-menu-heading span{
+	opacity: .86;
+	font-size: 11px;
+	margin-top: 2px;
+}
+
+.dashboard-date-range-quick-list{
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+	padding: 12px;
+}
+
+.dashboard-date-range-option{
+	align-items: center;
+	background: #f4fbfc;
+	border: 1px solid #d9f3f6;
+	border-radius: 8px;
 	color: #2f8f9d !important;
+	display: flex;
+	font-size: 12px;
+	font-weight: 700;
+	min-height: 36px;
+	padding: 7px 10px;
+}
+
+.dashboard-date-range-option i{
+	font-size: 11px;
+	margin-right: 7px;
+	opacity: .8;
+}
+
+.dashboard-date-range-option:hover,
+.dashboard-date-range-option.active{
+	background: #36b8cb;
+	border-color: #36b8cb;
+	color: #fff !important;
 }
 
 .dashboard-custom-date-range{
-	border-top: 1px solid #e8fbfd;
-	margin-top: 4px;
-	padding: 8px 12px 4px;
+	background: #fff;
+	border-top: 1px solid #edf6f8;
+	padding: 13px 16px 15px;
+}
+
+.dashboard-custom-date-title{
+	align-items: center;
+	color: #258fa0;
+	display: flex;
+	font-size: 13px;
+	font-weight: 800;
+	margin-bottom: 10px;
+}
+
+.dashboard-custom-date-title i{
+	margin-right: 7px;
+}
+
+.dashboard-custom-date-grid{
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
 }
 
 .dashboard-custom-date-range label{
-	color: #36b8cb;
+	color: #526b74;
 	font-size: 11px;
-	font-weight: 600;
-	margin-bottom: 2px;
+	font-weight: 700;
+	margin-bottom: 3px;
+}
+
+.dashboard-custom-date-range .form-control{
+	border-color: #d9edf1;
+	border-radius: 7px;
+	color: #385662;
+	font-size: 12px;
+	height: 34px;
+}
+
+.dashboard-custom-date-range .form-control:focus{
+	border-color: #36b8cb;
+	box-shadow: 0 0 0 0.12rem rgba(54, 184, 203, 0.18);
+}
+
+.dashboard-date-range-help{
+	color: #7a8d95;
+	display: block;
+	font-size: 10px;
+	margin-top: 8px;
 }
 
 .dashboard-custom-date-apply{
-	background-color: #36b8cb !important;
-	border-color: #36b8cb !important;
+	background: linear-gradient(135deg, #36b8cb 0%, #2f8f9d 100%) !important;
+	border: 0 !important;
+	border-radius: 8px !important;
+	box-shadow: 0 7px 16px rgba(54, 184, 203, 0.25);
 	color: #fff !important;
-	margin-top: 8px;
+	font-weight: 800 !important;
+	margin-top: 10px;
 	width: 100%;
+}
+
+@media (max-width: 575.98px){
+	.dashboard-date-range-toggle,
+	.dashboard-date-range-menu{
+		min-width: 280px;
+	}
+
+	.dashboard-date-range-quick-list,
+	.dashboard-custom-date-grid{
+		grid-template-columns: 1fr;
+	}
 }

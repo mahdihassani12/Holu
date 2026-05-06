@@ -670,6 +670,7 @@
           $accessed_sub_categories_transfer
         ) AS dashboard_transactions
         WHERE 1
+        $dashboard_date_filtering_data
         ORDER BY transaction_date DESC, transaction_id DESC");
 
         $style = (new StyleBuilder())
