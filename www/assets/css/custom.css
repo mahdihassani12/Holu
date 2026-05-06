@@ -480,3 +480,90 @@ a{
 		grid-template-columns: 1fr;
 	}
 }
+
+.dashboard-transaction-summary{
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: 8px;
+	margin: 0 0 12px;
+}
+
+.dashboard-summary-card{
+	background: linear-gradient(135deg, #32aebd 0%, #42bfd0 100%);
+	border: 1px solid rgba(255, 255, 255, 0.44);
+	border-radius: 7px;
+	box-shadow: 0 8px 18px rgba(36, 139, 153, 0.13);
+	color: #fff;
+	min-height: 82px;
+	overflow: hidden;
+	padding: 8px 10px;
+	position: relative;
+}
+
+.dashboard-summary-card::after{
+	background: rgba(255, 255, 255, 0.16);
+	border-radius: 50%;
+	content: "";
+	height: 72px;
+	position: absolute;
+	right: -34px;
+	top: -38px;
+	width: 72px;
+}
+
+.dashboard-summary-income{
+	background: linear-gradient(135deg, #25b99a 0%, #3fc8b3 100%);
+}
+
+.dashboard-summary-expense{
+	background: linear-gradient(135deg, #ef5b73 0%, #f47f91 100%);
+}
+
+.dashboard-summary-exchange{
+	background: linear-gradient(135deg, #f4aa2f 0%, #f7c15c 100%);
+}
+
+.dashboard-summary-transfer{
+	background: linear-gradient(135deg, #6d7885 0%, #8b96a3 100%);
+}
+
+.dashboard-summary-total{
+	background: linear-gradient(135deg, #2fb4cf 0%, #4dc9df 100%);
+}
+
+.dashboard-summary-closing{
+	background: linear-gradient(135deg, #248ca2 0%, #36b8cb 100%);
+}
+
+.dashboard-summary-title{
+	align-items: center;
+	display: flex;
+	font-size: 12px;
+	font-weight: 800;
+	gap: 5px;
+	line-height: 1.15;
+	margin-bottom: 5px;
+	position: relative;
+	z-index: 1;
+}
+
+.dashboard-summary-title i{
+	font-size: 11px;
+	opacity: 0.86;
+}
+
+.dashboard-summary-values{
+	display: flex;
+	flex-direction: column;
+	font-size: 10px;
+	font-weight: 700;
+	gap: 2px;
+	line-height: 1.25;
+	position: relative;
+	z-index: 1;
+}
+
+.dashboard-summary-routes{
+	font-size: 9px;
+	gap: 1px;
+}
