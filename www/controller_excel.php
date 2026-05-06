@@ -627,6 +627,162 @@
 
       }break;
       
+
+      case 'dashboard_transactions':{
+
+        $writer = SimpleExcelWriter::streamDownload($excel_type.'.xlsx');
+
+        $dashboard_date_range_options = [
+          'last_7_days' => 'Last 7 days',
+          'last_30_days' => 'Last 30 days',
+          'last_60_days' => 'Last 60 days',
+          'last_90_days' => 'Last 90 days',
+          'last_6_months' => 'Last 6 months',
+          'last_year' => 'Last Year',
+          'life_time' => 'Life time',
+          'custom' => 'Custom',
+        ];
+
+        $dashboard_date_range = isset($_GET['date_range']) ? holu_escape($_GET['date_range']) : 'last_90_days';
+        if(!array_key_exists($dashboard_date_range, $dashboard_date_range_options)){
+          $dashboard_date_range = 'last_90_days';
+        }
+
+        $dashboard_custom_from_date = isset($_GET['from_date']) ? holu_escape($_GET['from_date']) : '';
+        $dashboard_custom_to_date = isset($_GET['to_date']) ? holu_escape($_GET['to_date']) : '';
+        $dashboard_from_date = '';
+        $dashboard_to_date = '';
+        $dashboard_today = date('Y-m-d');
+
+        switch($dashboard_date_range){
+          case 'last_7_days':{
+            $dashboard_from_date = date('Y-m-d', strtotime('-6 days'));
+            $dashboard_to_date = $dashboard_today;
+          }break;
+          case 'last_30_days':{
+            $dashboard_from_date = date('Y-m-d', strtotime('-29 days'));
+            $dashboard_to_date = $dashboard_today;
+          }break;
+          case 'last_60_days':{
+            $dashboard_from_date = date('Y-m-d', strtotime('-59 days'));
+            $dashboard_to_date = $dashboard_today;
+          }break;
+          case 'last_90_days':{
+            $dashboard_from_date = date('Y-m-d', strtotime('-89 days'));
+            $dashboard_to_date = $dashboard_today;
+          }break;
+          case 'last_6_months':{
+            $dashboard_from_date = date('Y-m-d', strtotime('-6 months'));
+            $dashboard_to_date = $dashboard_today;
+          }break;
+          case 'last_year':{
+            $dashboard_from_date = date('Y-m-d', strtotime('-1 year'));
+            $dashboard_to_date = $dashboard_today;
+          }break;
+          case 'custom':{
+            $dashboard_from_date = $dashboard_custom_from_date;
+            $dashboard_to_date = $dashboard_custom_to_date;
+          }break;
+          default:{
+            $dashboard_from_date = '';
+            $dashboard_to_date = '';
+          }break;
+        }
+
+        $dashboard_date_filtering_data = '';
+        if($dashboard_from_date!=''){
+          $dashboard_date_filtering_data .= " AND transaction_date>='".$dashboard_from_date."' ";
+        }
+        if($dashboard_to_date!=''){
+          $dashboard_date_filtering_data .= " AND transaction_date<='".$dashboard_to_date."' ";
+        }
+
+        $income_access_condition = set_province_branch_portion('incomes.province', 'incomes.branch');
+        $expense_access_condition = set_province_branch_portion('expenses.province', 'expenses.branch');
+        $exchange_access_condition = set_province_branch_portion('exchanges.province', 'exchanges.branch');
+        $transfer_from_access_condition = set_province_branch_portion('transfers.from_province', 'transfers.from_branch');
+        $transfer_to_access_condition = set_province_branch_portion('transfers.to_province', 'transfers.to_branch');
+
+        $transaction_sq = $db->query("SELECT * FROM (
+          SELECT incomes.id AS transaction_id, 'Income' AS transaction_type, incomes.province AS transaction_province, incomes.branch AS transaction_branch, incomes.income_date AS transaction_date, incomes.income_amount AS transaction_amount, incomes.currency AS transaction_currency, incomes.description AS transaction_description, incomes.users_id AS transaction_users_id, incomes.sub_categories_id AS transaction_sub_categories_id, incomes.check_number AS transaction_check_number
+          FROM `incomes`
+          WHERE incomes.deleted='0'
+          AND $income_access_condition
+          AND incomes.sub_categories_id IN ($accessed_sub_categories_income)
+          UNION ALL
+          SELECT expenses.id AS transaction_id, 'Expense' AS transaction_type, expenses.province AS transaction_province, expenses.branch AS transaction_branch, expenses.expense_date AS transaction_date, expenses.expense_amount AS transaction_amount, expenses.currency AS transaction_currency, expenses.description AS transaction_description, expenses.users_id AS transaction_users_id, expenses.sub_categories_id AS transaction_sub_categories_id, expenses.check_number AS transaction_check_number
+          FROM `expenses`
+          WHERE expenses.deleted='0'
+          AND $expense_access_condition
+          AND expenses.sub_categories_id IN ($accessed_sub_categories_expense)
+          UNION ALL
+          SELECT exchanges.id AS transaction_id, 'Exchange' AS transaction_type, exchanges.province AS transaction_province, exchanges.branch AS transaction_branch, exchanges.exchange_date AS transaction_date, CONCAT(exchanges.from_amount, ' to ', exchanges.to_amount) AS transaction_amount, CONCAT(exchanges.from_currency, ' to ', exchanges.to_currency) AS transaction_currency, exchanges.description AS transaction_description, exchanges.users_id AS transaction_users_id, 0 AS transaction_sub_categories_id, '' AS transaction_check_number
+          FROM `exchanges`
+          WHERE exchanges.deleted='0'
+          AND $exchange_access_condition
+          $accessed_sub_categories_exchange
+          UNION ALL
+          SELECT transfers.id AS transaction_id, 'Transfers' AS transaction_type, CONCAT(transfers.from_province, ' to ', transfers.to_province) AS transaction_province, CONCAT(transfers.from_branch, ' to ', transfers.to_branch) AS transaction_branch, transfers.transfer_date AS transaction_date, transfers.transfer_amount AS transaction_amount, transfers.currency AS transaction_currency, transfers.description AS transaction_description, transfers.users_id AS transaction_users_id, 0 AS transaction_sub_categories_id, transfers.check_number AS transaction_check_number
+          FROM `transfers`
+          WHERE transfers.deleted='0'
+          AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR transfers.users_id='$holu_users_id')
+          $accessed_sub_categories_transfer
+        ) AS dashboard_transactions
+        WHERE 1 $dashboard_date_filtering_data
+        ORDER BY transaction_date DESC, transaction_id DESC");
+
+        $style = (new StyleBuilder())
+        ->setFontSize(14)
+        ->setFontColor(Color::WHITE)
+        ->setBackgroundColor(Color::rgb(0, 184, 165))
+        ->build();
+
+        $writer->addRow([
+          '#',
+          'Type',
+          'Province',
+          'Branch',
+          'Category',
+          'Sub Category',
+          'Date',
+          'Amount',
+          'Currency',
+          'Check Number',
+          'Description',
+          'Created By',
+        ], $style);
+
+        if($transaction_sq->rowCount()>0){
+          $count = 1;
+          while($transaction_row = $transaction_sq->fetch()){
+            $transaction_category = '';
+            $transaction_sub_category = '';
+            if($transaction_row['transaction_sub_categories_id']!=0){
+              $transaction_category = get_col('categories', 'category_name', 'id', get_col('sub_categories', 'categories_id', 'id', $transaction_row['transaction_sub_categories_id']));
+              $transaction_sub_category = get_col('sub_categories', 'sub_category_name', 'id', $transaction_row['transaction_sub_categories_id']);
+            }
+
+            $writer->addRow([
+              $count++,
+              $transaction_row['transaction_type'],
+              $transaction_row['transaction_province'],
+              $transaction_row['transaction_branch'],
+              $transaction_category,
+              $transaction_sub_category,
+              $transaction_row['transaction_date'],
+              $transaction_row['transaction_amount'],
+              $transaction_row['transaction_currency'],
+              $transaction_row['transaction_check_number'],
+              $transaction_row['transaction_description'],
+              get_col('users', 'username', 'id', $transaction_row['transaction_users_id']),
+            ]);
+          }
+        }
+
+        $writer->toBrowser();
+
+      }break;
+
       default:{
 
       }break;
