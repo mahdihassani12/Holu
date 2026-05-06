@@ -4,6 +4,96 @@
 
   set_pagination();
 
+
+  $dashboard_date_range_options = [
+    'last_7_days' => 'Last 7 days',
+    'last_30_days' => 'Last 30 days',
+    'last_60_days' => 'Last 60 days',
+    'last_90_days' => 'Last 90 days',
+    'last_6_months' => 'Last 6 months',
+    'last_year' => 'Last Year',
+    'life_time' => 'Life time',
+    'custom' => 'Custom',
+  ];
+
+  $dashboard_date_range = isset($_GET['date_range']) ? holu_escape($_GET['date_range']) : 'last_90_days';
+  if(!array_key_exists($dashboard_date_range, $dashboard_date_range_options)){
+    $dashboard_date_range = 'last_90_days';
+  }
+
+  $dashboard_custom_from_date = isset($_GET['from_date']) ? holu_escape($_GET['from_date']) : '';
+  $dashboard_custom_to_date = isset($_GET['to_date']) ? holu_escape($_GET['to_date']) : '';
+  $dashboard_from_date = '';
+  $dashboard_to_date = '';
+  $dashboard_today = date('Y-m-d');
+
+  switch($dashboard_date_range){
+    case 'last_7_days':{
+      $dashboard_from_date = date('Y-m-d', strtotime('-6 days'));
+      $dashboard_to_date = $dashboard_today;
+    }break;
+
+    case 'last_30_days':{
+      $dashboard_from_date = date('Y-m-d', strtotime('-29 days'));
+      $dashboard_to_date = $dashboard_today;
+    }break;
+
+    case 'last_60_days':{
+      $dashboard_from_date = date('Y-m-d', strtotime('-59 days'));
+      $dashboard_to_date = $dashboard_today;
+    }break;
+
+    case 'last_90_days':{
+      $dashboard_from_date = date('Y-m-d', strtotime('-89 days'));
+      $dashboard_to_date = $dashboard_today;
+    }break;
+
+    case 'last_6_months':{
+      $dashboard_from_date = date('Y-m-d', strtotime('-6 months'));
+      $dashboard_to_date = $dashboard_today;
+    }break;
+
+    case 'last_year':{
+      $dashboard_from_date = date('Y-m-d', strtotime('-1 year'));
+      $dashboard_to_date = $dashboard_today;
+    }break;
+
+    case 'custom':{
+      $dashboard_from_date = $dashboard_custom_from_date;
+      $dashboard_to_date = $dashboard_custom_to_date;
+    }break;
+
+    default:{
+      $dashboard_from_date = '';
+      $dashboard_to_date = '';
+    }break;
+  }
+
+  $dashboard_date_filtering_data = '';
+  $dashboard_excel_data = '&date_range='.$dashboard_date_range;
+  if($dashboard_date_range=='custom'){
+    $dashboard_excel_data .= '&from_date='.urlencode($dashboard_custom_from_date).'&to_date='.urlencode($dashboard_custom_to_date);
+  }
+  if($dashboard_from_date!=''){
+    $dashboard_date_filtering_data .= " AND transaction_date>='".$dashboard_from_date."' ";
+  }
+  if($dashboard_to_date!=''){
+    $dashboard_date_filtering_data .= " AND transaction_date<='".$dashboard_to_date."' ";
+  }
+  $dashboard_date_range_label = $dashboard_date_range_options[$dashboard_date_range];
+  $dashboard_date_label_dates = '';
+  if($dashboard_from_date!='' || $dashboard_to_date!=''){
+    $dashboard_from_label = $dashboard_from_date!='' ? date('M j, Y', strtotime($dashboard_from_date)) : '';
+    $dashboard_to_label = $dashboard_to_date!='' ? date('M j, Y', strtotime($dashboard_to_date)) : '';
+    $dashboard_date_label_dates = trim($dashboard_from_label.' - '.$dashboard_to_label, ' -');
+    $holu_filtering_array[] = 'Date: '.$dashboard_date_range_label.($dashboard_date_label_dates!='' ? ' ('.$dashboard_date_label_dates.')' : '');
+  }
+  $dashboard_range_button_dates = $dashboard_date_label_dates!='' ? $dashboard_date_label_dates : 'All Dates';
+  $dashboard_header_context = 'ALL';
+  if($dashboard_date_label_dates!=''){
+    $dashboard_header_context .= ' | '.$dashboard_date_label_dates;
+  }
+
   $income_access_condition = set_province_branch_portion('incomes.province', 'incomes.branch');
   $expense_access_condition = set_province_branch_portion('expenses.province', 'expenses.branch');
   $exchange_access_condition = set_province_branch_portion('exchanges.province', 'exchanges.branch');
@@ -82,9 +172,9 @@
     ) AS dashboard_transactions
   ";
 
-  $transaction_sq = $db->query("$transactions_query ORDER BY transaction_date DESC, transaction_id DESC limit $holu_to OFFSET $holu_from");
+  $transaction_sq = $db->query("$transactions_query WHERE 1 $dashboard_date_filtering_data ORDER BY transaction_date DESC, transaction_id DESC limit $holu_to OFFSET $holu_from");
 
-  $Pagenation = $db->query("SELECT count(transaction_id) as record FROM ($transactions_query) AS counted_dashboard_transactions");
+  $Pagenation = $db->query("SELECT count(transaction_id) as record FROM ($transactions_query WHERE 1 $dashboard_date_filtering_data) AS counted_dashboard_transactions");
   extract($Pagenation->fetch());
 ?>
 
@@ -123,9 +213,39 @@
             <div class="col-lg-12">
               <div class="card-box card-box-header">
 
-                <h4 class="header-title">
-                  <?php echo get_table_header('fa fa-list', 'List of Transactions', $transaction_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
-                </h4>
+                <div class="dashboard-transactions-header">
+                  <h4 class="header-title dashboard-transactions-title">
+                    <i class="fa fa-list"></i>
+                    Report of Transactions
+                    <span class="dashboard-header-separator">•</span>
+                    <span class="dashboard-header-context"><?php echo htmlspecialchars($dashboard_header_context, ENT_QUOTES, 'UTF-8'); ?></span>
+                  </h4>
+
+                  <div class="dashboard-header-actions">
+                    <form id="dashboard_date_range_form" class="dashboard-date-range-form" method="get" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
+                      <input type="hidden" id="dashboard_date_range" name="date_range" value="<?php echo $dashboard_date_range; ?>">
+                      <div class="dashboard-range-dropdown">
+                        <button type="button" class="dashboard-range-toggle" onclick="dashboardTransactionsToggleDateRangeMenu();">
+                          <span class="dashboard-range-dates"><?php echo htmlspecialchars($dashboard_range_button_dates, ENT_QUOTES, 'UTF-8'); ?></span>
+                          <span class="dashboard-range-label"><?php echo htmlspecialchars($dashboard_date_range_label, ENT_QUOTES, 'UTF-8'); ?></span>
+                          <i class="fa fa-chevron-down dashboard-range-caret"></i>
+                        </button>
+                        <div id="dashboard_date_range_menu" class="dashboard-range-menu">
+                          <?php foreach($dashboard_date_range_options as $dashboard_date_range_key => $dashboard_date_range_value){ ?>
+                          <button type="button" class="dashboard-range-menu-item" onclick="dashboardTransactionsSelectDateRange('<?php echo $dashboard_date_range_key; ?>');"><?php echo $dashboard_date_range_value; ?></button>
+                          <?php } ?>
+                        </div>
+                      </div>
+                      <div id="dashboard_custom_date_fields" class="dashboard-custom-date-fields <?php echo ($dashboard_date_range=='custom'?'':'hidden'); ?>">
+                        <input type="text" name="from_date" class="form-control date_picker dashboard-custom-date-input" placeholder="From" value="<?php echo $dashboard_custom_from_date; ?>">
+                        <input type="text" name="to_date" class="form-control date_picker dashboard-custom-date-input" placeholder="To" value="<?php echo $dashboard_custom_to_date; ?>">
+                      </div>
+                      <button type="submit" class="btn waves-effect waves-light dashboard-filter-btn"><i class="fa fa-filter"></i> Filter</button>
+                    </form>
+
+                    <a id="export_excel_btn" class="btn waves-effect waves-light dashboard-export-btn" href="controller_excel.php?excel_type=dashboard_transactions<?php echo $dashboard_excel_data; ?>"><i class="far fa-file-excel"></i> Export Excel</a>
+                  </div>
+                </div>
 
               </div>
               <div class="card-box">
@@ -210,6 +330,28 @@
   <!-- END wrapper -->
   <div class="rightbar-overlay"></div>
   <?php include("_script.php"); ?>
+  <script>
+    function dashboardTransactionsToggleDateRangeMenu(){
+      $('#dashboard_date_range_menu').toggleClass('show');
+    }
+
+    function dashboardTransactionsSelectDateRange(selectedDateRange){
+      $('#dashboard_date_range').val(selectedDateRange);
+      $('#dashboard_date_range_menu').removeClass('show');
+      if(selectedDateRange==='custom'){
+        $('#dashboard_custom_date_fields').removeClass('hidden');
+      }else{
+        $('#dashboard_custom_date_fields').addClass('hidden');
+        $('#dashboard_date_range_form').submit();
+      }
+    }
+
+    $(document).on('click', function(event){
+      if(!$(event.target).closest('.dashboard-range-dropdown').length){
+        $('#dashboard_date_range_menu').removeClass('show');
+      }
+    });
+  </script>
 </body>
 </html>
 <?php include("_additional_elements.php"); ?>
