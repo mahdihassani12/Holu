@@ -632,6 +632,11 @@
 
         $writer = SimpleExcelWriter::streamDownload($excel_type.'.xlsx');
 
+        $dashboard_date_range_data = resolve_dashboard_transaction_date_range();
+        $dashboard_date_filtering_data = $dashboard_date_range_data['sql_filter'];
+        $dashboard_date_range_display = $dashboard_date_range_data['display_date_range'];
+        $dashboard_date_range_label = $dashboard_date_range_data['label'];
+
 
         $income_access_condition = set_province_branch_portion('incomes.province', 'incomes.branch');
         $expense_access_condition = set_province_branch_portion('expenses.province', 'expenses.branch');
@@ -672,6 +677,13 @@
         ->setFontColor(Color::WHITE)
         ->setBackgroundColor(Color::rgb(0, 184, 165))
         ->build();
+
+        $writer->addRow([
+          'Report of Transactions',
+          $dashboard_date_range_display,
+          $dashboard_date_range_label,
+        ], $style);
+        $writer->addRow([]);
 
         $writer->addRow([
           '#',
