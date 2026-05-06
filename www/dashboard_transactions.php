@@ -203,58 +203,6 @@
           ?>
           <div class="row">
             <div class="col-lg-12">
-              <div class="card-box card-box-header">
-
-                <div class="dashboard-transactions-header">
-                  <h4 class="header-title dashboard-transactions-title">
-                    <i class="fa fa-list"></i>
-                    Report of Transactions
-                    <span class="dashboard-header-separator">•</span>
-                    <span class="dashboard-header-context"><?php echo htmlspecialchars($dashboard_header_context, ENT_QUOTES, 'UTF-8'); ?></span>
-                  </h4>
-
-                  <div class="dashboard-header-actions">
-                    <form id="dashboard_date_range_form" class="dashboard-date-range-form" method="get" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
-                      <input type="hidden" id="dashboard_date_range" name="date_range" value="<?php echo $dashboard_date_range; ?>">
-                      <div class="dashboard-range-dropdown">
-                        <button type="button" class="dashboard-range-toggle" onclick="dashboardTransactionsToggleDateRangeMenu();">
-                          <span class="dashboard-range-dates"><?php echo htmlspecialchars($dashboard_range_button_dates, ENT_QUOTES, 'UTF-8'); ?></span>
-                          <span class="dashboard-range-label"><?php echo htmlspecialchars($dashboard_date_range_label, ENT_QUOTES, 'UTF-8'); ?></span>
-                          <i class="fa fa-chevron-down dashboard-range-caret"></i>
-                        </button>
-                        <div id="dashboard_date_range_menu" class="dashboard-range-menu">
-                          <?php foreach($dashboard_date_range_options as $dashboard_date_range_key => $dashboard_date_range_value){ ?>
-                          <button type="button" class="dashboard-range-menu-item" onclick="dashboardTransactionsSelectDateRange('<?php echo $dashboard_date_range_key; ?>');"><?php echo $dashboard_date_range_value; ?></button>
-                          <?php } ?>
-                        </div>
-                      </div>
-                      <div id="dashboard_custom_date_fields" class="dashboard-custom-date-fields <?php echo ($dashboard_date_range=='custom'?'':'hidden'); ?>">
-                        <input type="text" name="from_date" class="form-control date_picker dashboard-custom-date-input" placeholder="From" value="<?php echo $dashboard_custom_from_date; ?>">
-                        <input type="text" name="to_date" class="form-control date_picker dashboard-custom-date-input" placeholder="To" value="<?php echo $dashboard_custom_to_date; ?>">
-                      </div>
-                      <button type="submit" class="btn waves-effect waves-light dashboard-filter-btn"><i class="fa fa-filter"></i> Filter</button>
-                    </form>
-
-                    <a id="export_excel_btn" class="btn waves-effect waves-light dashboard-export-btn" href="controller_excel.php?excel_type=dashboard_transactions<?php echo $dashboard_excel_data; ?>"><i class="far fa-file-excel"></i> Export Excel</a>
-                  </div>
-                </div>
-
-                <a id="export_excel_btn" href="controller_excel.php?excel_type=dashboard_transactions<?php echo $dashboard_excel_data; ?>"><button type="button" class="btn waves-effect waves-light adder_button"><i class="far fa-file-excel"></i> Export Excel</button></a>
-
-                <form id="dashboard_date_range_form" class="dashboard-date-range-form" method="get" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
-                  <select id="dashboard_date_range" name="date_range" class="form-control dashboard-date-range-select" onchange="dashboardTransactionsDateRangeChanged();">
-                    <?php foreach($dashboard_date_range_options as $dashboard_date_range_key => $dashboard_date_range_value){ ?>
-                    <option value="<?php echo $dashboard_date_range_key; ?>" <?php echo ($dashboard_date_range==$dashboard_date_range_key?'selected':''); ?>><?php echo $dashboard_date_range_value; ?></option>
-                    <?php } ?>
-                  </select>
-                  <div id="dashboard_custom_date_fields" class="dashboard-custom-date-fields <?php echo ($dashboard_date_range=='custom'?'':'hidden'); ?>">
-                    <input type="text" name="from_date" class="form-control date_picker dashboard-custom-date-input" placeholder="From" value="<?php echo $dashboard_custom_from_date; ?>">
-                    <input type="text" name="to_date" class="form-control date_picker dashboard-custom-date-input" placeholder="To" value="<?php echo $dashboard_custom_to_date; ?>">
-                    <button type="submit" class="btn waves-effect waves-light adder_button dashboard-date-apply-btn"><i class="fa fa-filter"></i> Apply</button>
-                  </div>
-                </form>
-
-              </div>
               <div class="card-box">
                 <div class="table-responsive slimscroll">
                   <table class="table table-bordered table-sm mb-0">
@@ -337,16 +285,6 @@
   <!-- END wrapper -->
   <div class="rightbar-overlay"></div>
   <?php include("_script.php"); ?>
-  <script>
-    function dashboardTransactionsDateRangeChanged(){
-      var selectedDateRange = $('#dashboard_date_range').val();
-      if(selectedDateRange==='custom'){
-        $('#dashboard_custom_date_fields').removeClass('hidden');
-      }else{
-        $('#dashboard_date_range_form').submit();
-      }
-    }
-  </script>
 </body>
 </html>
 <?php include("_additional_elements.php"); ?>
