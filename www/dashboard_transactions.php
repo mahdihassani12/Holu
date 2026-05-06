@@ -80,18 +80,10 @@
   if($dashboard_to_date!=''){
     $dashboard_date_filtering_data .= " AND transaction_date<='".$dashboard_to_date."' ";
   }
-  $dashboard_date_range_label = $dashboard_date_range_options[$dashboard_date_range];
-  $dashboard_date_label_dates = '';
   if($dashboard_from_date!='' || $dashboard_to_date!=''){
-    $dashboard_from_label = $dashboard_from_date!='' ? date('M j, Y', strtotime($dashboard_from_date)) : '';
-    $dashboard_to_label = $dashboard_to_date!='' ? date('M j, Y', strtotime($dashboard_to_date)) : '';
-    $dashboard_date_label_dates = trim($dashboard_from_label.' - '.$dashboard_to_label, ' -');
+    $dashboard_date_range_label = $dashboard_date_range_options[$dashboard_date_range];
+    $dashboard_date_label_dates = trim($dashboard_from_date.' - '.$dashboard_to_date, ' -');
     $holu_filtering_array[] = 'Date: '.$dashboard_date_range_label.($dashboard_date_label_dates!='' ? ' ('.$dashboard_date_label_dates.')' : '');
-  }
-  $dashboard_range_button_dates = $dashboard_date_label_dates!='' ? $dashboard_date_label_dates : 'All Dates';
-  $dashboard_header_context = 'ALL';
-  if($dashboard_date_label_dates!=''){
-    $dashboard_header_context .= ' | '.$dashboard_date_label_dates;
   }
 
   $income_access_condition = set_province_branch_portion('incomes.province', 'incomes.branch');
@@ -247,6 +239,21 @@
                   </div>
                 </div>
 
+                <a id="export_excel_btn" href="controller_excel.php?excel_type=dashboard_transactions<?php echo $dashboard_excel_data; ?>"><button type="button" class="btn waves-effect waves-light adder_button"><i class="far fa-file-excel"></i> Export Excel</button></a>
+
+                <form id="dashboard_date_range_form" class="dashboard-date-range-form" method="get" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
+                  <select id="dashboard_date_range" name="date_range" class="form-control dashboard-date-range-select" onchange="dashboardTransactionsDateRangeChanged();">
+                    <?php foreach($dashboard_date_range_options as $dashboard_date_range_key => $dashboard_date_range_value){ ?>
+                    <option value="<?php echo $dashboard_date_range_key; ?>" <?php echo ($dashboard_date_range==$dashboard_date_range_key?'selected':''); ?>><?php echo $dashboard_date_range_value; ?></option>
+                    <?php } ?>
+                  </select>
+                  <div id="dashboard_custom_date_fields" class="dashboard-custom-date-fields <?php echo ($dashboard_date_range=='custom'?'':'hidden'); ?>">
+                    <input type="text" name="from_date" class="form-control date_picker dashboard-custom-date-input" placeholder="From" value="<?php echo $dashboard_custom_from_date; ?>">
+                    <input type="text" name="to_date" class="form-control date_picker dashboard-custom-date-input" placeholder="To" value="<?php echo $dashboard_custom_to_date; ?>">
+                    <button type="submit" class="btn waves-effect waves-light adder_button dashboard-date-apply-btn"><i class="fa fa-filter"></i> Apply</button>
+                  </div>
+                </form>
+
               </div>
               <div class="card-box">
                 <div class="table-responsive slimscroll">
@@ -331,26 +338,14 @@
   <div class="rightbar-overlay"></div>
   <?php include("_script.php"); ?>
   <script>
-    function dashboardTransactionsToggleDateRangeMenu(){
-      $('#dashboard_date_range_menu').toggleClass('show');
-    }
-
-    function dashboardTransactionsSelectDateRange(selectedDateRange){
-      $('#dashboard_date_range').val(selectedDateRange);
-      $('#dashboard_date_range_menu').removeClass('show');
+    function dashboardTransactionsDateRangeChanged(){
+      var selectedDateRange = $('#dashboard_date_range').val();
       if(selectedDateRange==='custom'){
         $('#dashboard_custom_date_fields').removeClass('hidden');
       }else{
-        $('#dashboard_custom_date_fields').addClass('hidden');
         $('#dashboard_date_range_form').submit();
       }
     }
-
-    $(document).on('click', function(event){
-      if(!$(event.target).closest('.dashboard-range-dropdown').length){
-        $('#dashboard_date_range_menu').removeClass('show');
-      }
-    });
   </script>
 </body>
 </html>

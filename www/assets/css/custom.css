@@ -256,146 +256,33 @@ a{
 	color: #3bb507;
 	background-color: #fff;
 }
-
-.dashboard-transactions-header{
-	display: flex !important;
-	align-items: center !important;
-	justify-content: space-between !important;
-	gap: 10px !important;
-	width: 100% !important;
-}
-.dashboard-transactions-title{
-	align-items: center !important;
-	display: inline-flex !important;
-	flex: 1 1 auto !important;
-	gap: 8px !important;
-	min-width: 0 !important;
-	white-space: nowrap !important;
-}
-.dashboard-header-separator,
-.dashboard-header-context{
-	font-size: 12px !important;
-	font-weight: bold !important;
-	line-height: 1 !important;
-}
-.dashboard-header-context{
-	overflow: hidden !important;
-	text-overflow: ellipsis !important;
-}
-.dashboard-header-actions{
-	display: inline-flex !important;
-	align-items: center !important;
-	gap: 6px !important;
-	flex: 0 0 auto !important;
-}
 .dashboard-date-range-form{
 	display: inline-flex !important;
+	float: right !important;
 	align-items: center !important;
-	gap: 6px !important;
-	margin: 0 !important;
+	margin-top: -7px !important;
+	margin-left: 3px !important;
 }
-.dashboard-range-dropdown{
-	position: relative !important;
-}
-.dashboard-range-toggle{
-	align-items: center !important;
-	background: #fff !important;
-	border: 0 !important;
-	border-radius: 3px !important;
+.dashboard-date-range-select{
+	width: 190px !important;
 	color: #36b8cb !important;
-	display: grid !important;
-	grid-template-columns: 1fr 16px !important;
-	grid-template-rows: 13px 13px !important;
-	height: 34px !important;
-	line-height: 1 !important;
-	min-width: 190px !important;
-	padding: 4px 6px !important;
-	text-align: center !important;
-}
-.dashboard-range-dates{
-	font-size: 9px !important;
 	font-weight: bold !important;
-	grid-column: 1 !important;
-}
-.dashboard-range-label{
-	font-size: 10px !important;
-	font-weight: bold !important;
-	grid-column: 1 !important;
-}
-.dashboard-range-caret{
-	align-self: center !important;
-	font-size: 13px !important;
-	grid-column: 2 !important;
-	grid-row: 1 / span 2 !important;
-}
-.dashboard-range-menu{
-	background: #fff !important;
-	border: 1px solid #e9eef1 !important;
-	box-shadow: 0 3px 8px rgba(0,0,0,.08) !important;
-	display: none !important;
-	left: 0 !important;
-	min-width: 190px !important;
-	padding: 6px 0 !important;
-	position: absolute !important;
-	top: 38px !important;
-	z-index: 1050 !important;
-}
-.dashboard-range-menu.show{
-	display: block !important;
-}
-.dashboard-range-menu-item{
-	background: #fff !important;
 	border: 0 !important;
-	color: #36b8cb !important;
-	display: block !important;
-	font-size: 15px !important;
-	font-weight: 500 !important;
-	line-height: 1.35 !important;
-	padding: 4px 14px !important;
-	text-align: left !important;
-	width: 100% !important;
-}
-.dashboard-range-menu-item:hover{
-	background: #f2fbfd !important;
 }
 .dashboard-custom-date-fields{
 	display: inline-flex !important;
 	align-items: center !important;
-	gap: 4px !important;
+	margin-left: 3px !important;
 }
 .dashboard-custom-date-fields.hidden{
 	display: none !important;
 }
 .dashboard-custom-date-input{
+	width: 115px !important;
+	margin-left: 3px !important;
 	border: 0 !important;
-	height: 34px !important;
-	width: 105px !important;
 }
-.dashboard-filter-btn,
-.dashboard-export-btn{
-	background: #fff !important;
-	border: 0 !important;
-	border-radius: 0 !important;
-	color: #36b8cb !important;
-	font-size: 12px !important;
-	font-weight: bold !important;
-	height: 34px !important;
-	line-height: 20px !important;
-	padding: 7px 10px !important;
-	white-space: nowrap !important;
-}
-.dashboard-filter-btn:hover,
-.dashboard-export-btn:hover{
-	background: #f2fbfd !important;
-	color: #2F8F9D !important;
-}
-@media (max-width: 991px){
-	.dashboard-transactions-header{
-		align-items: flex-start !important;
-		flex-direction: column !important;
-	}
-	.dashboard-header-actions,
-	.dashboard-date-range-form{
-		flex-wrap: wrap !important;
-	}
+.dashboard-date-apply-btn{
+	float: none !important;
+	margin-top: 0 !important;
 }
