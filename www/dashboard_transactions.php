@@ -14,6 +14,8 @@
   $dashboard_excel_data = $dashboard_date_range_data['query_string'];
   $dashboard_date_range_display = $dashboard_date_range_data['display_date_range'];
   $dashboard_date_range_label = $dashboard_date_range_data['label'];
+  $dashboard_from_date = $dashboard_date_range_data['from_date'];
+  $dashboard_to_date = $dashboard_date_range_data['to_date'];
   $holu_filtering_array[] = $dashboard_date_range_data['filter_label'];
 
 
@@ -99,6 +101,200 @@
 
   $Pagenation = $db->query("SELECT count(transaction_id) as record FROM ($transactions_query WHERE 1 $dashboard_date_filtering_data) AS counted_dashboard_transactions");
   extract($Pagenation->fetch());
+
+  $dashboard_income_date_filter = "";
+  $dashboard_expense_date_filter = "";
+  $dashboard_exchange_date_filter = "";
+  $dashboard_transfer_date_filter = "";
+
+  if($dashboard_from_date!=''){
+    $dashboard_income_date_filter .= " AND incomes.income_date>='".$dashboard_from_date."' ";
+    $dashboard_expense_date_filter .= " AND expenses.expense_date>='".$dashboard_from_date."' ";
+    $dashboard_exchange_date_filter .= " AND exchanges.exchange_date>='".$dashboard_from_date."' ";
+    $dashboard_transfer_date_filter .= " AND transfers.transfer_date>='".$dashboard_from_date."' ";
+  }
+  if($dashboard_to_date!=''){
+    $dashboard_income_date_filter .= " AND incomes.income_date<='".$dashboard_to_date."' ";
+    $dashboard_expense_date_filter .= " AND expenses.expense_date<='".$dashboard_to_date."' ";
+    $dashboard_exchange_date_filter .= " AND exchanges.exchange_date<='".$dashboard_to_date."' ";
+    $dashboard_transfer_date_filter .= " AND transfers.transfer_date<='".$dashboard_to_date."' ";
+  }
+
+  $dashboard_closing_income_date_filter = $dashboard_income_date_filter;
+  $dashboard_closing_expense_date_filter = $dashboard_expense_date_filter;
+  $dashboard_closing_exchange_date_filter = $dashboard_exchange_date_filter;
+  $dashboard_closing_transfer_date_filter = $dashboard_transfer_date_filter;
+
+  if($dashboard_to_date!=''){
+    $dashboard_closing_income_date_filter = " AND incomes.income_date<='".$dashboard_to_date."' ";
+    $dashboard_closing_expense_date_filter = " AND expenses.expense_date<='".$dashboard_to_date."' ";
+    $dashboard_closing_exchange_date_filter = " AND exchanges.exchange_date<='".$dashboard_to_date."' ";
+    $dashboard_closing_transfer_date_filter = " AND transfers.transfer_date<='".$dashboard_to_date."' ";
+  }
+
+  $dashboard_total_income_sq = $db->query(
+    "SELECT
+      SUM(CASE WHEN currency='AFN' THEN income_amount ELSE 0 END) AS total_income_afn,
+      SUM(CASE WHEN currency='USD' THEN income_amount ELSE 0 END) AS total_income_usd,
+      SUM(CASE WHEN currency='IRT' THEN income_amount ELSE 0 END) AS total_income_irt
+    FROM `incomes`
+    WHERE incomes.deleted='0'
+    AND $income_access_condition
+    AND incomes.sub_categories_id IN ($accessed_sub_categories_income)
+    $dashboard_income_date_filter"
+  );
+  $dashboard_total_income_row = $dashboard_total_income_sq->fetch();
+
+  $dashboard_total_expense_sq = $db->query(
+    "SELECT
+      SUM(CASE WHEN currency='AFN' THEN expense_amount ELSE 0 END) AS total_expense_afn,
+      SUM(CASE WHEN currency='USD' THEN expense_amount ELSE 0 END) AS total_expense_usd,
+      SUM(CASE WHEN currency='IRT' THEN expense_amount ELSE 0 END) AS total_expense_irt
+    FROM `expenses`
+    WHERE expenses.deleted='0'
+    AND $expense_access_condition
+    AND expenses.sub_categories_id IN ($accessed_sub_categories_expense)
+    $dashboard_expense_date_filter"
+  );
+  $dashboard_total_expense_row = $dashboard_total_expense_sq->fetch();
+
+  $dashboard_total_exchange_sq = $db->query(
+    "SELECT
+      SUM(CASE WHEN from_currency='AFN' AND to_currency='USD' THEN from_amount ELSE 0 END) AS total_from_afn,
+      SUM(CASE WHEN from_currency='AFN' AND to_currency='IRT' THEN from_amount ELSE 0 END) AS total_from_afn2,
+      SUM(CASE WHEN from_currency='USD' AND to_currency='AFN' THEN from_amount ELSE 0 END) AS total_from_usd,
+      SUM(CASE WHEN from_currency='IRT' AND to_currency='AFN' THEN from_amount ELSE 0 END) AS total_from_irt,
+      SUM(CASE WHEN to_currency='AFN' AND from_currency='USD' THEN to_amount ELSE 0 END) AS total_to_afn,
+      SUM(CASE WHEN to_currency='AFN' AND from_currency='IRT' THEN to_amount ELSE 0 END) AS total_to_afn2,
+      SUM(CASE WHEN to_currency='USD' AND from_currency='AFN' THEN to_amount ELSE 0 END) AS total_to_usd,
+      SUM(CASE WHEN to_currency='IRT' AND from_currency='AFN' THEN to_amount ELSE 0 END) AS total_to_irt
+    FROM `exchanges`
+    WHERE exchanges.deleted='0'
+    AND $exchange_access_condition
+    $dashboard_exchange_date_filter
+    $accessed_sub_categories_exchange"
+  );
+  $dashboard_total_exchange_row = $dashboard_total_exchange_sq->fetch();
+
+  $dashboard_transfer_out_scope = "(($transfer_from_access_condition) OR (transfers.users_id='$holu_users_id' AND NOT ($transfer_to_access_condition)))";
+  $dashboard_transfer_in_scope = "($transfer_to_access_condition)";
+  $dashboard_total_transfer_sq = $db->query(
+    "SELECT
+      SUM(CASE WHEN currency='AFN' AND $dashboard_transfer_out_scope THEN transfer_amount ELSE 0 END) AS total_transfer_out_afn,
+      SUM(CASE WHEN currency='AFN' AND $dashboard_transfer_in_scope THEN transfer_amount ELSE 0 END) AS total_transfer_in_afn,
+      SUM(CASE WHEN currency='USD' AND $dashboard_transfer_out_scope THEN transfer_amount ELSE 0 END) AS total_transfer_out_usd,
+      SUM(CASE WHEN currency='USD' AND $dashboard_transfer_in_scope THEN transfer_amount ELSE 0 END) AS total_transfer_in_usd,
+      SUM(CASE WHEN currency='IRT' AND $dashboard_transfer_out_scope THEN transfer_amount ELSE 0 END) AS total_transfer_out_irt,
+      SUM(CASE WHEN currency='IRT' AND $dashboard_transfer_in_scope THEN transfer_amount ELSE 0 END) AS total_transfer_in_irt
+    FROM `transfers`
+    WHERE transfers.deleted='0'
+    AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR transfers.users_id='$holu_users_id')
+    $dashboard_transfer_date_filter
+    $accessed_sub_categories_transfer"
+  );
+  $dashboard_total_transfer_row = $dashboard_total_transfer_sq->fetch();
+
+  $dashboard_total_afn = ($dashboard_total_income_row['total_income_afn'] ?? 0)
+    - ($dashboard_total_expense_row['total_expense_afn'] ?? 0)
+    + ($dashboard_total_exchange_row['total_to_afn'] ?? 0)
+    + ($dashboard_total_exchange_row['total_to_afn2'] ?? 0)
+    - ($dashboard_total_exchange_row['total_from_afn'] ?? 0)
+    - ($dashboard_total_exchange_row['total_from_afn2'] ?? 0)
+    - ($dashboard_total_transfer_row['total_transfer_out_afn'] ?? 0)
+    + ($dashboard_total_transfer_row['total_transfer_in_afn'] ?? 0);
+  $dashboard_total_usd = ($dashboard_total_income_row['total_income_usd'] ?? 0)
+    - ($dashboard_total_expense_row['total_expense_usd'] ?? 0)
+    + ($dashboard_total_exchange_row['total_to_usd'] ?? 0)
+    - ($dashboard_total_exchange_row['total_from_usd'] ?? 0)
+    - ($dashboard_total_transfer_row['total_transfer_out_usd'] ?? 0)
+    + ($dashboard_total_transfer_row['total_transfer_in_usd'] ?? 0);
+  $dashboard_total_irt = ($dashboard_total_income_row['total_income_irt'] ?? 0)
+    - ($dashboard_total_expense_row['total_expense_irt'] ?? 0)
+    + ($dashboard_total_exchange_row['total_to_irt'] ?? 0)
+    - ($dashboard_total_exchange_row['total_from_irt'] ?? 0)
+    - ($dashboard_total_transfer_row['total_transfer_out_irt'] ?? 0)
+    + ($dashboard_total_transfer_row['total_transfer_in_irt'] ?? 0);
+
+  $dashboard_closing_income_sq = $db->query(
+    "SELECT
+      SUM(CASE WHEN currency='AFN' THEN income_amount ELSE 0 END) AS closing_income_afn,
+      SUM(CASE WHEN currency='USD' THEN income_amount ELSE 0 END) AS closing_income_usd,
+      SUM(CASE WHEN currency='IRT' THEN income_amount ELSE 0 END) AS closing_income_irt
+    FROM `incomes`
+    WHERE incomes.deleted='0'
+    AND $income_access_condition
+    AND incomes.sub_categories_id IN ($accessed_sub_categories_income)
+    $dashboard_closing_income_date_filter"
+  );
+  $dashboard_closing_income_row = $dashboard_closing_income_sq->fetch();
+
+  $dashboard_closing_expense_sq = $db->query(
+    "SELECT
+      SUM(CASE WHEN currency='AFN' THEN expense_amount ELSE 0 END) AS closing_expense_afn,
+      SUM(CASE WHEN currency='USD' THEN expense_amount ELSE 0 END) AS closing_expense_usd,
+      SUM(CASE WHEN currency='IRT' THEN expense_amount ELSE 0 END) AS closing_expense_irt
+    FROM `expenses`
+    WHERE expenses.deleted='0'
+    AND $expense_access_condition
+    AND expenses.sub_categories_id IN ($accessed_sub_categories_expense)
+    $dashboard_closing_expense_date_filter"
+  );
+  $dashboard_closing_expense_row = $dashboard_closing_expense_sq->fetch();
+
+  $dashboard_closing_exchange_sq = $db->query(
+    "SELECT
+      SUM(CASE WHEN from_currency='AFN' AND to_currency='USD' THEN from_amount ELSE 0 END) AS closing_from_afn,
+      SUM(CASE WHEN from_currency='AFN' AND to_currency='IRT' THEN from_amount ELSE 0 END) AS closing_from_afn2,
+      SUM(CASE WHEN from_currency='USD' AND to_currency='AFN' THEN from_amount ELSE 0 END) AS closing_from_usd,
+      SUM(CASE WHEN from_currency='IRT' AND to_currency='AFN' THEN from_amount ELSE 0 END) AS closing_from_irt,
+      SUM(CASE WHEN to_currency='AFN' AND from_currency='USD' THEN to_amount ELSE 0 END) AS closing_to_afn,
+      SUM(CASE WHEN to_currency='AFN' AND from_currency='IRT' THEN to_amount ELSE 0 END) AS closing_to_afn2,
+      SUM(CASE WHEN to_currency='USD' AND from_currency='AFN' THEN to_amount ELSE 0 END) AS closing_to_usd,
+      SUM(CASE WHEN to_currency='IRT' AND from_currency='AFN' THEN to_amount ELSE 0 END) AS closing_to_irt
+    FROM `exchanges`
+    WHERE exchanges.deleted='0'
+    AND $exchange_access_condition
+    $dashboard_closing_exchange_date_filter
+    $accessed_sub_categories_exchange"
+  );
+  $dashboard_closing_exchange_row = $dashboard_closing_exchange_sq->fetch();
+
+  $dashboard_closing_transfer_sq = $db->query(
+    "SELECT
+      SUM(CASE WHEN currency='AFN' AND $dashboard_transfer_out_scope THEN transfer_amount ELSE 0 END) AS closing_transfer_out_afn,
+      SUM(CASE WHEN currency='AFN' AND $dashboard_transfer_in_scope THEN transfer_amount ELSE 0 END) AS closing_transfer_in_afn,
+      SUM(CASE WHEN currency='USD' AND $dashboard_transfer_out_scope THEN transfer_amount ELSE 0 END) AS closing_transfer_out_usd,
+      SUM(CASE WHEN currency='USD' AND $dashboard_transfer_in_scope THEN transfer_amount ELSE 0 END) AS closing_transfer_in_usd,
+      SUM(CASE WHEN currency='IRT' AND $dashboard_transfer_out_scope THEN transfer_amount ELSE 0 END) AS closing_transfer_out_irt,
+      SUM(CASE WHEN currency='IRT' AND $dashboard_transfer_in_scope THEN transfer_amount ELSE 0 END) AS closing_transfer_in_irt
+    FROM `transfers`
+    WHERE transfers.deleted='0'
+    AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR transfers.users_id='$holu_users_id')
+    $dashboard_closing_transfer_date_filter
+    $accessed_sub_categories_transfer"
+  );
+  $dashboard_closing_transfer_row = $dashboard_closing_transfer_sq->fetch();
+
+  $dashboard_closing_afn = ($dashboard_closing_income_row['closing_income_afn'] ?? 0)
+    - ($dashboard_closing_expense_row['closing_expense_afn'] ?? 0)
+    + ($dashboard_closing_exchange_row['closing_to_afn'] ?? 0)
+    + ($dashboard_closing_exchange_row['closing_to_afn2'] ?? 0)
+    - ($dashboard_closing_exchange_row['closing_from_afn'] ?? 0)
+    - ($dashboard_closing_exchange_row['closing_from_afn2'] ?? 0)
+    - ($dashboard_closing_transfer_row['closing_transfer_out_afn'] ?? 0)
+    + ($dashboard_closing_transfer_row['closing_transfer_in_afn'] ?? 0);
+  $dashboard_closing_usd = ($dashboard_closing_income_row['closing_income_usd'] ?? 0)
+    - ($dashboard_closing_expense_row['closing_expense_usd'] ?? 0)
+    + ($dashboard_closing_exchange_row['closing_to_usd'] ?? 0)
+    - ($dashboard_closing_exchange_row['closing_from_usd'] ?? 0)
+    - ($dashboard_closing_transfer_row['closing_transfer_out_usd'] ?? 0)
+    + ($dashboard_closing_transfer_row['closing_transfer_in_usd'] ?? 0);
+  $dashboard_closing_irt = ($dashboard_closing_income_row['closing_income_irt'] ?? 0)
+    - ($dashboard_closing_expense_row['closing_expense_irt'] ?? 0)
+    + ($dashboard_closing_exchange_row['closing_to_irt'] ?? 0)
+    - ($dashboard_closing_exchange_row['closing_from_irt'] ?? 0)
+    - ($dashboard_closing_transfer_row['closing_transfer_out_irt'] ?? 0)
+    + ($dashboard_closing_transfer_row['closing_transfer_in_irt'] ?? 0);
 ?>
 
 <!DOCTYPE html>
@@ -191,6 +387,57 @@
                         <i class="fa fa-check"></i> Apply date filter
                       </button>
                     </form>
+                  </div>
+                </div>
+              </div>
+              <div class="dashboard-transaction-summary" aria-label="Transaction totals for selected date range">
+                <div class="dashboard-summary-card dashboard-summary-income">
+                  <div class="dashboard-summary-title"><i class="fa fa-arrow-down"></i> Income</div>
+                  <div class="dashboard-summary-values">
+                    <span><?php echo number_format($dashboard_total_income_row['total_income_afn'] ?? 0, 2); ?> AFN</span>
+                    <span><?php echo number_format($dashboard_total_income_row['total_income_usd'] ?? 0, 2); ?> USD</span>
+                    <span><?php echo number_format($dashboard_total_income_row['total_income_irt'] ?? 0, 2); ?> IRT</span>
+                  </div>
+                </div>
+                <div class="dashboard-summary-card dashboard-summary-expense">
+                  <div class="dashboard-summary-title"><i class="fa fa-arrow-up"></i> Expense</div>
+                  <div class="dashboard-summary-values">
+                    <span><?php echo number_format($dashboard_total_expense_row['total_expense_afn'] ?? 0, 2); ?> AFN</span>
+                    <span><?php echo number_format($dashboard_total_expense_row['total_expense_usd'] ?? 0, 2); ?> USD</span>
+                    <span><?php echo number_format($dashboard_total_expense_row['total_expense_irt'] ?? 0, 2); ?> IRT</span>
+                  </div>
+                </div>
+                <div class="dashboard-summary-card dashboard-summary-exchange">
+                  <div class="dashboard-summary-title"><i class="fa fa-exchange-alt"></i> Exchange</div>
+                  <div class="dashboard-summary-values dashboard-summary-routes">
+                    <span><?php echo number_format($dashboard_total_exchange_row['total_from_afn'] ?? 0, 2); ?> AFN to <?php echo number_format($dashboard_total_exchange_row['total_to_usd'] ?? 0, 2); ?> USD</span>
+                    <span><?php echo number_format($dashboard_total_exchange_row['total_from_usd'] ?? 0, 2); ?> USD to <?php echo number_format($dashboard_total_exchange_row['total_to_afn'] ?? 0, 2); ?> AFN</span>
+                    <span><?php echo number_format($dashboard_total_exchange_row['total_from_afn2'] ?? 0, 2); ?> AFN to <?php echo number_format($dashboard_total_exchange_row['total_to_irt'] ?? 0, 2); ?> IRT</span>
+                    <span><?php echo number_format($dashboard_total_exchange_row['total_from_irt'] ?? 0, 2); ?> IRT to <?php echo number_format($dashboard_total_exchange_row['total_to_afn2'] ?? 0, 2); ?> AFN</span>
+                  </div>
+                </div>
+                <div class="dashboard-summary-card dashboard-summary-transfer">
+                  <div class="dashboard-summary-title"><i class="fa fa-random"></i> Transfer</div>
+                  <div class="dashboard-summary-values">
+                    <span><?php echo number_format(($dashboard_total_transfer_row['total_transfer_in_afn'] ?? 0) - ($dashboard_total_transfer_row['total_transfer_out_afn'] ?? 0), 2); ?> AFN</span>
+                    <span><?php echo number_format(($dashboard_total_transfer_row['total_transfer_in_usd'] ?? 0) - ($dashboard_total_transfer_row['total_transfer_out_usd'] ?? 0), 2); ?> USD</span>
+                    <span><?php echo number_format(($dashboard_total_transfer_row['total_transfer_in_irt'] ?? 0) - ($dashboard_total_transfer_row['total_transfer_out_irt'] ?? 0), 2); ?> IRT</span>
+                  </div>
+                </div>
+                <div class="dashboard-summary-card dashboard-summary-total">
+                  <div class="dashboard-summary-title"><i class="fa fa-balance-scale"></i> Total</div>
+                  <div class="dashboard-summary-values">
+                    <span><?php echo number_format($dashboard_total_afn, 2); ?> AFN</span>
+                    <span><?php echo number_format($dashboard_total_usd, 2); ?> USD</span>
+                    <span><?php echo number_format($dashboard_total_irt, 2); ?> IRT</span>
+                  </div>
+                </div>
+                <div class="dashboard-summary-card dashboard-summary-closing">
+                  <div class="dashboard-summary-title"><i class="fa fa-wallet"></i> Total with Closing</div>
+                  <div class="dashboard-summary-values">
+                    <span><?php echo number_format($dashboard_closing_afn, 2); ?> AFN</span>
+                    <span><?php echo number_format($dashboard_closing_usd, 2); ?> USD</span>
+                    <span><?php echo number_format($dashboard_closing_irt, 2); ?> IRT</span>
                   </div>
                 </div>
               </div>
