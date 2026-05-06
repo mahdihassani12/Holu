@@ -330,6 +330,57 @@
           ?>
           <div class="row">
             <div class="col-lg-12">
+              <div class="dashboard-transaction-summary" aria-label="Transaction totals for selected date range">
+                <div class="dashboard-summary-card dashboard-summary-income">
+                  <div class="dashboard-summary-title"><i class="fa fa-arrow-down"></i> Income</div>
+                  <div class="dashboard-summary-values">
+                    <span><?php echo number_format($dashboard_total_income_row['total_income_afn'] ?? 0, 2); ?> AFN</span>
+                    <span><?php echo number_format($dashboard_total_income_row['total_income_usd'] ?? 0, 2); ?> USD</span>
+                    <span><?php echo number_format($dashboard_total_income_row['total_income_irt'] ?? 0, 2); ?> IRT</span>
+                  </div>
+                </div>
+                <div class="dashboard-summary-card dashboard-summary-expense">
+                  <div class="dashboard-summary-title"><i class="fa fa-arrow-up"></i> Expense</div>
+                  <div class="dashboard-summary-values">
+                    <span><?php echo number_format($dashboard_total_expense_row['total_expense_afn'] ?? 0, 2); ?> AFN</span>
+                    <span><?php echo number_format($dashboard_total_expense_row['total_expense_usd'] ?? 0, 2); ?> USD</span>
+                    <span><?php echo number_format($dashboard_total_expense_row['total_expense_irt'] ?? 0, 2); ?> IRT</span>
+                  </div>
+                </div>
+                <div class="dashboard-summary-card dashboard-summary-exchange">
+                  <div class="dashboard-summary-title"><i class="fa fa-exchange-alt"></i> Exchange</div>
+                  <div class="dashboard-summary-values dashboard-summary-routes">
+                    <span><?php echo number_format($dashboard_total_exchange_row['total_from_afn'] ?? 0, 2); ?> AFN to <?php echo number_format($dashboard_total_exchange_row['total_to_usd'] ?? 0, 2); ?> USD</span>
+                    <span><?php echo number_format($dashboard_total_exchange_row['total_from_usd'] ?? 0, 2); ?> USD to <?php echo number_format($dashboard_total_exchange_row['total_to_afn'] ?? 0, 2); ?> AFN</span>
+                    <span><?php echo number_format($dashboard_total_exchange_row['total_from_afn2'] ?? 0, 2); ?> AFN to <?php echo number_format($dashboard_total_exchange_row['total_to_irt'] ?? 0, 2); ?> IRT</span>
+                    <span><?php echo number_format($dashboard_total_exchange_row['total_from_irt'] ?? 0, 2); ?> IRT to <?php echo number_format($dashboard_total_exchange_row['total_to_afn2'] ?? 0, 2); ?> AFN</span>
+                  </div>
+                </div>
+                <div class="dashboard-summary-card dashboard-summary-transfer">
+                  <div class="dashboard-summary-title"><i class="fa fa-random"></i> Transfer</div>
+                  <div class="dashboard-summary-values">
+                    <span><?php echo number_format(($dashboard_total_transfer_row['total_transfer_in_afn'] ?? 0) - ($dashboard_total_transfer_row['total_transfer_out_afn'] ?? 0), 2); ?> AFN</span>
+                    <span><?php echo number_format(($dashboard_total_transfer_row['total_transfer_in_usd'] ?? 0) - ($dashboard_total_transfer_row['total_transfer_out_usd'] ?? 0), 2); ?> USD</span>
+                    <span><?php echo number_format(($dashboard_total_transfer_row['total_transfer_in_irt'] ?? 0) - ($dashboard_total_transfer_row['total_transfer_out_irt'] ?? 0), 2); ?> IRT</span>
+                  </div>
+                </div>
+                <div class="dashboard-summary-card dashboard-summary-total">
+                  <div class="dashboard-summary-title"><i class="fa fa-balance-scale"></i> Total</div>
+                  <div class="dashboard-summary-values">
+                    <span><?php echo number_format($dashboard_total_afn, 2); ?> AFN</span>
+                    <span><?php echo number_format($dashboard_total_usd, 2); ?> USD</span>
+                    <span><?php echo number_format($dashboard_total_irt, 2); ?> IRT</span>
+                  </div>
+                </div>
+                <div class="dashboard-summary-card dashboard-summary-closing">
+                  <div class="dashboard-summary-title"><i class="fa fa-wallet"></i> Total with Closing</div>
+                  <div class="dashboard-summary-values">
+                    <span><?php echo number_format($dashboard_closing_afn, 2); ?> AFN</span>
+                    <span><?php echo number_format($dashboard_closing_usd, 2); ?> USD</span>
+                    <span><?php echo number_format($dashboard_closing_irt, 2); ?> IRT</span>
+                  </div>
+                </div>
+              </div>
               <div class="card-box card-box-header dashboard-transactions-header">
                 <h4 class="header-title">
                   <?php echo get_table_header('fa fa-list', 'Report of Transactions • '.$dashboard_date_range_display, $transaction_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
@@ -387,57 +438,6 @@
                         <i class="fa fa-check"></i> Apply date filter
                       </button>
                     </form>
-                  </div>
-                </div>
-              </div>
-              <div class="dashboard-transaction-summary" aria-label="Transaction totals for selected date range">
-                <div class="dashboard-summary-card dashboard-summary-income">
-                  <div class="dashboard-summary-title"><i class="fa fa-arrow-down"></i> Income</div>
-                  <div class="dashboard-summary-values">
-                    <span><?php echo number_format($dashboard_total_income_row['total_income_afn'] ?? 0, 2); ?> AFN</span>
-                    <span><?php echo number_format($dashboard_total_income_row['total_income_usd'] ?? 0, 2); ?> USD</span>
-                    <span><?php echo number_format($dashboard_total_income_row['total_income_irt'] ?? 0, 2); ?> IRT</span>
-                  </div>
-                </div>
-                <div class="dashboard-summary-card dashboard-summary-expense">
-                  <div class="dashboard-summary-title"><i class="fa fa-arrow-up"></i> Expense</div>
-                  <div class="dashboard-summary-values">
-                    <span><?php echo number_format($dashboard_total_expense_row['total_expense_afn'] ?? 0, 2); ?> AFN</span>
-                    <span><?php echo number_format($dashboard_total_expense_row['total_expense_usd'] ?? 0, 2); ?> USD</span>
-                    <span><?php echo number_format($dashboard_total_expense_row['total_expense_irt'] ?? 0, 2); ?> IRT</span>
-                  </div>
-                </div>
-                <div class="dashboard-summary-card dashboard-summary-exchange">
-                  <div class="dashboard-summary-title"><i class="fa fa-exchange-alt"></i> Exchange</div>
-                  <div class="dashboard-summary-values dashboard-summary-routes">
-                    <span><?php echo number_format($dashboard_total_exchange_row['total_from_afn'] ?? 0, 2); ?> AFN to <?php echo number_format($dashboard_total_exchange_row['total_to_usd'] ?? 0, 2); ?> USD</span>
-                    <span><?php echo number_format($dashboard_total_exchange_row['total_from_usd'] ?? 0, 2); ?> USD to <?php echo number_format($dashboard_total_exchange_row['total_to_afn'] ?? 0, 2); ?> AFN</span>
-                    <span><?php echo number_format($dashboard_total_exchange_row['total_from_afn2'] ?? 0, 2); ?> AFN to <?php echo number_format($dashboard_total_exchange_row['total_to_irt'] ?? 0, 2); ?> IRT</span>
-                    <span><?php echo number_format($dashboard_total_exchange_row['total_from_irt'] ?? 0, 2); ?> IRT to <?php echo number_format($dashboard_total_exchange_row['total_to_afn2'] ?? 0, 2); ?> AFN</span>
-                  </div>
-                </div>
-                <div class="dashboard-summary-card dashboard-summary-transfer">
-                  <div class="dashboard-summary-title"><i class="fa fa-random"></i> Transfer</div>
-                  <div class="dashboard-summary-values">
-                    <span><?php echo number_format(($dashboard_total_transfer_row['total_transfer_in_afn'] ?? 0) - ($dashboard_total_transfer_row['total_transfer_out_afn'] ?? 0), 2); ?> AFN</span>
-                    <span><?php echo number_format(($dashboard_total_transfer_row['total_transfer_in_usd'] ?? 0) - ($dashboard_total_transfer_row['total_transfer_out_usd'] ?? 0), 2); ?> USD</span>
-                    <span><?php echo number_format(($dashboard_total_transfer_row['total_transfer_in_irt'] ?? 0) - ($dashboard_total_transfer_row['total_transfer_out_irt'] ?? 0), 2); ?> IRT</span>
-                  </div>
-                </div>
-                <div class="dashboard-summary-card dashboard-summary-total">
-                  <div class="dashboard-summary-title"><i class="fa fa-balance-scale"></i> Total</div>
-                  <div class="dashboard-summary-values">
-                    <span><?php echo number_format($dashboard_total_afn, 2); ?> AFN</span>
-                    <span><?php echo number_format($dashboard_total_usd, 2); ?> USD</span>
-                    <span><?php echo number_format($dashboard_total_irt, 2); ?> IRT</span>
-                  </div>
-                </div>
-                <div class="dashboard-summary-card dashboard-summary-closing">
-                  <div class="dashboard-summary-title"><i class="fa fa-wallet"></i> Total with Closing</div>
-                  <div class="dashboard-summary-values">
-                    <span><?php echo number_format($dashboard_closing_afn, 2); ?> AFN</span>
-                    <span><?php echo number_format($dashboard_closing_usd, 2); ?> USD</span>
-                    <span><?php echo number_format($dashboard_closing_irt, 2); ?> IRT</span>
                   </div>
                 </div>
               </div>
