@@ -256,33 +256,88 @@ a{
 	color: #3bb507;
 	background-color: #fff;
 }
-.dashboard-date-range-form{
-	display: inline-flex !important;
+.dashboard-transactions-header{
+	position: relative;
+	z-index: 10;
+}
+
+.dashboard-date-range-dropdown{
+	display: inline-block !important;
 	float: right !important;
-	align-items: center !important;
 	margin-top: -7px !important;
 	margin-left: 3px !important;
 }
-.dashboard-date-range-select{
-	width: 190px !important;
+
+.dashboard-date-range-toggle{
+	background-color: #fff !important;
+	border-color: #fff !important;
 	color: #36b8cb !important;
-	font-weight: bold !important;
-	border: 0 !important;
+	min-width: 205px;
+	padding: 3px 24px 3px 8px !important;
+	text-align: center;
 }
-.dashboard-custom-date-fields{
-	display: inline-flex !important;
-	align-items: center !important;
-	margin-left: 3px !important;
+
+.dashboard-date-range-toggle::after{
+	position: absolute;
+	right: 8px;
+	top: 50%;
+	color: #36b8cb;
 }
-.dashboard-custom-date-fields.hidden{
-	display: none !important;
+
+.dashboard-date-range-dates,
+.dashboard-date-range-label{
+	display: block;
+	line-height: 1.1;
 }
-.dashboard-custom-date-input{
-	width: 115px !important;
-	margin-left: 3px !important;
-	border: 0 !important;
+
+.dashboard-date-range-dates{
+	font-size: 11px;
+	font-weight: 600;
 }
-.dashboard-date-apply-btn{
-	float: none !important;
-	margin-top: 0 !important;
+
+.dashboard-date-range-label{
+	font-size: 9px;
+	font-weight: 700;
+}
+
+.dashboard-date-range-menu{
+	border: 1px solid #36b8cb !important;
+	min-width: 205px;
+	padding: 6px 0 !important;
+}
+
+.dashboard-date-range-menu .dropdown-item{
+	background-color: #fff !important;
+	color: #36b8cb !important;
+	font-weight: 500 !important;
+	height: auto !important;
+	line-height: 1.4 !important;
+	padding: 3px 12px !important;
+}
+
+.dashboard-date-range-menu .dropdown-item:hover,
+.dashboard-date-range-menu .dropdown-item.active{
+	background-color: #e8fbfd !important;
+	color: #2f8f9d !important;
+}
+
+.dashboard-custom-date-range{
+	border-top: 1px solid #e8fbfd;
+	margin-top: 4px;
+	padding: 8px 12px 4px;
+}
+
+.dashboard-custom-date-range label{
+	color: #36b8cb;
+	font-size: 11px;
+	font-weight: 600;
+	margin-bottom: 2px;
+}
+
+.dashboard-custom-date-apply{
+	background-color: #36b8cb !important;
+	border-color: #36b8cb !important;
+	color: #fff !important;
+	margin-top: 8px;
+	width: 100%;
 }

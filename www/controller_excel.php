@@ -632,70 +632,11 @@
 
         $writer = SimpleExcelWriter::streamDownload($excel_type.'.xlsx');
 
-        $dashboard_date_range_options = [
-          'last_7_days' => 'Last 7 days',
-          'last_30_days' => 'Last 30 days',
-          'last_60_days' => 'Last 60 days',
-          'last_90_days' => 'Last 90 days',
-          'last_6_months' => 'Last 6 months',
-          'last_year' => 'Last Year',
-          'life_time' => 'Life time',
-          'custom' => 'Custom',
-        ];
+        $dashboard_date_range_data = resolve_dashboard_transaction_date_range();
+        $dashboard_date_filtering_data = $dashboard_date_range_data['sql_filter'];
+        $dashboard_date_range_display = $dashboard_date_range_data['display_date_range'];
+        $dashboard_date_range_label = $dashboard_date_range_data['label'];
 
-        $dashboard_date_range = isset($_GET['date_range']) ? holu_escape($_GET['date_range']) : 'last_90_days';
-        if(!array_key_exists($dashboard_date_range, $dashboard_date_range_options)){
-          $dashboard_date_range = 'last_90_days';
-        }
-
-        $dashboard_custom_from_date = isset($_GET['from_date']) ? holu_escape($_GET['from_date']) : '';
-        $dashboard_custom_to_date = isset($_GET['to_date']) ? holu_escape($_GET['to_date']) : '';
-        $dashboard_from_date = '';
-        $dashboard_to_date = '';
-        $dashboard_today = date('Y-m-d');
-
-        switch($dashboard_date_range){
-          case 'last_7_days':{
-            $dashboard_from_date = date('Y-m-d', strtotime('-6 days'));
-            $dashboard_to_date = $dashboard_today;
-          }break;
-          case 'last_30_days':{
-            $dashboard_from_date = date('Y-m-d', strtotime('-29 days'));
-            $dashboard_to_date = $dashboard_today;
-          }break;
-          case 'last_60_days':{
-            $dashboard_from_date = date('Y-m-d', strtotime('-59 days'));
-            $dashboard_to_date = $dashboard_today;
-          }break;
-          case 'last_90_days':{
-            $dashboard_from_date = date('Y-m-d', strtotime('-89 days'));
-            $dashboard_to_date = $dashboard_today;
-          }break;
-          case 'last_6_months':{
-            $dashboard_from_date = date('Y-m-d', strtotime('-6 months'));
-            $dashboard_to_date = $dashboard_today;
-          }break;
-          case 'last_year':{
-            $dashboard_from_date = date('Y-m-d', strtotime('-1 year'));
-            $dashboard_to_date = $dashboard_today;
-          }break;
-          case 'custom':{
-            $dashboard_from_date = $dashboard_custom_from_date;
-            $dashboard_to_date = $dashboard_custom_to_date;
-          }break;
-          default:{
-            $dashboard_from_date = '';
-            $dashboard_to_date = '';
-          }break;
-        }
-
-        $dashboard_date_filtering_data = '';
-        if($dashboard_from_date!=''){
-          $dashboard_date_filtering_data .= " AND transaction_date>='".$dashboard_from_date."' ";
-        }
-        if($dashboard_to_date!=''){
-          $dashboard_date_filtering_data .= " AND transaction_date<='".$dashboard_to_date."' ";
-        }
 
         $income_access_condition = set_province_branch_portion('incomes.province', 'incomes.branch');
         $expense_access_condition = set_province_branch_portion('expenses.province', 'expenses.branch');
@@ -736,6 +677,13 @@
         ->setFontColor(Color::WHITE)
         ->setBackgroundColor(Color::rgb(0, 184, 165))
         ->build();
+
+        $writer->addRow([
+          'Report of Transactions',
+          $dashboard_date_range_display,
+          $dashboard_date_range_label,
+        ], $style);
+        $writer->addRow([]);
 
         $writer->addRow([
           '#',

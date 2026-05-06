@@ -5,86 +5,17 @@
   set_pagination();
 
 
-  $dashboard_date_range_options = [
-    'last_7_days' => 'Last 7 days',
-    'last_30_days' => 'Last 30 days',
-    'last_60_days' => 'Last 60 days',
-    'last_90_days' => 'Last 90 days',
-    'last_6_months' => 'Last 6 months',
-    'last_year' => 'Last Year',
-    'life_time' => 'Life time',
-    'custom' => 'Custom',
-  ];
+  $dashboard_date_range_data = resolve_dashboard_transaction_date_range();
+  $dashboard_date_range_options = $dashboard_date_range_data['options'];
+  $dashboard_date_range = $dashboard_date_range_data['selected'];
+  $dashboard_custom_from_date = $dashboard_date_range_data['custom_from_date'];
+  $dashboard_custom_to_date = $dashboard_date_range_data['custom_to_date'];
+  $dashboard_date_filtering_data = $dashboard_date_range_data['sql_filter'];
+  $dashboard_excel_data = $dashboard_date_range_data['query_string'];
+  $dashboard_date_range_display = $dashboard_date_range_data['display_date_range'];
+  $dashboard_date_range_label = $dashboard_date_range_data['label'];
+  $holu_filtering_array[] = $dashboard_date_range_data['filter_label'];
 
-  $dashboard_date_range = isset($_GET['date_range']) ? holu_escape($_GET['date_range']) : 'last_90_days';
-  if(!array_key_exists($dashboard_date_range, $dashboard_date_range_options)){
-    $dashboard_date_range = 'last_90_days';
-  }
-
-  $dashboard_custom_from_date = isset($_GET['from_date']) ? holu_escape($_GET['from_date']) : '';
-  $dashboard_custom_to_date = isset($_GET['to_date']) ? holu_escape($_GET['to_date']) : '';
-  $dashboard_from_date = '';
-  $dashboard_to_date = '';
-  $dashboard_today = date('Y-m-d');
-
-  switch($dashboard_date_range){
-    case 'last_7_days':{
-      $dashboard_from_date = date('Y-m-d', strtotime('-6 days'));
-      $dashboard_to_date = $dashboard_today;
-    }break;
-
-    case 'last_30_days':{
-      $dashboard_from_date = date('Y-m-d', strtotime('-29 days'));
-      $dashboard_to_date = $dashboard_today;
-    }break;
-
-    case 'last_60_days':{
-      $dashboard_from_date = date('Y-m-d', strtotime('-59 days'));
-      $dashboard_to_date = $dashboard_today;
-    }break;
-
-    case 'last_90_days':{
-      $dashboard_from_date = date('Y-m-d', strtotime('-89 days'));
-      $dashboard_to_date = $dashboard_today;
-    }break;
-
-    case 'last_6_months':{
-      $dashboard_from_date = date('Y-m-d', strtotime('-6 months'));
-      $dashboard_to_date = $dashboard_today;
-    }break;
-
-    case 'last_year':{
-      $dashboard_from_date = date('Y-m-d', strtotime('-1 year'));
-      $dashboard_to_date = $dashboard_today;
-    }break;
-
-    case 'custom':{
-      $dashboard_from_date = $dashboard_custom_from_date;
-      $dashboard_to_date = $dashboard_custom_to_date;
-    }break;
-
-    default:{
-      $dashboard_from_date = '';
-      $dashboard_to_date = '';
-    }break;
-  }
-
-  $dashboard_date_filtering_data = '';
-  $dashboard_excel_data = '&date_range='.$dashboard_date_range;
-  if($dashboard_date_range=='custom'){
-    $dashboard_excel_data .= '&from_date='.urlencode($dashboard_custom_from_date).'&to_date='.urlencode($dashboard_custom_to_date);
-  }
-  if($dashboard_from_date!=''){
-    $dashboard_date_filtering_data .= " AND transaction_date>='".$dashboard_from_date."' ";
-  }
-  if($dashboard_to_date!=''){
-    $dashboard_date_filtering_data .= " AND transaction_date<='".$dashboard_to_date."' ";
-  }
-  if($dashboard_from_date!='' || $dashboard_to_date!=''){
-    $dashboard_date_range_label = $dashboard_date_range_options[$dashboard_date_range];
-    $dashboard_date_label_dates = trim($dashboard_from_date.' - '.$dashboard_to_date, ' -');
-    $holu_filtering_array[] = 'Date: '.$dashboard_date_range_label.($dashboard_date_label_dates!='' ? ' ('.$dashboard_date_label_dates.')' : '');
-  }
 
   $income_access_condition = set_province_branch_portion('incomes.province', 'incomes.branch');
   $expense_access_condition = set_province_branch_portion('expenses.province', 'expenses.branch');
@@ -203,6 +134,41 @@
           ?>
           <div class="row">
             <div class="col-lg-12">
+              <div class="card-box card-box-header dashboard-transactions-header">
+                <h4 class="header-title">
+                  <?php echo get_table_header('fa fa-list', 'Report of Transactions • '.$dashboard_date_range_display, $transaction_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
+                </h4>
+
+                <a id="dashboard_export_excel_btn" href="controller_excel.php?excel_type=dashboard_transactions<?php echo $dashboard_excel_data; ?>"><button type="button" class="btn waves-effect waves-light adder_button"><i class="far fa-file-excel"></i> Export Excel</button></a>
+
+                <button type="button" class="btn waves-effect waves-light adder_button"><i class="fa fa-filter"></i> Filter</button>
+
+                <div class="dropdown dashboard-date-range-dropdown">
+                  <button class="btn dropdown-toggle waves-effect waves-light dashboard-date-range-toggle" type="button" id="dashboardDateRangeDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="dashboard-date-range-dates"><?php echo $dashboard_date_range_display; ?></span>
+                    <span class="dashboard-date-range-label"><?php echo $dashboard_date_range_label; ?></span>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right dashboard-date-range-menu" aria-labelledby="dashboardDateRangeDropdown">
+                    <?php
+                    foreach($dashboard_date_range_options as $dashboard_date_range_key => $dashboard_date_range_option){
+                      if($dashboard_date_range_key!='custom'){
+                        ?>
+                        <a class="dropdown-item <?php echo $dashboard_date_range==$dashboard_date_range_key ? 'active' : ''; ?>" href="dashboard_transactions.php?date_range=<?php echo $dashboard_date_range_key; ?>"><?php echo $dashboard_date_range_option; ?></a>
+                        <?php
+                      }
+                    }
+                    ?>
+                    <a class="dropdown-item <?php echo $dashboard_date_range=='custom' ? 'active' : ''; ?>" href="#" onclick="event.preventDefault(); document.getElementById('dashboard_custom_date_range').classList.toggle('d-none');">Custom</a>
+                    <div id="dashboard_custom_date_range" class="dashboard-custom-date-range <?php echo $dashboard_date_range=='custom' ? '' : 'd-none'; ?>" onclick="event.stopPropagation();">
+                      <label for="dashboard_from_date">Start date</label>
+                      <input type="date" class="form-control form-control-sm" id="dashboard_from_date" value="<?php echo $dashboard_custom_from_date; ?>">
+                      <label class="mt-1" for="dashboard_to_date">End date</label>
+                      <input type="date" class="form-control form-control-sm" id="dashboard_to_date" value="<?php echo $dashboard_custom_to_date; ?>">
+                      <button type="button" class="btn btn-sm dashboard-custom-date-apply" onclick="apply_dashboard_custom_date_range();">Apply</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div class="card-box">
                 <div class="table-responsive slimscroll">
                   <table class="table table-bordered table-sm mb-0">
@@ -285,6 +251,22 @@
   <!-- END wrapper -->
   <div class="rightbar-overlay"></div>
   <?php include("_script.php"); ?>
+  <script>
+    function apply_dashboard_custom_date_range(){
+      var fromDate = document.getElementById('dashboard_from_date').value;
+      var toDate = document.getElementById('dashboard_to_date').value;
+      var queryString = 'date_range=custom';
+
+      if(fromDate){
+        queryString += '&from_date=' + encodeURIComponent(fromDate);
+      }
+      if(toDate){
+        queryString += '&to_date=' + encodeURIComponent(toDate);
+      }
+
+      window.location.href = 'dashboard_transactions.php?' + queryString;
+    }
+  </script>
 </body>
 </html>
 <?php include("_additional_elements.php"); ?>
