@@ -256,3 +256,33 @@ a{
 	color: #3bb507;
 	background-color: #fff;
 }
+.dashboard-date-range-form{
+	display: inline-flex !important;
+	float: right !important;
+	align-items: center !important;
+	margin-top: -7px !important;
+	margin-left: 3px !important;
+}
+.dashboard-date-range-select{
+	width: 190px !important;
+	color: #36b8cb !important;
+	font-weight: bold !important;
+	border: 0 !important;
+}
+.dashboard-custom-date-fields{
+	display: inline-flex !important;
+	align-items: center !important;
+	margin-left: 3px !important;
+}
+.dashboard-custom-date-fields.hidden{
+	display: none !important;
+}
+.dashboard-custom-date-input{
+	width: 115px !important;
+	margin-left: 3px !important;
+	border: 0 !important;
+}
+.dashboard-date-apply-btn{
+	float: none !important;
+	margin-top: 0 !important;
+}
