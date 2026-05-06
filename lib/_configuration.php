@@ -2494,6 +2494,138 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 
 	}
 
+
+	function get_dashboard_transaction_date_range_options(){
+		return [
+			'last_7_days' => 'Last 7 days',
+			'last_30_days' => 'Last 30 days',
+			'last_60_days' => 'Last 60 days',
+			'last_90_days' => 'Last 90 days',
+			'last_180_days' => 'Last 180 days',
+			'last_year' => 'Last Year',
+			'life_time' => 'Life time',
+			'custom' => 'Custom',
+		];
+	}
+
+	function is_holu_date_value($date_value){
+		if(!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_value)){
+			return false;
+		}
+
+		$date_parts = explode('-', $date_value);
+		return checkdate((int)$date_parts[1], (int)$date_parts[2], (int)$date_parts[0]);
+	}
+
+	function format_holu_display_date($date_value){
+		if(!is_holu_date_value($date_value)){
+			return '';
+		}
+
+		return date('M j, Y', strtotime($date_value));
+	}
+
+	function resolve_dashboard_transaction_date_range(){
+		$options = get_dashboard_transaction_date_range_options();
+		$date_range = isset($_GET['date_range']) ? holu_escape($_GET['date_range']) : 'last_90_days';
+
+		if($date_range=='last_6_months'){
+			$date_range = 'last_180_days';
+		}
+
+		if(!array_key_exists($date_range, $options)){
+			$date_range = 'last_90_days';
+		}
+
+		$custom_from_date = isset($_GET['from_date']) ? holu_escape($_GET['from_date']) : '';
+		$custom_to_date = isset($_GET['to_date']) ? holu_escape($_GET['to_date']) : '';
+		if(!is_holu_date_value($custom_from_date)){
+			$custom_from_date = '';
+		}
+		if(!is_holu_date_value($custom_to_date)){
+			$custom_to_date = '';
+		}
+		if($custom_from_date!='' && $custom_to_date!='' && strtotime($custom_from_date)>strtotime($custom_to_date)){
+			$swap_date = $custom_from_date;
+			$custom_from_date = $custom_to_date;
+			$custom_to_date = $swap_date;
+		}
+
+		$from_date = '';
+		$to_date = '';
+		$today = date('Y-m-d');
+
+		switch($date_range){
+			case 'last_7_days':{
+				$from_date = date('Y-m-d', strtotime('-6 days'));
+				$to_date = $today;
+			}break;
+			case 'last_30_days':{
+				$from_date = date('Y-m-d', strtotime('-29 days'));
+				$to_date = $today;
+			}break;
+			case 'last_60_days':{
+				$from_date = date('Y-m-d', strtotime('-59 days'));
+				$to_date = $today;
+			}break;
+			case 'last_90_days':{
+				$from_date = date('Y-m-d', strtotime('-89 days'));
+				$to_date = $today;
+			}break;
+			case 'last_180_days':{
+				$from_date = date('Y-m-d', strtotime('-179 days'));
+				$to_date = $today;
+			}break;
+			case 'last_year':{
+				$from_date = date('Y-m-d', strtotime('-1 year'));
+				$to_date = $today;
+			}break;
+			case 'custom':{
+				$from_date = $custom_from_date;
+				$to_date = $custom_to_date;
+			}break;
+		}
+
+		$sql_filter = '';
+		if($from_date!=''){
+			$sql_filter .= " AND transaction_date>='".$from_date."' ";
+		}
+		if($to_date!=''){
+			$sql_filter .= " AND transaction_date<='".$to_date."' ";
+		}
+
+		$query_string = '&date_range='.$date_range;
+		if($date_range=='custom'){
+			$query_string .= '&from_date='.urlencode($custom_from_date).'&to_date='.urlencode($custom_to_date);
+		}
+
+		$display_from_date = format_holu_display_date($from_date);
+		$display_to_date = format_holu_display_date($to_date);
+		if($display_from_date!='' && $display_to_date!=''){
+			$display_date_range = $display_from_date.' - '.$display_to_date;
+		}elseif($display_from_date!=''){
+			$display_date_range = 'From '.$display_from_date;
+		}elseif($display_to_date!=''){
+			$display_date_range = 'To '.$display_to_date;
+		}else{
+			$display_date_range = 'All dates';
+		}
+
+		return [
+			'options' => $options,
+			'selected' => $date_range,
+			'label' => $options[$date_range],
+			'from_date' => $from_date,
+			'to_date' => $to_date,
+			'custom_from_date' => $custom_from_date,
+			'custom_to_date' => $custom_to_date,
+			'sql_filter' => $sql_filter,
+			'query_string' => $query_string,
+			'display_date_range' => $display_date_range,
+			'filter_label' => 'Date: '.$options[$date_range].($display_date_range!='All dates' ? ' ('.$display_date_range.')' : ''),
+		];
+	}
+
 	function get_table_header($icon, $label, $meta, $meta2, array $filter_items){
 		$header = '';
 
