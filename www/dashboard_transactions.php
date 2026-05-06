@@ -95,9 +95,9 @@
     ) AS dashboard_transactions
   ";
 
-  $transaction_sq = $db->query("$transactions_query WHERE 1 $dashboard_date_filtering_data ORDER BY transaction_date DESC, transaction_id DESC limit $holu_to OFFSET $holu_from");
+  $transaction_sq = $db->query("$transactions_query WHERE 1 ORDER BY transaction_date DESC, transaction_id DESC limit $holu_to OFFSET $holu_from");
 
-  $Pagenation = $db->query("SELECT count(transaction_id) as record FROM ($transactions_query WHERE 1 $dashboard_date_filtering_data) AS counted_dashboard_transactions");
+  $Pagenation = $db->query("SELECT count(transaction_id) as record FROM ($transactions_query WHERE 1) AS counted_dashboard_transactions");
   extract($Pagenation->fetch());
 ?>
 

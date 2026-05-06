@@ -669,7 +669,7 @@
           AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR transfers.users_id='$holu_users_id')
           $accessed_sub_categories_transfer
         ) AS dashboard_transactions
-        WHERE 1 $dashboard_date_filtering_data
+        WHERE 1
         ORDER BY transaction_date DESC, transaction_id DESC");
 
         $style = (new StyleBuilder())
