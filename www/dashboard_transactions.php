@@ -95,9 +95,9 @@
     ) AS dashboard_transactions
   ";
 
-  $transaction_sq = $db->query("$transactions_query WHERE 1 ORDER BY transaction_date DESC, transaction_id DESC limit $holu_to OFFSET $holu_from");
+  $transaction_sq = $db->query("$transactions_query WHERE 1 $dashboard_date_filtering_data ORDER BY transaction_date DESC, transaction_id DESC limit $holu_to OFFSET $holu_from");
 
-  $Pagenation = $db->query("SELECT count(transaction_id) as record FROM ($transactions_query WHERE 1) AS counted_dashboard_transactions");
+  $Pagenation = $db->query("SELECT count(transaction_id) as record FROM ($transactions_query WHERE 1 $dashboard_date_filtering_data) AS counted_dashboard_transactions");
   extract($Pagenation->fetch());
 ?>
 
@@ -145,27 +145,52 @@
 
                 <div class="dropdown dashboard-date-range-dropdown">
                   <button class="btn dropdown-toggle waves-effect waves-light dashboard-date-range-toggle" type="button" id="dashboardDateRangeDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="dashboard-date-range-dates"><?php echo $dashboard_date_range_display; ?></span>
-                    <span class="dashboard-date-range-label"><?php echo $dashboard_date_range_label; ?></span>
+                    <i class="far fa-calendar-alt dashboard-date-range-icon"></i>
+                    <span class="dashboard-date-range-copy">
+                      <span class="dashboard-date-range-dates"><?php echo $dashboard_date_range_display; ?></span>
+                      <span class="dashboard-date-range-label"><?php echo $dashboard_date_range_label; ?></span>
+                    </span>
                   </button>
-                  <div class="dropdown-menu dropdown-menu-right dashboard-date-range-menu" aria-labelledby="dashboardDateRangeDropdown">
-                    <?php
-                    foreach($dashboard_date_range_options as $dashboard_date_range_key => $dashboard_date_range_option){
-                      if($dashboard_date_range_key!='custom'){
-                        ?>
-                        <a class="dropdown-item <?php echo $dashboard_date_range==$dashboard_date_range_key ? 'active' : ''; ?>" href="dashboard_transactions.php?date_range=<?php echo $dashboard_date_range_key; ?>"><?php echo $dashboard_date_range_option; ?></a>
-                        <?php
-                      }
-                    }
-                    ?>
-                    <a class="dropdown-item <?php echo $dashboard_date_range=='custom' ? 'active' : ''; ?>" href="#" onclick="event.preventDefault(); document.getElementById('dashboard_custom_date_range').classList.toggle('d-none');">Custom</a>
-                    <div id="dashboard_custom_date_range" class="dashboard-custom-date-range <?php echo $dashboard_date_range=='custom' ? '' : 'd-none'; ?>" onclick="event.stopPropagation();">
-                      <label for="dashboard_from_date">Start date</label>
-                      <input type="date" class="form-control form-control-sm" id="dashboard_from_date" value="<?php echo $dashboard_custom_from_date; ?>">
-                      <label class="mt-1" for="dashboard_to_date">End date</label>
-                      <input type="date" class="form-control form-control-sm" id="dashboard_to_date" value="<?php echo $dashboard_custom_to_date; ?>">
-                      <button type="button" class="btn btn-sm dashboard-custom-date-apply" onclick="apply_dashboard_custom_date_range();">Apply</button>
+                  <div class="dropdown-menu dropdown-menu-right dashboard-date-range-menu" aria-labelledby="dashboardDateRangeDropdown" onclick="event.stopPropagation();">
+                    <div class="dashboard-date-range-menu-heading">
+                      <strong>Choose date range</strong>
+                      <span>Transactions shown in this report</span>
                     </div>
+                    <div class="dashboard-date-range-quick-list">
+                      <?php
+                      foreach($dashboard_date_range_options as $dashboard_date_range_key => $dashboard_date_range_option){
+                        if($dashboard_date_range_key!='custom'){
+                          ?>
+                          <a class="dashboard-date-range-option <?php echo $dashboard_date_range==$dashboard_date_range_key ? 'active' : ''; ?>" href="dashboard_transactions.php?date_range=<?php echo $dashboard_date_range_key; ?>">
+                            <i class="far fa-clock"></i>
+                            <span><?php echo $dashboard_date_range_option; ?></span>
+                          </a>
+                          <?php
+                        }
+                      }
+                      ?>
+                    </div>
+                    <form id="dashboard_custom_date_range" class="dashboard-custom-date-range" action="dashboard_transactions.php" method="get">
+                      <input type="hidden" name="date_range" value="custom">
+                      <div class="dashboard-custom-date-title">
+                        <i class="far fa-calendar-check"></i>
+                        <span>Custom range</span>
+                      </div>
+                      <div class="dashboard-custom-date-grid">
+                        <div>
+                          <label for="dashboard_from_date">Start date</label>
+                          <input type="date" class="form-control form-control-sm" id="dashboard_from_date" name="from_date" value="<?php echo $dashboard_custom_from_date; ?>">
+                        </div>
+                        <div>
+                          <label for="dashboard_to_date">End date</label>
+                          <input type="date" class="form-control form-control-sm" id="dashboard_to_date" name="to_date" value="<?php echo $dashboard_custom_to_date; ?>">
+                        </div>
+                      </div>
+                      <small class="dashboard-date-range-help">Leave one side empty for an open-ended date filter.</small>
+                      <button type="submit" class="btn btn-sm dashboard-custom-date-apply">
+                        <i class="fa fa-check"></i> Apply date filter
+                      </button>
+                    </form>
                   </div>
                 </div>
               </div>
@@ -252,20 +277,15 @@
   <div class="rightbar-overlay"></div>
   <?php include("_script.php"); ?>
   <script>
-    function apply_dashboard_custom_date_range(){
-      var fromDate = document.getElementById('dashboard_from_date').value;
-      var toDate = document.getElementById('dashboard_to_date').value;
-      var queryString = 'date_range=custom';
+    $('#dashboard_custom_date_range').on('submit', function(){
+      var fromDate = $('#dashboard_from_date').val();
+      var toDate = $('#dashboard_to_date').val();
 
-      if(fromDate){
-        queryString += '&from_date=' + encodeURIComponent(fromDate);
+      if(fromDate && toDate && fromDate > toDate){
+        $('#dashboard_from_date').val(toDate);
+        $('#dashboard_to_date').val(fromDate);
       }
-      if(toDate){
-        queryString += '&to_date=' + encodeURIComponent(toDate);
-      }
-
-      window.location.href = 'dashboard_transactions.php?' + queryString;
-    }
+    });
   </script>
 </body>
 </html>
