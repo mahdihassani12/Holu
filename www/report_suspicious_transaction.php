@@ -303,12 +303,6 @@
   $accessed_sub_categories_exchange
   UNION
   SELECT 
-  0 AS transaction_sub_categories_id,
-  '' AS transaction_check_number,
-  '' AS transaction_sib_number,
-  '' AS transaction_additional_informations
-  UNION
-  SELECT 
   transfers.id AS transaction_id,
   'Transfer' AS transaction_type,
   0 AS transaction_sub_categories_id,
@@ -366,8 +360,6 @@
     AND exchanges.province IN ($accessed_provinces) 
     $exchange_filtering_data
     $accessed_sub_categories_exchange
-    UNION
-    SELECT 
     UNION
     SELECT 
       transfers.id AS transaction_id
