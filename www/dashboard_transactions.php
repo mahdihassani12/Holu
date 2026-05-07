@@ -5,6 +5,23 @@
   set_pagination();
 
 
+  function has_customer_reference_for_sib($additional_informations_raw){
+    if(empty($additional_informations_raw)){
+      return false;
+    }
+
+    $decoded_additional_informations = json_decode($additional_informations_raw, true);
+    if(!is_array($decoded_additional_informations)){
+      return false;
+    }
+
+    $customer_name = isset($decoded_additional_informations['Customer Name']) ? trim((string)$decoded_additional_informations['Customer Name']) : '';
+    $customer_id = isset($decoded_additional_informations['Customer ID']) ? trim((string)$decoded_additional_informations['Customer ID']) : '';
+
+    return ($customer_name !== '' || $customer_id !== '');
+  }
+
+
   $dashboard_date_range_data = resolve_dashboard_transaction_date_range();
   $dashboard_date_range_options = $dashboard_date_range_data['options'];
   $dashboard_date_range = $dashboard_date_range_data['selected'];
@@ -30,6 +47,7 @@
       SELECT 
         incomes.id AS transaction_id,
         'Income' AS transaction_type,
+        incomes.sub_categories_id AS transaction_sub_categories_id,
         incomes.province AS transaction_province,
         incomes.branch AS transaction_branch,
         incomes.income_date AS transaction_date,
@@ -37,8 +55,18 @@
         incomes.currency AS transaction_currency,
         incomes.description AS transaction_description,
         incomes.users_id AS transaction_users_id,
-        incomes.sub_categories_id AS transaction_sub_categories_id,
-        incomes.check_number AS transaction_check_number
+        incomes.check_number AS transaction_check_number,
+        incomes.sib_number AS transaction_sib_number,
+        incomes.tms_markup AS transaction_tms_markup,
+        incomes.qb_markup AS transaction_qb_markup,
+        incomes.sib_markup AS transaction_sib_markup,
+        incomes.ad_markup AS transaction_ad_markup,
+        incomes.additional_informations AS transaction_additional_informations,
+        '' AS transaction_approve_description,
+        '' AS transaction_from_province,
+        '' AS transaction_to_province,
+        '' AS transaction_from_branch,
+        '' AS transaction_to_branch
       FROM `incomes`
       WHERE incomes.deleted='0'
       AND $income_access_condition
@@ -47,6 +75,7 @@
       SELECT 
         expenses.id AS transaction_id,
         'Expense' AS transaction_type,
+        expenses.sub_categories_id AS transaction_sub_categories_id,
         expenses.province AS transaction_province,
         expenses.branch AS transaction_branch,
         expenses.expense_date AS transaction_date,
@@ -54,8 +83,18 @@
         expenses.currency AS transaction_currency,
         expenses.description AS transaction_description,
         expenses.users_id AS transaction_users_id,
-        expenses.sub_categories_id AS transaction_sub_categories_id,
-        expenses.check_number AS transaction_check_number
+        expenses.check_number AS transaction_check_number,
+        '' AS transaction_sib_number,
+        expenses.tms_markup AS transaction_tms_markup,
+        expenses.qb_markup AS transaction_qb_markup,
+        expenses.sib_markup AS transaction_sib_markup,
+        expenses.ad_markup AS transaction_ad_markup,
+        expenses.additional_informations AS transaction_additional_informations,
+        '' AS transaction_approve_description,
+        '' AS transaction_from_province,
+        '' AS transaction_to_province,
+        '' AS transaction_from_branch,
+        '' AS transaction_to_branch
       FROM `expenses`
       WHERE expenses.deleted='0'
       AND $expense_access_condition
@@ -64,6 +103,7 @@
       SELECT 
         exchanges.id AS transaction_id,
         'Exchange' AS transaction_type,
+        0 AS transaction_sub_categories_id,
         exchanges.province AS transaction_province,
         exchanges.branch AS transaction_branch,
         exchanges.exchange_date AS transaction_date,
@@ -71,16 +111,58 @@
         CONCAT(exchanges.from_currency, ' to ', exchanges.to_currency) AS transaction_currency,
         exchanges.description AS transaction_description,
         exchanges.users_id AS transaction_users_id,
-        0 AS transaction_sub_categories_id,
-        '' AS transaction_check_number
+        '' AS transaction_check_number,
+        '' AS transaction_sib_number,
+        exchanges.tms_markup AS transaction_tms_markup,
+        exchanges.qb_markup AS transaction_qb_markup,
+        exchanges.sib_markup AS transaction_sib_markup,
+        exchanges.ad_markup AS transaction_ad_markup,
+        '' AS transaction_additional_informations,
+        '' AS transaction_approve_description,
+        '' AS transaction_from_province,
+        '' AS transaction_to_province,
+        '' AS transaction_from_branch,
+        '' AS transaction_to_branch
       FROM `exchanges`
       WHERE exchanges.deleted='0'
       AND $exchange_access_condition
       $accessed_sub_categories_exchange
       UNION ALL
       SELECT 
+        purchases.id AS transaction_id,
+        'Purchase' AS transaction_type,
+        purchases.sub_categories_id AS transaction_sub_categories_id,
+        purchases.province AS transaction_province,
+        '' AS transaction_branch,
+        purchases.purchase_date AS transaction_date,
+        purchases.purchase_amount AS transaction_amount,
+        purchases.currency AS transaction_currency,
+        purchases.description AS transaction_description,
+        purchases.users_id AS transaction_users_id,
+        '' AS transaction_check_number,
+        '' AS transaction_sib_number,
+        purchases.tms_markup AS transaction_tms_markup,
+        purchases.qb_markup AS transaction_qb_markup,
+        purchases.sib_markup AS transaction_sib_markup,
+        purchases.ad_markup AS transaction_ad_markup,
+        '' AS transaction_additional_informations,
+        '' AS transaction_approve_description,
+        '' AS transaction_from_province,
+        '' AS transaction_to_province,
+        '' AS transaction_from_branch,
+        '' AS transaction_to_branch
+      FROM `purchases`
+      WHERE purchases.deleted='0'
+      AND purchases.is_approved='1'
+      AND purchases.is_included='1'
+      AND purchases.province IN ($accessed_provinces)
+      AND purchases.logistic_cashes_id IN ($accessed_logistic_cashes)
+      AND purchases.sub_categories_id IN ($accessed_sub_categories_purchase)
+      UNION ALL
+      SELECT 
         transfers.id AS transaction_id,
-        'Transfers' AS transaction_type,
+        'Transfer' AS transaction_type,
+        0 AS transaction_sub_categories_id,
         CONCAT(transfers.from_province, ' to ', transfers.to_province) AS transaction_province,
         CONCAT(transfers.from_branch, ' to ', transfers.to_branch) AS transaction_branch,
         transfers.transfer_date AS transaction_date,
@@ -88,10 +170,21 @@
         transfers.currency AS transaction_currency,
         transfers.description AS transaction_description,
         transfers.users_id AS transaction_users_id,
-        0 AS transaction_sub_categories_id,
-        transfers.check_number AS transaction_check_number
+        '' AS transaction_check_number,
+        '' AS transaction_sib_number,
+        transfers.tms_markup AS transaction_tms_markup,
+        CONCAT(transfers.qb_markup, ',', transfers.rqb_markup) AS transaction_qb_markup,
+        transfers.sib_markup AS transaction_sib_markup,
+        transfers.ad_markup AS transaction_ad_markup,
+        '' AS transaction_additional_informations,
+        transfers.approve_description AS transaction_approve_description,
+        transfers.from_province AS transaction_from_province,
+        transfers.to_province AS transaction_to_province,
+        transfers.from_branch AS transaction_from_branch,
+        transfers.to_branch AS transaction_to_branch
       FROM `transfers`
       WHERE transfers.deleted='0'
+      AND transfers.is_approved='1'
       AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR transfers.users_id='$holu_users_id')
       $accessed_sub_categories_transfer
     ) AS dashboard_transactions
@@ -443,47 +536,87 @@
               </div>
               <div class="card-box">
                 <div class="table-responsive slimscroll">
-                  <table class="table table-bordered table-sm mb-0">
+                  <table class="table table-bordered table-sm mb-0" style="margin-bottom: 20px !important;">
                     <thead>
                       <tr>
                         <th class="text-center">#</th>
-                        <th>Type</th>
-                        <th>Province</th>
-                        <th>Branch</th>
-                        <th>Category</th>
-                        <th>Sub Category</th>
-                        <th>Date</th>
+                        <th>Description</th>
                         <th>Amount</th>
                         <th>Currency</th>
+                        <th>Type</th>
+                        <th>Sub Category</th>
+                        <th>Date</th>
+                        <th>Province</th>
+                        <th>Branch</th>
                         <th>Check Number</th>
-                        <th>Description</th>
-                        <th>Created By</th>
+                        <th>Additional Information</th>
+                        <th>Markups</th>
+                        <th>SIB Number</th>
+                        <th>Added By</th>
                       </tr>
                     </thead>
                     <tbody>
                       <?php
                       if($transaction_sq->rowCount()>0){
                         while($transaction_row = $transaction_sq->fetch()){
-                          $transaction_category = '';
-                          $transaction_sub_category = '';
+                          $transaction_type = $transaction_row['transaction_type'];
+                          $sub_category = '';
+                          $check_number_container = '';
+                          $sib_number_container = '';
+
                           if($transaction_row['transaction_sub_categories_id']!=0){
-                            $transaction_category = get_col('categories', 'category_name', 'id', get_col('sub_categories', 'categories_id', 'id', $transaction_row['transaction_sub_categories_id']));
-                            $transaction_sub_category = get_col('sub_categories', 'sub_category_name', 'id', $transaction_row['transaction_sub_categories_id']);
+                            $sub_category = get_col('sub_categories', 'sub_category_name', 'id', $transaction_row['transaction_sub_categories_id']);
                           }
+
+                          if(!empty($transaction_row['transaction_check_number'])){
+                            $check_number_container = htmlspecialchars($transaction_row['transaction_check_number'], ENT_QUOTES, 'UTF-8');
+                          }
+
+                          if($transaction_type=='Income' && has_customer_reference_for_sib($transaction_row['transaction_additional_informations'] ?? '')){
+                            $sib_number_container = '<p>'.$transaction_row['transaction_sib_number'].'</p>';
+                          }
+
+                          $transaction_description = $transaction_row['transaction_description'];
                           ?>
                           <tr>
                             <th class="text-center"><?php echo $holu_count++; ?></th>
-                            <td><?php echo $transaction_row['transaction_type']; ?></td>
-                            <td><?php echo $transaction_row['transaction_province']; ?></td>
-                            <td><?php echo $transaction_row['transaction_branch']; ?></td>
-                            <td><?php echo $transaction_category; ?></td>
-                            <td><?php echo $transaction_sub_category; ?></td>
-                            <td><?php echo $transaction_row['transaction_date']; ?></td>
+                            <td class="text-right"><p lang="fa" dir="rtl"><?php echo $transaction_description; ?></p></td>
                             <td><?php echo $transaction_row['transaction_amount']; ?></td>
                             <td><?php echo $transaction_row['transaction_currency']; ?></td>
-                            <td><?php echo htmlspecialchars($transaction_row['transaction_check_number'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td class="text-right"><p lang="fa" dir="rtl"><?php echo $transaction_row['transaction_description']; ?></p></td>
-                            <td><?php echo get_col('users', 'username', 'id', $transaction_row['transaction_users_id']); ?></td>
+                            <td><?php echo $transaction_row['transaction_type']; ?></td>
+                            <td><?php echo $sub_category; ?></td>
+                            <td><?php echo $transaction_row['transaction_date']; ?></td>
+                            <td><?php echo $transaction_row['transaction_province']; ?></td>
+                            <td><?php echo $transaction_row['transaction_branch']; ?></td>
+                            <td class="text-center"><?php echo $check_number_container; ?></td>
+                            <td class="text-center">
+                              <?php
+                                if ($transaction_type != 'Transfer') {
+                                  $json = $transaction_row['transaction_additional_informations'] ?? '';
+
+                                  if (!empty($json)) {
+                                    $decoded = json_decode($json);
+
+                                    if (json_last_error() === JSON_ERROR_NONE) {
+                                      echo print_ai_labels($decoded);
+                                    }
+                                  }
+                                }
+                              ?>
+                            </td>
+                            <td class="text-center" id="markups<?php echo $transaction_type.$transaction_row['transaction_id']; ?>">
+                              <?php echo get_markups(
+                                'system_accessibility/report/report_transaction/',
+                                $transaction_type,
+                                $transaction_row['transaction_id'],
+                                $transaction_row['transaction_tms_markup'],
+                                $transaction_row['transaction_qb_markup'],
+                                $transaction_row['transaction_sib_markup'],
+                                $transaction_row['transaction_ad_markup']
+                              ); ?>
+                            </td>
+                            <td class="text-center"><?php echo $sib_number_container; ?></td>
+                            <td class="text-center"><?php echo get_col('users', 'username', 'id', $transaction_row['transaction_users_id']); ?></td>
                           </tr>
                           <?php
                         }
