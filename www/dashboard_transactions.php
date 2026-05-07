@@ -481,7 +481,7 @@
 
                 <a id="dashboard_export_excel_btn" href="controller_excel.php?excel_type=dashboard_transactions<?php echo $dashboard_excel_data; ?>"><button type="button" class="btn waves-effect waves-light adder_button"><i class="far fa-file-excel"></i> Export Excel</button></a>
 
-                <button type="button" class="btn waves-effect waves-light adder_button"><i class="fa fa-filter"></i> Filter</button>
+                <button type="button" class="btn waves-effect waves-light adder_button dashboard-filter-toggle" id="dashboard_transaction_filter_toggle" aria-expanded="false" aria-controls="dashboard_transaction_filter_panel"><i class="fa fa-filter"></i> Filter</button>
 
                 <div class="dropdown dashboard-date-range-dropdown">
                   <button class="btn dropdown-toggle waves-effect waves-light dashboard-date-range-toggle" type="button" id="dashboardDateRangeDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -533,6 +533,129 @@
                     </form>
                   </div>
                 </div>
+              </div>
+
+              <div class="dashboard-filter-panel" id="dashboard_transaction_filter_panel" aria-hidden="true">
+                <form class="dashboard-filter-form" id="dashboard_transaction_filter_form" role="form" action="javascript:void(0);" method="GET">
+                  <div class="dashboard-filter-panel-topline"></div>
+                  <div class="dashboard-filter-form-header">
+                    <div>
+                      <span class="dashboard-filter-eyebrow"><i class="fa fa-sliders-h"></i> Advanced filters</span>
+                      <h5>Refine report transactions</h5>
+                      <p>Design-ready controls for the transaction report. Filtering logic will be connected later.</p>
+                    </div>
+                    <span class="dashboard-filter-status"><i class="far fa-clock"></i> Form only</span>
+                  </div>
+
+                  <div class="dashboard-filter-grid">
+                    <div class="dashboard-filter-field dashboard-filter-field-wide">
+                      <label for="dashboard_filter_province">Province</label>
+                      <select id="dashboard_filter_province" name="dashboard_filter_province" class="form-control" data-branch-target="dashboard_filter_branch" data-branch-value="0">
+                        <option selected hidden value="">Select an option</option>
+                        <?php echo get_province_option('0'); ?>
+                      </select>
+                    </div>
+
+                    <div class="dashboard-filter-field dashboard-filter-field-wide">
+                      <label for="dashboard_filter_branch">Branch</label>
+                      <select id="dashboard_filter_branch" name="dashboard_filter_branch" class="form-control">
+                        <?php echo get_branch_option('0', '0'); ?>
+                      </select>
+                    </div>
+
+                    <div class="dashboard-filter-field dashboard-filter-field-half">
+                      <label for="dashboard_filter_from_date">Date from</label>
+                      <div class="dashboard-filter-input-icon">
+                        <i class="far fa-calendar-alt"></i>
+                        <input type="text" id="dashboard_filter_from_date" name="dashboard_filter_from_date" class="form-control date_picker" placeholder="From">
+                      </div>
+                    </div>
+
+                    <div class="dashboard-filter-field dashboard-filter-field-half">
+                      <label for="dashboard_filter_to_date">Date to</label>
+                      <div class="dashboard-filter-input-icon">
+                        <i class="far fa-calendar-check"></i>
+                        <input type="text" id="dashboard_filter_to_date" name="dashboard_filter_to_date" class="form-control date_picker" placeholder="To">
+                      </div>
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_customer_name">Customer Name</label>
+                      <input type="text" id="dashboard_filter_customer_name" name="dashboard_filter_customer_name" class="form-control" placeholder="Type here...">
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_customer_id">Customer ID</label>
+                      <input type="text" id="dashboard_filter_customer_id" name="dashboard_filter_customer_id" class="form-control" placeholder="Type here...">
+                    </div>
+
+                    <div class="dashboard-filter-field dashboard-filter-field-wide">
+                      <label for="dashboard_filter_description">Description</label>
+                      <input type="text" id="dashboard_filter_description" name="dashboard_filter_description" class="form-control" placeholder="Search the transaction description...">
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_markup">Markup</label>
+                      <select id="dashboard_filter_markup" name="dashboard_filter_markup" class="form-control">
+                        <?php echo get_markup_option('system_accessibility/report/report_transaction/', ''); ?>
+                      </select>
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_unmark">Unmark</label>
+                      <select id="dashboard_filter_unmark" name="dashboard_filter_unmark" class="form-control">
+                        <?php echo get_markup_option('system_accessibility/report/report_transaction/', ''); ?>
+                      </select>
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_currency">Currency</label>
+                      <select id="dashboard_filter_currency" name="dashboard_filter_currency" class="form-control">
+                        <option selected value="">Select an option</option>
+                        <?php echo get_currency_option(''); ?>
+                      </select>
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_transaction_type">Transaction Type</label>
+                      <select id="dashboard_filter_transaction_type" name="dashboard_filter_transaction_type" class="form-control">
+                        <option selected value="">Select an option</option>
+                        <?php echo get_transaction_type_option(''); ?>
+                      </select>
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_amount">Amount</label>
+                      <input type="text" id="dashboard_filter_amount" name="dashboard_filter_amount" class="form-control" placeholder="Type amount...">
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_sib_number">SIB Number</label>
+                      <input type="text" id="dashboard_filter_sib_number" name="dashboard_filter_sib_number" class="form-control" placeholder="Type SIB number...">
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_check_number">Check Number</label>
+                      <input type="text" id="dashboard_filter_check_number" name="dashboard_filter_check_number" class="form-control" placeholder="Type check number...">
+                    </div>
+
+                    <div class="dashboard-filter-field dashboard-filter-field-wide">
+                      <label for="dashboard_filter_users_id">Added By</label>
+                      <select id="dashboard_filter_users_id" name="dashboard_filter_users_id[]" class="form-control select2" multiple data-placeholder="Select user(s)">
+                        <?php echo get_user_option([]); ?>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="dashboard-filter-actions">
+                    <small><i class="fa fa-info-circle"></i> These inputs are visual only for now and will not change report results.</small>
+                    <div>
+                      <button type="reset" class="btn dashboard-filter-reset"><i class="fa fa-undo"></i> Clear</button>
+                      <button type="button" class="btn dashboard-filter-close" id="dashboard_transaction_filter_close"><i class="fa fa-times"></i> Close</button>
+                      <button type="button" class="btn dashboard-filter-apply" disabled><i class="fa fa-search"></i> Apply filters soon</button>
+                    </div>
+                  </div>
+                </form>
               </div>
               <div class="card-box">
                 <div class="table-responsive slimscroll">
@@ -657,6 +780,22 @@
   <div class="rightbar-overlay"></div>
   <?php include("_script.php"); ?>
   <script>
+    $('#dashboard_transaction_filter_toggle').on('click', function(){
+      var $panel = $('#dashboard_transaction_filter_panel');
+      var isOpen = $panel.toggleClass('is-open').hasClass('is-open');
+      $(this).attr('aria-expanded', isOpen ? 'true' : 'false');
+      $panel.attr('aria-hidden', isOpen ? 'false' : 'true');
+    });
+
+    $('#dashboard_transaction_filter_close').on('click', function(){
+      $('#dashboard_transaction_filter_panel').removeClass('is-open').attr('aria-hidden', 'true');
+      $('#dashboard_transaction_filter_toggle').attr('aria-expanded', 'false');
+    });
+
+    $('#dashboard_transaction_filter_form').on('submit', function(event){
+      event.preventDefault();
+    });
+
     $('#dashboard_custom_date_range').on('submit', function(){
       var fromDate = $('#dashboard_from_date').val();
       var toDate = $('#dashboard_to_date').val();
