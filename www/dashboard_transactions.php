@@ -39,6 +39,7 @@
     'income' => '',
     'expense' => '',
     'exchange' => '',
+    'purchase' => '',
     'transfer' => '',
   ];
   $dashboard_filter_values = [
@@ -125,6 +126,7 @@
       'income' => " AND incomes.province=$province_sql ",
       'expense' => " AND expenses.province=$province_sql ",
       'exchange' => " AND exchanges.province=$province_sql ",
+      'purchase' => " AND purchases.province=$province_sql ",
       'transfer' => " AND (transfers.from_province=$province_sql OR transfers.to_province=$province_sql) ",
     ]);
     dashboard_add_filter_query('dashboard_filter_province', $dashboard_filter_values['province']);
@@ -138,6 +140,7 @@
       'income' => " AND incomes.branch=$branch_sql ",
       'expense' => " AND expenses.branch=$branch_sql ",
       'exchange' => " AND exchanges.branch=$branch_sql ",
+      'purchase' => " AND 0 ",
       'transfer' => " AND (transfers.from_branch=$branch_sql OR transfers.to_branch=$branch_sql) ",
     ]);
     dashboard_add_filter_query('dashboard_filter_branch', $dashboard_filter_values['branch']);
@@ -151,6 +154,7 @@
       'income' => " AND incomes.income_date>=$from_date_sql ",
       'expense' => " AND expenses.expense_date>=$from_date_sql ",
       'exchange' => " AND exchanges.exchange_date>=$from_date_sql ",
+      'purchase' => " AND purchases.purchase_date>=$from_date_sql ",
       'transfer' => " AND transfers.transfer_date>=$from_date_sql ",
     ]);
     dashboard_add_filter_query('dashboard_filter_from_date', $dashboard_filter_values['from_date']);
@@ -164,6 +168,7 @@
       'income' => " AND incomes.income_date<=$to_date_sql ",
       'expense' => " AND expenses.expense_date<=$to_date_sql ",
       'exchange' => " AND exchanges.exchange_date<=$to_date_sql ",
+      'purchase' => " AND purchases.purchase_date<=$to_date_sql ",
       'transfer' => " AND transfers.transfer_date<=$to_date_sql ",
     ]);
     dashboard_add_filter_query('dashboard_filter_to_date', $dashboard_filter_values['to_date']);
@@ -177,6 +182,7 @@
       'income' => " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info='Customer Name' AND value_info LIKE $customer_name_sql ESCAPE '\\\\' AND deleted='0') ",
       'expense' => " AND expenses.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Expense' AND key_info='Customer Name' AND value_info LIKE $customer_name_sql ESCAPE '\\\\' AND deleted='0') ",
       'exchange' => " AND 0 ",
+      'purchase' => " AND 0 ",
       'transfer' => " AND 0 ",
     ]);
     dashboard_add_filter_query('dashboard_filter_customer_name', $dashboard_filter_values['customer_name']);
@@ -190,6 +196,7 @@
       'income' => " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info='Customer ID' AND value_info LIKE $customer_id_sql ESCAPE '\\\\' AND deleted='0') ",
       'expense' => " AND expenses.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Expense' AND key_info='Customer ID' AND value_info LIKE $customer_id_sql ESCAPE '\\\\' AND deleted='0') ",
       'exchange' => " AND 0 ",
+      'purchase' => " AND 0 ",
       'transfer' => " AND 0 ",
     ]);
     dashboard_add_filter_query('dashboard_filter_customer_id', $dashboard_filter_values['customer_id']);
@@ -203,6 +210,7 @@
       'income' => " AND incomes.description LIKE $description_sql ESCAPE '\\\\' ",
       'expense' => " AND expenses.description LIKE $description_sql ESCAPE '\\\\' ",
       'exchange' => " AND exchanges.description LIKE $description_sql ESCAPE '\\\\' ",
+      'purchase' => " AND purchases.description LIKE $description_sql ESCAPE '\\\\' ",
       'transfer' => " AND transfers.description LIKE $description_sql ESCAPE '\\\\' ",
     ]);
     dashboard_add_filter_query('dashboard_filter_description', $dashboard_filter_values['description']);
@@ -216,6 +224,7 @@
       'income' => " AND incomes.id IN (SELECT reference_id FROM markups WHERE reference_type='Income' AND markup_type=$markup_sql AND deleted='0') ",
       'expense' => " AND expenses.id IN (SELECT reference_id FROM markups WHERE reference_type='Expense' AND markup_type=$markup_sql AND deleted='0') ",
       'exchange' => " AND exchanges.id IN (SELECT reference_id FROM markups WHERE reference_type='Exchange' AND markup_type=$markup_sql AND deleted='0') ",
+      'purchase' => " AND purchases.id IN (SELECT reference_id FROM markups WHERE reference_type='Purchase' AND markup_type=$markup_sql AND deleted='0') ",
       'transfer' => " AND transfers.id IN (SELECT reference_id FROM markups WHERE reference_type='Transfer' AND markup_type=$markup_sql AND deleted='0') ",
     ]);
     dashboard_add_filter_query('dashboard_filter_markup', $dashboard_filter_values['markup']);
@@ -229,6 +238,7 @@
       'income' => " AND (incomes.id IN (SELECT reference_id FROM markups WHERE reference_type='Income' AND markup_type=$unmark_sql AND deleted='1') OR incomes.id NOT IN (SELECT reference_id FROM markups WHERE reference_type='Income' AND markup_type=$unmark_sql)) ",
       'expense' => " AND (expenses.id IN (SELECT reference_id FROM markups WHERE reference_type='Expense' AND markup_type=$unmark_sql AND deleted='1') OR expenses.id NOT IN (SELECT reference_id FROM markups WHERE reference_type='Expense' AND markup_type=$unmark_sql)) ",
       'exchange' => " AND (exchanges.id IN (SELECT reference_id FROM markups WHERE reference_type='Exchange' AND markup_type=$unmark_sql AND deleted='1') OR exchanges.id NOT IN (SELECT reference_id FROM markups WHERE reference_type='Exchange' AND markup_type=$unmark_sql)) ",
+      'purchase' => " AND (purchases.id IN (SELECT reference_id FROM markups WHERE reference_type='Purchase' AND markup_type=$unmark_sql AND deleted='1') OR purchases.id NOT IN (SELECT reference_id FROM markups WHERE reference_type='Purchase' AND markup_type=$unmark_sql)) ",
       'transfer' => " AND (transfers.id IN (SELECT reference_id FROM markups WHERE reference_type='Transfer' AND markup_type=$unmark_sql AND deleted='1') OR transfers.id NOT IN (SELECT reference_id FROM markups WHERE reference_type='Transfer' AND markup_type=$unmark_sql)) ",
     ]);
     dashboard_add_filter_query('dashboard_filter_unmark', $dashboard_filter_values['unmark']);
@@ -242,6 +252,7 @@
       'income' => " AND incomes.currency=$currency_sql ",
       'expense' => " AND expenses.currency=$currency_sql ",
       'exchange' => " AND (exchanges.from_currency=$currency_sql OR exchanges.to_currency=$currency_sql) ",
+      'purchase' => " AND purchases.currency=$currency_sql ",
       'transfer' => " AND transfers.currency=$currency_sql ",
     ]);
     dashboard_add_filter_query('dashboard_filter_currency', $dashboard_filter_values['currency']);
@@ -267,6 +278,7 @@
       'income' => " AND incomes.income_amount=$amount_sql ",
       'expense' => " AND expenses.expense_amount=$amount_sql ",
       'exchange' => " AND (exchanges.from_amount=$amount_sql OR exchanges.to_amount=$amount_sql) ",
+      'purchase' => " AND purchases.purchase_amount=$amount_sql ",
       'transfer' => " AND transfers.transfer_amount=$amount_sql ",
     ]);
     dashboard_add_filter_query('dashboard_filter_amount', $dashboard_filter_values['amount']);
@@ -280,6 +292,7 @@
       'income' => " AND incomes.sib_number=$sib_number_sql ",
       'expense' => " AND 0 ",
       'exchange' => " AND 0 ",
+      'purchase' => " AND 0 ",
       'transfer' => " AND 0 ",
     ]);
     dashboard_add_filter_query('dashboard_filter_sib_number', $dashboard_filter_values['sib_number']);
@@ -293,6 +306,7 @@
       'income' => " AND incomes.check_number=$check_number_sql ",
       'expense' => " AND expenses.check_number=$check_number_sql ",
       'exchange' => " AND 0 ",
+      'purchase' => " AND 0 ",
       'transfer' => " AND 0 ",
     ]);
     dashboard_add_filter_query('dashboard_filter_check_number', $dashboard_filter_values['check_number']);
@@ -314,6 +328,7 @@
         'income' => " AND incomes.users_id IN ($users_id_sql) ",
         'expense' => " AND expenses.users_id IN ($users_id_sql) ",
         'exchange' => " AND exchanges.users_id IN ($users_id_sql) ",
+        'purchase' => " AND purchases.users_id IN ($users_id_sql) ",
         'transfer' => " AND (transfers.users_id IN ($users_id_sql) OR transfers.approved_by IN ($users_id_sql)) ",
       ]);
       dashboard_add_filter_query('dashboard_filter_users_id', $dashboard_filter_values['users_id']);
@@ -427,6 +442,38 @@
       {$dashboard_filtering_data['exchange']}
       UNION ALL
       SELECT 
+        purchases.id AS transaction_id,
+        'Purchase' AS transaction_type,
+        purchases.sub_categories_id AS transaction_sub_categories_id,
+        purchases.province AS transaction_province,
+        '' AS transaction_branch,
+        purchases.purchase_date AS transaction_date,
+        purchases.purchase_amount AS transaction_amount,
+        purchases.currency AS transaction_currency,
+        purchases.description AS transaction_description,
+        purchases.users_id AS transaction_users_id,
+        '' AS transaction_check_number,
+        '' AS transaction_sib_number,
+        purchases.tms_markup AS transaction_tms_markup,
+        purchases.qb_markup AS transaction_qb_markup,
+        purchases.sib_markup AS transaction_sib_markup,
+        purchases.ad_markup AS transaction_ad_markup,
+        '' AS transaction_additional_informations,
+        '' AS transaction_approve_description,
+        '' AS transaction_from_province,
+        '' AS transaction_to_province,
+        '' AS transaction_from_branch,
+        '' AS transaction_to_branch
+      FROM `purchases`
+      WHERE purchases.deleted='0'
+      AND purchases.is_approved='1'
+      AND purchases.is_included='1'
+      AND purchases.province IN ($accessed_provinces)
+      AND purchases.logistic_cashes_id IN ($accessed_logistic_cashes)
+      AND purchases.sub_categories_id IN ($accessed_sub_categories_purchase)
+      {$dashboard_filtering_data['purchase']}
+      UNION ALL
+      SELECT 
         transfers.id AS transaction_id,
         'Transfer' AS transaction_type,
         0 AS transaction_sub_categories_id,
@@ -466,30 +513,35 @@
   $dashboard_income_date_filter = "";
   $dashboard_expense_date_filter = "";
   $dashboard_exchange_date_filter = "";
+  $dashboard_purchase_date_filter = "";
   $dashboard_transfer_date_filter = "";
 
   if($dashboard_from_date!=''){
     $dashboard_income_date_filter .= " AND incomes.income_date>='".$dashboard_from_date."' ";
     $dashboard_expense_date_filter .= " AND expenses.expense_date>='".$dashboard_from_date."' ";
     $dashboard_exchange_date_filter .= " AND exchanges.exchange_date>='".$dashboard_from_date."' ";
+    $dashboard_purchase_date_filter .= " AND purchases.purchase_date>='".$dashboard_from_date."' ";
     $dashboard_transfer_date_filter .= " AND transfers.transfer_date>='".$dashboard_from_date."' ";
   }
   if($dashboard_to_date!=''){
     $dashboard_income_date_filter .= " AND incomes.income_date<='".$dashboard_to_date."' ";
     $dashboard_expense_date_filter .= " AND expenses.expense_date<='".$dashboard_to_date."' ";
     $dashboard_exchange_date_filter .= " AND exchanges.exchange_date<='".$dashboard_to_date."' ";
+    $dashboard_purchase_date_filter .= " AND purchases.purchase_date<='".$dashboard_to_date."' ";
     $dashboard_transfer_date_filter .= " AND transfers.transfer_date<='".$dashboard_to_date."' ";
   }
 
   $dashboard_closing_income_date_filter = $dashboard_income_date_filter;
   $dashboard_closing_expense_date_filter = $dashboard_expense_date_filter;
   $dashboard_closing_exchange_date_filter = $dashboard_exchange_date_filter;
+  $dashboard_closing_purchase_date_filter = $dashboard_purchase_date_filter;
   $dashboard_closing_transfer_date_filter = $dashboard_transfer_date_filter;
 
   if($dashboard_to_date!=''){
     $dashboard_closing_income_date_filter = " AND incomes.income_date<='".$dashboard_to_date."' ";
     $dashboard_closing_expense_date_filter = " AND expenses.expense_date<='".$dashboard_to_date."' ";
     $dashboard_closing_exchange_date_filter = " AND exchanges.exchange_date<='".$dashboard_to_date."' ";
+    $dashboard_closing_purchase_date_filter = " AND purchases.purchase_date<='".$dashboard_to_date."' ";
     $dashboard_closing_transfer_date_filter = " AND transfers.transfer_date<='".$dashboard_to_date."' ";
   }
 
@@ -520,6 +572,23 @@
     {$dashboard_filtering_data['expense']}"
   );
   $dashboard_total_expense_row = $dashboard_total_expense_sq->fetch();
+
+  $dashboard_total_purchase_sq = $db->query(
+    "SELECT
+      SUM(CASE WHEN currency='AFN' THEN purchase_amount ELSE 0 END) AS total_purchase_afn,
+      SUM(CASE WHEN currency='USD' THEN purchase_amount ELSE 0 END) AS total_purchase_usd,
+      SUM(CASE WHEN currency='IRT' THEN purchase_amount ELSE 0 END) AS total_purchase_irt
+    FROM `purchases`
+    WHERE purchases.deleted='0'
+    AND purchases.is_approved='1'
+    AND purchases.is_included='1'
+    AND purchases.province IN ($accessed_provinces)
+    AND purchases.logistic_cashes_id IN ($accessed_logistic_cashes)
+    AND purchases.sub_categories_id IN ($accessed_sub_categories_purchase)
+    $dashboard_purchase_date_filter
+    {$dashboard_filtering_data['purchase']}"
+  );
+  $dashboard_total_purchase_row = $dashboard_total_purchase_sq->fetch();
 
   $dashboard_total_exchange_sq = $db->query(
     "SELECT
@@ -559,6 +628,7 @@
 
   $dashboard_total_afn = ($dashboard_total_income_row['total_income_afn'] ?? 0)
     - ($dashboard_total_expense_row['total_expense_afn'] ?? 0)
+    - ($dashboard_total_purchase_row['total_purchase_afn'] ?? 0)
     + ($dashboard_total_exchange_row['total_to_afn'] ?? 0)
     + ($dashboard_total_exchange_row['total_to_afn2'] ?? 0)
     - ($dashboard_total_exchange_row['total_from_afn'] ?? 0)
@@ -567,12 +637,14 @@
     + ($dashboard_total_transfer_row['total_transfer_in_afn'] ?? 0);
   $dashboard_total_usd = ($dashboard_total_income_row['total_income_usd'] ?? 0)
     - ($dashboard_total_expense_row['total_expense_usd'] ?? 0)
+    - ($dashboard_total_purchase_row['total_purchase_usd'] ?? 0)
     + ($dashboard_total_exchange_row['total_to_usd'] ?? 0)
     - ($dashboard_total_exchange_row['total_from_usd'] ?? 0)
     - ($dashboard_total_transfer_row['total_transfer_out_usd'] ?? 0)
     + ($dashboard_total_transfer_row['total_transfer_in_usd'] ?? 0);
   $dashboard_total_irt = ($dashboard_total_income_row['total_income_irt'] ?? 0)
     - ($dashboard_total_expense_row['total_expense_irt'] ?? 0)
+    - ($dashboard_total_purchase_row['total_purchase_irt'] ?? 0)
     + ($dashboard_total_exchange_row['total_to_irt'] ?? 0)
     - ($dashboard_total_exchange_row['total_from_irt'] ?? 0)
     - ($dashboard_total_transfer_row['total_transfer_out_irt'] ?? 0)
@@ -605,6 +677,23 @@
     {$dashboard_filtering_data['expense']}"
   );
   $dashboard_closing_expense_row = $dashboard_closing_expense_sq->fetch();
+
+  $dashboard_closing_purchase_sq = $db->query(
+    "SELECT
+      SUM(CASE WHEN currency='AFN' THEN purchase_amount ELSE 0 END) AS closing_purchase_afn,
+      SUM(CASE WHEN currency='USD' THEN purchase_amount ELSE 0 END) AS closing_purchase_usd,
+      SUM(CASE WHEN currency='IRT' THEN purchase_amount ELSE 0 END) AS closing_purchase_irt
+    FROM `purchases`
+    WHERE purchases.deleted='0'
+    AND purchases.is_approved='1'
+    AND purchases.is_included='1'
+    AND purchases.province IN ($accessed_provinces)
+    AND purchases.logistic_cashes_id IN ($accessed_logistic_cashes)
+    AND purchases.sub_categories_id IN ($accessed_sub_categories_purchase)
+    $dashboard_closing_purchase_date_filter
+    {$dashboard_filtering_data['purchase']}"
+  );
+  $dashboard_closing_purchase_row = $dashboard_closing_purchase_sq->fetch();
 
   $dashboard_closing_exchange_sq = $db->query(
     "SELECT
@@ -644,6 +733,7 @@
 
   $dashboard_closing_afn = ($dashboard_closing_income_row['closing_income_afn'] ?? 0)
     - ($dashboard_closing_expense_row['closing_expense_afn'] ?? 0)
+    - ($dashboard_closing_purchase_row['closing_purchase_afn'] ?? 0)
     + ($dashboard_closing_exchange_row['closing_to_afn'] ?? 0)
     + ($dashboard_closing_exchange_row['closing_to_afn2'] ?? 0)
     - ($dashboard_closing_exchange_row['closing_from_afn'] ?? 0)
@@ -652,12 +742,14 @@
     + ($dashboard_closing_transfer_row['closing_transfer_in_afn'] ?? 0);
   $dashboard_closing_usd = ($dashboard_closing_income_row['closing_income_usd'] ?? 0)
     - ($dashboard_closing_expense_row['closing_expense_usd'] ?? 0)
+    - ($dashboard_closing_purchase_row['closing_purchase_usd'] ?? 0)
     + ($dashboard_closing_exchange_row['closing_to_usd'] ?? 0)
     - ($dashboard_closing_exchange_row['closing_from_usd'] ?? 0)
     - ($dashboard_closing_transfer_row['closing_transfer_out_usd'] ?? 0)
     + ($dashboard_closing_transfer_row['closing_transfer_in_usd'] ?? 0);
   $dashboard_closing_irt = ($dashboard_closing_income_row['closing_income_irt'] ?? 0)
     - ($dashboard_closing_expense_row['closing_expense_irt'] ?? 0)
+    - ($dashboard_closing_purchase_row['closing_purchase_irt'] ?? 0)
     + ($dashboard_closing_exchange_row['closing_to_irt'] ?? 0)
     - ($dashboard_closing_exchange_row['closing_from_irt'] ?? 0)
     - ($dashboard_closing_transfer_row['closing_transfer_out_irt'] ?? 0)
@@ -712,6 +804,14 @@
                     <span><?php echo number_format($dashboard_total_expense_row['total_expense_afn'] ?? 0, 2); ?> AFN</span>
                     <span><?php echo number_format($dashboard_total_expense_row['total_expense_usd'] ?? 0, 2); ?> USD</span>
                     <span><?php echo number_format($dashboard_total_expense_row['total_expense_irt'] ?? 0, 2); ?> IRT</span>
+                  </div>
+                </div>
+                <div class="dashboard-summary-card dashboard-summary-expense">
+                  <div class="dashboard-summary-title"><i class="fa fa-shopping-cart"></i> Purchase</div>
+                  <div class="dashboard-summary-values">
+                    <span><?php echo number_format($dashboard_total_purchase_row['total_purchase_afn'] ?? 0, 2); ?> AFN</span>
+                    <span><?php echo number_format($dashboard_total_purchase_row['total_purchase_usd'] ?? 0, 2); ?> USD</span>
+                    <span><?php echo number_format($dashboard_total_purchase_row['total_purchase_irt'] ?? 0, 2); ?> IRT</span>
                   </div>
                 </div>
                 <div class="dashboard-summary-card dashboard-summary-exchange">
