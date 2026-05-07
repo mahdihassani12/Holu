@@ -287,41 +287,6 @@
 
 					}break;
 
-					case 'Purchase':{
-
-						$purchase_uq = $db->query("UPDATE purchases SET tms_markup='0', qb_markup='0', sib_markup='0', ad_markup='0' WHERE id='$reference_id'");
-
-						$markup_sq = $db->query("SELECT * FROM markups WHERE deleted='0' AND reference_type='Purchase' AND reference_id='$reference_id'");
-
-						if($markup_sq->rowCount()>0){
-							$markup_array = [];
-							while($markup_row = $markup_sq->fetch()){
-								switch ($markup_row['markup_type']) {
-									case 'TMS Markup':{
-										$purchase_uq = $db->query("UPDATE purchases SET tms_markup='1' WHERE id='$reference_id'");
-									}break;
-
-									case 'QB Markup':{
-										$purchase_uq = $db->query("UPDATE purchases SET qb_markup='1' WHERE id='$reference_id'");
-									}break;
-
-									case 'SIB Markup':{
-										$purchase_uq = $db->query("UPDATE purchases SET sib_markup='1' WHERE id='$reference_id'");
-									}break;
-
-									case 'Ad Markup':{
-										$purchase_uq = $db->query("UPDATE purchases SET ad_markup='1' WHERE id='$reference_id'");
-									}break;
-									
-									default:{
-
-									}break;
-								}
-							}
-						}
-
-					}break;
-
 					case 'Transfer':{
 
 						$transfer_uq = $db->query("UPDATE transfers SET tms_markup='0', qb_markup='0', rqb_markup='0', sib_markup='0', ad_markup='0' WHERE id='$reference_id'");
@@ -744,13 +709,11 @@
 				$income_filtering_data = "";
 				$expense_filtering_data = "";
 				$exchange_filtering_data = "";
-				$purchase_filtering_data = "";
 				$transfer_filtering_data = "";
 
 				$closing_income_filtering_data = "";
 			  $closing_expense_filtering_data = "";
 			  $closing_exchange_filtering_data = "";
-			  $closing_purchase_filtering_data = "";
 			  $closing_transfer_filtering_data = "";
 
 				$province = "0";
@@ -762,13 +725,11 @@
 				  $income_filtering_data .= " AND province='".$province."' ";
 				  $expense_filtering_data .= " AND province='".$province."' ";
 				  $exchange_filtering_data .= " AND province='".$province."' ";
-				  $purchase_filtering_data .= " AND province='".$province."' ";
 				  $transfer_filtering_data .= " AND (transfers.from_province='".$province."' OR to_province='".$province."') ";
 
 				  $closing_income_filtering_data .= " AND incomes.province='".$province."' ";
 			    $closing_expense_filtering_data .= " AND expenses.province='".$province."' ";
 			    $closing_exchange_filtering_data .= " AND exchanges.province='".$province."' ";
-			    $closing_purchase_filtering_data .= " AND purchases.province='".$province."' ";
 			    $closing_transfer_filtering_data .= " AND (transfers.from_province='".$province."' OR to_province='".$province."') ";
 				}
 				if(isset($_POST['from_date']) AND !empty($_POST['from_date'])){
@@ -776,7 +737,6 @@
 				  $income_filtering_data .= " AND income_date>='".$from_date."' ";
 				  $expense_filtering_data .= " AND expense_date>='".$from_date."' ";
 				  $exchange_filtering_data .= " AND exchange_date>='".$from_date."' ";
-				  $purchase_filtering_data .= " AND purchase_date>='".$from_date."' ";
 				  $transfer_filtering_data .= " AND transfer_date>='".$from_date."' ";
 				}
 				if(isset($_POST['to_date']) AND !empty($_POST['to_date'])){
@@ -784,14 +744,12 @@
 				  $income_filtering_data .= " AND income_date<='".$to_date."' ";
 				  $expense_filtering_data .= " AND expense_date<='".$to_date."' ";
 				  $exchange_filtering_data .= " AND exchange_date<='".$to_date."' ";
-				  $purchase_filtering_data .= " AND purchase_date<='".$to_date."' ";
 				  $transfer_filtering_data .= " AND transfer_date<='".$to_date."' ";
 
 				  $closing_income_filtering_data .= " AND incomes.income_date<='".$to_date."' ";
 			    $closing_expense_filtering_data .= " AND expenses.expense_date<='".$to_date."' ";
 			    $closing_exchange_filtering_data .= " AND exchanges.exchange_date<='".$to_date."' ";
 			    $closing_exchange_filtering_data .= " AND exchanges.exchange_date<='".$to_date."' ";
-			    $closing_purchase_filtering_data .= " AND purchases.purchase_date<='".$to_date."' ";
 			    $closing_transfer_filtering_data .= " AND transfers.transfer_date<='".$to_date."' ";
 				}
 
@@ -905,22 +863,6 @@
              );
             $closing_total_exchange_row = $closing_total_exchange_sq->fetch();
 
-            $closing_total_purchase_sq = $db->query(
-							"SELECT 
-							SUM(CASE WHEN currency='AFN' THEN purchase_amount ELSE 0 END) as total_afn_purchase,
-							SUM(CASE WHEN currency='USD' THEN purchase_amount ELSE 0 END) as total_usd_purchase,
-							SUM(CASE WHEN currency='IRT' THEN purchase_amount ELSE 0 END) as total_irt_purchase
-	            FROM `purchases` 
-	            WHERE purchases.deleted='0' 
-				      AND purchases.is_approved='1'
-    					AND purchases.is_included='1'
-				      AND purchases.province IN ($accessed_provinces) 
-				      $closing_purchase_filtering_data
-				      AND purchases.sub_categories_id IN ($accessed_sub_categories_purchase)
-				      AND logistic_cashes_id IN ($accessed_logistic_cashes)"
-            );
-            $closing_total_purchase_row = $closing_total_purchase_sq->fetch();
-
             $closing_total_transfer_sq = $db->query(
 							"SELECT 
 							SUM(CASE WHEN currency='AFN' AND from_province='$province' THEN transfer_amount ELSE 0 END) as total_afn_transfer_out,
@@ -944,7 +886,6 @@
               <span class="badge badge-secondary">'.(
               	$closing_total_income_row['total_afn_income']
               	-$closing_total_expense_row['total_afn_expense']
-              	-$closing_total_purchase_row['total_afn_purchase']
               	-$closing_total_exchange_row['total_afn_from_amount']
               	-$closing_total_exchange_row['total_afn_from_amount2']
               	+$closing_total_exchange_row['total_afn_to_amount']
@@ -954,7 +895,6 @@
               ).' AFN</span> - <span class="badge badge-secondary">'.(
               	$closing_total_income_row['total_usd_income']
               	-$closing_total_expense_row['total_usd_expense']
-              	-$closing_total_purchase_row['total_usd_purchase']
               	-$closing_total_exchange_row['total_usd_from_amount']
               	+$closing_total_exchange_row['total_usd_to_amount']
               	-$closing_total_transfer_row['total_usd_transfer_out']
@@ -962,7 +902,6 @@
               ).' USD</span> - <span class="badge badge-secondary">'.(
               	$closing_total_income_row['total_irt_income']
               	-$closing_total_expense_row['total_irt_expense']
-              	-$closing_total_purchase_row['total_irt_purchase']
               	-$closing_total_exchange_row['total_irt_from_amount']
               	+$closing_total_exchange_row['total_irt_to_amount']
               	-$closing_total_transfer_row['total_irt_transfer_out']
@@ -976,7 +915,6 @@
               <span class="badge badge-secondary">'.(
               	$total_income_row['total_afn_income']
               	-$total_expense_row['total_afn_expense']
-              	-$total_purchase_row['total_afn_purchase']
               	-$total_exchange_row['total_afn_from_amount']
               	-$total_exchange_row['total_afn_from_amount2']
               	+$total_exchange_row['total_afn_to_amount']
@@ -986,7 +924,6 @@
               ).' AFN</span> - <span class="badge badge-secondary">'.(
               	$total_income_row['total_usd_income']
               	-$total_expense_row['total_usd_expense']
-              	-$total_purchase_row['total_usd_purchase']
               	-$total_exchange_row['total_usd_from_amount']
               	+$total_exchange_row['total_usd_to_amount']
               	-$total_transfer_row['total_usd_transfer_out']
@@ -994,7 +931,6 @@
               ).' USD</span> - <span class="badge badge-secondary">'.(
               	$total_income_row['total_irt_income']
               	-$total_expense_row['total_irt_expense']
-              	-$total_purchase_row['total_irt_purchase']
               	-$total_exchange_row['total_irt_from_amount']
               	+$total_exchange_row['total_irt_to_amount']
               	-$total_transfer_row['total_irt_transfer_out']
@@ -1050,22 +986,6 @@
               $exchange_filtering_data"
              );
             $total_exchange_row = $total_exchange_sq->fetch();
-
-            $total_purchase_sq = $db->query(
-							"SELECT 
-							SUM(CASE WHEN currency='AFN' THEN purchase_amount ELSE 0 END) as total_afn_purchase,
-							SUM(CASE WHEN currency='USD' THEN purchase_amount ELSE 0 END) as total_usd_purchase,
-							SUM(CASE WHEN currency='IRT' THEN purchase_amount ELSE 0 END) as total_irt_purchase
-	            FROM `purchases` 
-	            WHERE purchases.deleted='0' 
-				      AND purchases.is_approved='1'
-    					AND purchases.is_included='1'
-				      AND purchases.province IN ($accessed_provinces) 
-				      $purchase_filtering_data
-				      AND purchases.sub_categories_id IN ($accessed_sub_categories_purchase)
-				      AND logistic_cashes_id IN ($accessed_logistic_cashes)"
-            );
-            $total_purchase_row = $total_purchase_sq->fetch();
 
             $total_transfer_sq = $db->query(
 							"SELECT 
@@ -1344,118 +1264,6 @@
             echo $result;
 					}break;
 
-					case 'Purchase':{
-						$category_sq = $db->query(
-							"SELECT 
-							id, category_name
-	            FROM `categories` 
-	            WHERE deleted='0'
-	            AND category_type='Purchase'"
-            );
-            while($category_row = $category_sq->fetch()){
-            	if(check_access('sub_category_accessibility/purchase/'.$category_row['id'].'/')==1){
-
-            		$categories_id = $category_row['id'];
-            		$total_category_sq = $db->query(
-									"SELECT 
-									SUM(CASE WHEN currency='AFN' THEN purchase_amount ELSE 0 END) as total_afn_category,
-									SUM(CASE WHEN currency='USD' THEN purchase_amount ELSE 0 END) as total_usd_category,
-									SUM(CASE WHEN currency='IRT' THEN purchase_amount ELSE 0 END) as total_irt_category
-			            FROM `purchases` 
-			            WHERE deleted='0' 
-			            AND is_approved='1'
-    							AND is_included='1'
-			            AND sub_categories_id IN (
-			            	SELECT id FROM sub_categories WHERE deleted='0' AND categories_id='$categories_id'
-			            )
-			            AND province IN ($accessed_provinces) 
-			            AND sub_categories_id IN ($accessed_sub_categories_purchase)
-			            AND logistic_cashes_id IN ($accessed_logistic_cashes)
-			            $purchase_filtering_data"
-		            );
-		            $total_category_row = $total_category_sq->fetch();
-
-		            $result .= '
-	            	<li>
-		              <b onclick="load_data_for_report_component(\'PurchaseCategory\', \''.$categories_id.'\');">'.$category_row['category_name'].': </b>
-		              <span class="badge badge-danger">'.$total_category_row['total_afn_category'].' AFN</span> - <span class="badge badge-danger">'.$total_category_row['total_usd_category'].' USD</span> - <span class="badge badge-danger">'.$total_category_row['total_irt_category'].' IRT</span>
-		              <ul class="tree_view" id="PurchaseCategory'.$categories_id.'Container"></ul>
-		            </li>
-	            	';
-            	}
-            }
-            echo $result;
-					}break;
-
-					case 'PurchaseCategory':{
-						$sub_category_sq = $db->query(
-							"SELECT 
-							id, sub_category_name
-	            FROM `sub_categories` 
-	            WHERE deleted='0'
-	            AND categories_id='$selector'"
-            );
-            while($sub_category_row = $sub_category_sq->fetch()){
-            	if(check_access('sub_category_accessibility/purchase/'.$selector.'/'.$sub_category_row['id'].'/')==1){
-
-            		$sub_categories_id = $sub_category_row['id'];
-            		$total_sub_category_sq = $db->query(
-									"SELECT 
-									SUM(CASE WHEN currency='AFN' THEN purchase_amount ELSE 0 END) as total_afn_sub_category,
-									SUM(CASE WHEN currency='USD' THEN purchase_amount ELSE 0 END) as total_usd_sub_category,
-									SUM(CASE WHEN currency='IRT' THEN purchase_amount ELSE 0 END) as total_irt_sub_category
-			            FROM `purchases` 
-			            WHERE deleted='0' 
-			            AND is_approved='1'
-    							AND is_included='1'
-			            AND sub_categories_id = '$sub_categories_id'
-			            AND province IN ($accessed_provinces) 
-			            AND sub_categories_id IN ($accessed_sub_categories_purchase)
-			            AND logistic_cashes_id IN ($accessed_logistic_cashes)
-			            $purchase_filtering_data"
-		            );
-		            $total_sub_category_row = $total_sub_category_sq->fetch();
-
-		            $result .= '
-	            	<li>
-		              <b onclick="load_data_for_report_component(\'PurchaseSubCategory\', \''.$sub_categories_id.'\');">'.$sub_category_row['sub_category_name'].': </b>
-		              <span class="badge badge-danger">'.$total_sub_category_row['total_afn_sub_category'].' AFN</span> - <span class="badge badge-danger">'.$total_sub_category_row['total_usd_sub_category'].' USD</span> - <span class="badge badge-danger">'.$total_sub_category_row['total_irt_sub_category'].' IRT</span>
-		              <ul class="tree_view" id="PurchaseSubCategory'.$sub_categories_id.'Container"></ul>
-		            </li>
-	            	';
-            	}
-            }
-            echo $result;
-					}break;
-
-					case 'PurchaseSubCategory':{
-						$purchase_sq = $db->query(
-							"SELECT 
-							id, purchase_amount, currency, description
-	            FROM `purchases` 
-	            WHERE deleted='0'
-	            AND is_approved='1'
-    					AND is_included='1'
-	            AND sub_categories_id='$selector'
-	            AND province IN ($accessed_provinces) 
-			        AND sub_categories_id IN ($accessed_sub_categories_purchase)
-			        AND logistic_cashes_id IN ($accessed_logistic_cashes)
-			        $purchase_filtering_data"
-            );
-            while($purchase_row = $purchase_sq->fetch()){
-
-	            $result .= '
-            	<li>
-	              <b onclick="load_data_for_report_component(\'PurchaseAttribute\', \''.$purchase_row['id'].'\');" lang="fa" dir="rtl">'.$purchase_row['description'].': </b>
-	              <span class="badge badge-danger">'.$purchase_row['purchase_amount'].' '.$purchase_row['currency'].'</span>
-	              <ul class="tree_view" id="PurchaseAttribute'.$purchase_row['id'].'Container"></ul>
-	            </li>
-            	';
-            	
-            }
-            echo $result;
-					}break;
-
 					case 'TransferIn':{
 						$transfer_sq = $db->query(
 							"SELECT 
@@ -1652,53 +1460,6 @@
             echo $result;
 					}break;
 
-					
-
-					case 'PurchaseAttribute':{
-
-						$purchase_attribute_sq = $db->query(
-							"SELECT * 
-              FROM `purchases` 
-              WHERE id='$selector'
-              LIMIT 1");
-            $purchase_attribute_row = $purchase_attribute_sq->fetch();
-
-            
-
-            $result .= '
-            <li>
-              Logistic Cash: <span class="badge badge-danger">'.get_col('logistic_cashes', 'name', 'id', $purchase_attribute_row['logistic_cashes_id']).'
-            </li>
-          	<li>
-              Province: <span class="badge badge-danger">'.$purchase_attribute_row['province'].'
-            </li>
-            <li>
-              Category: <span class="badge badge-danger">'.get_col('sub_categories', 'sub_category_name', 'id', $purchase_attribute_row['sub_categories_id']).'
-            </li>
-            <li>
-              Sub Category: <span class="badge badge-danger">'.get_col('categories', 'category_name', 'id', get_col('sub_categories', 'categories_id', 'id', $purchase_attribute_row['sub_categories_id'])).'
-            </li>
-            <li>
-              Date: <span class="badge badge-danger">'.$purchase_attribute_row['purchase_date'].'
-            </li>
-            <li>
-              Amount: <span class="badge badge-danger">'.$purchase_attribute_row['purchase_amount'].'
-            </li>
-            <li>
-              Currency: <span class="badge badge-danger">'.$purchase_attribute_row['currency'].'
-            </li>
-            <li>
-              Check Number: <span class="badge badge-danger">'.$purchase_attribute_row['check_number'].'
-            </li>
-            <li>
-              Description: <span class="badge badge-danger">'.$purchase_attribute_row['description'].'
-            </li>
-          	';
-            	
-            
-            echo $result;
-					}break;
-
 					case 'TransferInAttribute':{
 
 						$transfer_attribute_sq = $db->query(
@@ -1857,20 +1618,6 @@
           );
           $closing_exchange_row = $closing_exchange_sq->fetch();
 
-          $closing_purchase_sq = $db->query(
-            "SELECT 
-              SUM(CASE WHEN currency='AFN' THEN purchase_amount ELSE 0 END) AS closing_purchase_afn,
-              SUM(CASE WHEN currency='USD' THEN purchase_amount ELSE 0 END) AS closing_purchase_usd,
-              SUM(CASE WHEN currency='IRT' THEN purchase_amount ELSE 0 END) AS closing_purchase_irt
-            FROM `purchases`
-            WHERE purchases.deleted='0' 
-            AND purchases.is_approved='1'
-            AND purchases.is_included='1'
-            AND purchases.province IN ('$accessed_province') 
-            AND purchases.sub_categories_id IN ($accessed_sub_categories_purchase)"
-          );
-          $closing_purchase_row = $closing_purchase_sq->fetch();
-
           $closing_transfer_sq = $db->query(
             "SELECT 
               SUM(CASE WHEN currency='AFN' AND from_province='$accessed_province' THEN transfer_amount ELSE 0 END) AS closing_transfer_out_afn,
@@ -1889,7 +1636,6 @@
 
           $closing_afn = $closing_income_row['closing_income_afn']
             - $closing_expense_row['closing_expense_afn']
-            - $closing_purchase_row['closing_purchase_afn']
             + $closing_exchange_row['closing_to_afn']
             + $closing_exchange_row['closing_to_afn2']
             - $closing_exchange_row['closing_from_afn']
@@ -1899,7 +1645,6 @@
 
           $closing_usd = $closing_income_row['closing_income_usd']
             - $closing_expense_row['closing_expense_usd']
-            - $closing_purchase_row['closing_purchase_usd']
             + $closing_exchange_row['closing_to_usd']
             - $closing_exchange_row['closing_from_usd']
             - $closing_transfer_row['closing_transfer_out_usd']
@@ -1907,7 +1652,6 @@
 
           $closing_irt = $closing_income_row['closing_income_irt']
             - $closing_expense_row['closing_expense_irt']
-            - $closing_purchase_row['closing_purchase_irt']
             + $closing_exchange_row['closing_to_irt']
             - $closing_exchange_row['closing_from_irt']
             - $closing_transfer_row['closing_transfer_out_irt']
@@ -2139,71 +1883,6 @@
 
 		      var ctx_expense_in_province_donut = document.getElementById(\'canvas_expense_in_province_donut\').getContext(\'2d\');
 		      var expense_in_province_donut = new Chart(ctx_expense_in_province_donut, {
-		        type: "doughnut",
-		        data: {
-		            datasets: [{
-		                data: [
-		                  '.$data.'
-		                ],
-		                backgroundColor: [
-		                  '.$background_color.'
-		                ],
-		                label: "Dataset 1"
-		            }],
-		            labels: [
-		              '.$labels.'
-		            ]
-		        },
-		        options: {
-		            responsive: true,
-		            legend: {
-		                position: "right",
-		            },
-		            maintainAspectRatio: false,
-		            animation: {
-		                animateScale: true,
-		                animateRotate: true
-		            }
-		        }
-		      });
-		    </script>
-		    ';
-
-		    echo $result;
-			}break;
-
-			case 'get_dashboard_purchase_in_province':{
-				$data = '';
-				$background_color = '';
-				$labels = '';
-				foreach ($holu_provinces as $holu_province) :
-          if (check_access('province_accessibility/' . $holu_province . '/') != 1)
-            continue;
-          else
-
-          	$purchase_sq = $db->query("SELECT count(id) AS num_purchase FROM purchases WHERE deleted='0' AND province='$holu_province' AND province IN ($accessed_provinces) AND sub_categories_id IN ($accessed_sub_categories_purchase)");
-
-          	if($purchase_sq->rowCount()>0){
-              $purchase_row = $purchase_sq->fetch();
-              $data .= $purchase_row['num_purchase'].',';
-            }else{
-            	$data .= '0,';
-            }
-
-          	
-          	$background_color .= '\''.get_random_color().'\',';
-          	$labels .= '"'.$holu_province.'",';
-        
-        endforeach;
-
-				$result = '
-		    <script>
-		      $("#canvas_purchase_in_province_donut").remove(); 
-		      $("#canvas_purchase_in_province_donut_spinner").remove(); 
-		      $("#container_purchase_in_province_donut").append("<canvas id=\'canvas_purchase_in_province_donut\'><canvas>");
-
-		      var ctx_purchase_in_province_donut = document.getElementById(\'canvas_purchase_in_province_donut\').getContext(\'2d\');
-		      var purchase_in_province_donut = new Chart(ctx_purchase_in_province_donut, {
 		        type: "doughnut",
 		        data: {
 		            datasets: [{

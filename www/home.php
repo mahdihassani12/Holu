@@ -327,22 +327,6 @@ if ($online_users_sq) {
             <div class="col-lg-4">
               <div class="card-box card-box-header">
 
-                <h4 class="header-title">Purchase in Province</h4>
-
-              </div>
-              <div class="card-box" id="container_purchase_in_province_donut" style="height: 300px !important;">
-
-                <div class="w-100 text-center" id="canvas_purchase_in_province_donut_spinner">
-                  <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                </div>
-                <canvas id="canvas_purchase_in_province_donut"></canvas>
-
-              </div> <!-- end card-box -->
-            </div> <!-- end col -->
-
-            <div class="col-lg-4">
-              <div class="card-box card-box-header">
-
                 <h4 class="header-title">Exchange in Province</h4>
 
               </div>
@@ -435,7 +419,7 @@ if ($online_users_sq) {
 
           <?php endif; ?>
 
-          <?php if(check_access("system_accessibility/home/monthly_purchase/")==1) : ?>
+          <?php if(true) : ?>
 
           <div class="row">
             <div class="col-lg-12">
@@ -625,30 +609,6 @@ if ($online_users_sq) {
   <?php if(check_access('system_accessibility/home/num_transaction/')==1){ ?>
     <script>
       //////////////////////////////////////////
-      function get_dashboard_purchase_in_province(){
-
-        $.ajax({
-          url:'controller_ajax.php',
-          type:'post',
-          data:{
-            operation:'get_dashboard_purchase_in_province'
-          },
-          success: function(data){
-
-            $("#purchase_in_province_donut_property").html(data);
-          },
-          error: function(xhr, status, error){
-              get_dashboard_purchase_in_province();
-          }
-        });
-      }
-      get_dashboard_purchase_in_province();
-    </script>
-  <?php } ?>
-
-  <?php if(check_access('system_accessibility/home/num_transaction/')==1){ ?>
-    <script>
-      //////////////////////////////////////////
       function get_dashboard_exchange_in_province(){
 
         $.ajax({
@@ -818,7 +778,7 @@ if ($online_users_sq) {
     </script>
   <?php } ?>
 
-  <?php if(check_access('system_accessibility/home/monthly_purchase/')==1){ ?>
+  <?php if(true){ ?>
     <script>
       //////////////////////////////////////////
       function get_dashboard_monthly_exchange_line(){
@@ -914,7 +874,6 @@ if ($online_users_sq) {
   <?php } ?>
   <div id="income_in_province_donut_property"></div>
   <div id="expense_in_province_donut_property"></div>
-  <div id="purchase_in_province_donut_property"></div>
   <div id="exchange_in_province_donut_property"></div>
   <div id="transferin_in_province_donut_property"></div>
   <div id="transferout_in_province_donut_property"></div>

@@ -22,7 +22,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	$holu_users_id = $_SESSION['holu_users_id'];
 	$holu_currencies = ['AFN', 'USD', 'IRT'];
 
-	$holu_transaction_types = ['Income', 'Expense', 'Exchange', 'Purchase', 'Transfer'];
+	$holu_transaction_types = ['Income', 'Expense', 'Exchange', 'Transfer'];
 
 	$holu_provinces = array();
 
@@ -120,15 +120,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 					"icon" => '',
 					"location" => "monthly_expense/",
 					"path" => "system_accessibility/home/monthly_expense/",
-					"subs" => array(),
-				),
-				array(
-					"type" => "operation",
-					"url" => "",
-					"label" => "Monthly Purchase",
-					"icon" => '',
-					"location" => "monthly_purchase/",
-					"path" => "system_accessibility/home/monthly_purchase/",
 					"subs" => array(),
 				),
 			),
@@ -602,15 +593,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 							"icon" => '',
 							"location" => "index/",
 							"path" => "system_accessibility/request/report_transfer/index/",
-							"subs" => array(),
-						),
-						array(
-							"type" => "operation",
-							"url" => "",
-							"label" => "Approve Purchase",
-							"icon" => '',
-							"location" => "approve_transfer/",
-							"path" => "system_accessibility/request/report_transfer/approve_transfer/",
 							"subs" => array(),
 						),
 						array(
@@ -1313,7 +1295,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				return 'X';
 			case 'exchange':
 				return 'E';
-			case 'purchase':
 				return 'P';
 			case 'transfer':
 				return 'T';
@@ -1764,38 +1745,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 
 						}break;
 
-						case 'system_accessibility/request/report_purchase/':{
-
-							$purchase_sq = $db->query("SELECT count(id) as num_pending FROM `purchases` WHERE deleted='0' AND is_approved='0' AND province IN ($accessed_provinces) AND logistic_cashes_id IN ($accessed_logistic_cashes)");
-  							$purchase_row = $purchase_sq->fetch();
-
-  						if($purchase_row['num_pending']>0){
-  							$counter = '
-									<div class="badge badge-danger">
-	            			'.$purchase_row['num_pending'].'
-	        				</div>
-	        			';
-  						}
-							
-
-						}break;
-
-						case 'system_accessibility/request/report_purchase_include/':{
-
-							$purchase_sq = $db->query("SELECT count(id) as num_pending FROM `purchases` WHERE deleted='0' AND is_approved='1' AND is_included='0' AND province IN ($accessed_provinces) AND logistic_cashes_id IN ($accessed_logistic_cashes)");
-  						$purchase_row = $purchase_sq->fetch();
-
-  						if($purchase_row['num_pending']>0){
-  							$counter = '
-									<div class="badge badge-danger">
-	            			'.$purchase_row['num_pending'].'
-	        				</div>
-	        			';
-  						}
-							
-
-						}break;
-
 						case 'system_accessibility/request/report_transfer/':{
 
 						$transfer_sq = $db->query("SELECT count(id) as num_pending FROM `transfers` WHERE deleted='0' AND is_approved='0' AND to_province IN ($accessed_provinces)");
@@ -2232,62 +2181,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				}
 			break;
 
-			case "purchase_province":
-				if(isset($_GET['province']) AND !empty($_GET['province'])){
-					$province = $_GET['province'];
-					$holu_filtering_data .= " AND purchases.province='".$province."' ";
-					array_push($holu_filtering_array, "Province: $province");
-				}
-			break;
-
-			case "purchase_date":
-				if(isset($_GET['from_purchase_date']) AND !empty($_GET['from_purchase_date'])){
-					$from_purchase_date = $_GET['from_purchase_date'];
-					$holu_filtering_data .= " AND purchases.purchase_date>='".$from_purchase_date."' ";
-					array_push($holu_filtering_array, "From: $from_purchase_date");
-				}
-				if(isset($_GET['to_purchase_date']) AND !empty($_GET['to_purchase_date'])){
-					$to_purchase_date = $_GET['to_purchase_date'];
-					$holu_filtering_data .= " AND purchases.purchase_date<='".$to_purchase_date."' ";
-					array_push($holu_filtering_array, "To: $to_purchase_date");
-				}
-			break;
-
-			case "purchase_categories_id":
-				if(isset($_GET['categories_id']) AND !empty($_GET['categories_id'])){
-					global $db;
-					$categories_id = $_GET['categories_id'];
-					$sub_categories = '';
-					$sub_category_sq = $db->prepare(
-						"SELECT id 
-						FROM `sub_categories` 
-						WHERE categories_id=:categories_id 
-						AND deleted='0'"
-					);
-					$sub_category_sqx = $sub_category_sq->execute([
-						'categories_id'=>$categories_id
-					]);
-					if($sub_category_sq->rowCount()>0){
-						while($sub_category_row = $sub_category_sq->fetch()){
-							$sub_categories .= '\''.$sub_category_row['id'].'\',';
-						}
-						$sub_categories = rtrim($sub_categories, ',');
-					}
-					
-					
-					$holu_filtering_data .= " AND purchases.sub_categories_id IN (".$sub_categories.") ";
-					array_push($holu_filtering_array, "Category: ".get_col('categories', 'category_name', 'id', $categories_id));
-				}
-			break;
-
-			case "purchase_sub_categories_id":
-				if(isset($_GET['sub_categories_id']) AND !empty($_GET['sub_categories_id'])){
-					$sub_categories_id = $_GET['sub_categories_id'];
-					$holu_filtering_data .= " AND purchases.sub_categories_id='".$sub_categories_id."' ";
-					array_push($holu_filtering_array, "Sub Category: $sub_categories_id");
-				}
-			break;
-
 			case "exchange_province":
 				if(isset($_GET['province']) AND !empty($_GET['province'])){
 					$province = $_GET['province'];
@@ -2374,42 +2267,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 						$holu_filtering_data .= " AND expenses.id NOT IN (SELECT reference_id FROM `invoices` WHERE deleted='0' AND reference_type='Expense' )  ";
 					}
 					array_push($holu_filtering_array, "Is Printed: $is_printed");
-				}
-			break;
-
-			case "purchase_currency":
-				if(isset($_GET['purchase_currency']) AND !empty($_GET['purchase_currency'])){
-					$purchase_currency = $_GET['purchase_currency'];
-					$holu_filtering_data .= " AND purchases.currency='".$purchase_currency."' ";
-					array_push($holu_filtering_array, "Currency: $purchase_currency");
-				}
-			break;
-
-			case "purchase_amount":
-				if(isset($_GET['purchase_amount']) AND !empty($_GET['purchase_amount'])){
-					$purchase_amount = $_GET['purchase_amount'];
-					$holu_filtering_data .= " AND purchases.purchase_amount='".$purchase_amount."' ";
-					array_push($holu_filtering_array, "Amount: $purchase_amount");
-				}
-			break;
-
-			case "purchase_is_printed":
-				if(isset($_GET['is_printed']) AND !empty($_GET['is_printed'])){
-					$is_printed = $_GET['is_printed'];
-					if($is_printed=="Yes"){
-						$holu_filtering_data .= " AND purchases.id IN (SELECT reference_id FROM `invoices` WHERE deleted='0' AND reference_type='Purchase' )  ";
-					}else if($is_printed=="No"){
-						$holu_filtering_data .= " AND purchases.id NOT IN (SELECT reference_id FROM `invoices` WHERE deleted='0' AND reference_type='Purchase' )  ";
-					}
-					array_push($holu_filtering_array, "Is Printed: $is_printed");
-				}
-			break;
-
-			case "purchase_users_id":
-				if(isset($_GET['users_id']) AND !empty($_GET['users_id'])){
-					$users_id = $_GET['users_id'];
-					$holu_filtering_data .= " AND purchases.users_id='".$users_id."' ";
-					array_push($holu_filtering_array, "Added By: ".get_col('users', 'username', 'id', $users_id));
 				}
 			break;
 
@@ -2791,9 +2648,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			}break;
 			case "Exchange":{
 				$rtap = 'exchange';
-			}break;
-			case "Purchase":{
-				$rtap = 'purchase';
 			}break;
 		}
 
@@ -3939,91 +3793,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	  return $flag;
 	}
 
-	function check_duplicate_purchase($post){
-		global $db;
-		$flag = 0;
-
-		$logistic_cashes_id = holu_escape($post['logistic_cashes_id']);
-		$province = holu_escape($post['province']);
-    $purchase_date = holu_escape($post['purchase_date']);
-		$purchase_amount = holu_escape($post['purchase_amount']);
-    $currency = holu_escape($post['currency']);
-    $description = holu_escape($post['description']);
-
-    if(isset($post['data_id']) AND !empty($post['data_id'])){
-    	$purchases_id = holu_escape(holu_decode($post['data_id']));
-
-    	
-    	
-    	$purchase_sq = $db->prepare(
-				"SELECT
-				  *
-				FROM
-			    `purchases`
-				WHERE
-					purchases.deleted='0'
-					AND purchases.logistic_cashes_id=:logistic_cashes_id
-					AND purchases.province=:province
-					AND purchases.purchase_date=:purchase_date
-					AND purchases.purchase_amount=:purchase_amount
-					AND purchases.currency=:currency
-					AND purchases.description=:description
-					AND purchases.id!=:purchases_id
-				"
-			);
-
-			$purchase_sqx = $purchase_sq->execute([
-		  	'logistic_cashes_id'=>$logistic_cashes_id,
-		  	'province'=>$province,
-		  	'purchase_date'=>$purchase_date,
-		  	'purchase_amount'=>$purchase_amount,
-		  	'currency'=>$currency,
-		  	'description'=>$description,
-		  	'purchases_id'=>$purchases_id
-		  ]);
-
-    }else{
-
-    	
-
-    	$purchase_sq = $db->prepare(
-				"SELECT
-				  *
-				FROM
-			    `purchases`
-				WHERE
-					purchases.deleted='0'
-					AND purchases.logistic_cashes_id=:logistic_cashes_id
-					AND purchases.province=:province
-					AND purchases.purchase_date=:purchase_date
-					AND purchases.purchase_amount=:purchase_amount
-					AND purchases.currency=:currency
-					AND purchases.description=:description
-				"
-			);
-
-			$purchase_sqx = $purchase_sq->execute([
-		  	'logistic_cashes_id'=>$logistic_cashes_id,
-		  	'province'=>$province,
-		  	'purchase_date'=>$purchase_date,
-		  	'purchase_amount'=>$purchase_amount,
-		  	'currency'=>$currency,
-		  	'description'=>$description
-		  ]);
-
-    }
-
-		
-
-
-
-	  if($purchase_sq->rowCount()>0){
-	  	$flag = 1;
-	  }
-
-	  return $flag;
-	}
-
 	function track_editions($operation_type, $operation_array){
 
 		global $db;
@@ -4353,63 +4122,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 
 			}break;
 
-			case 'edit_purchase':{
-
-				$old_data = "";
-				$new_data = "";
-
-				$purchases_id = holu_escape(holu_decode($operation_array['purchases_id']));
-
-				$old_data .= '`Logistic Cash`=>`'.get_col('purchases', 'logistic_cashes_id', 'id', $purchases_id).'`###';
-				$old_data .= '`Province`=>`'.get_col('purchases', 'province', 'id', $purchases_id).'`###';
-				$old_data .= '`Sub Category`=>`'.get_col('purchases', 'sub_categories_id', 'id', $purchases_id).'`###';
-				$old_data .= '`Purchase Date`=>`'.get_col('purchases', 'purchase_date', 'id', $purchases_id).'`###';
-				$old_data .= '`Purchase Amount`=>`'.get_col('purchases', 'purchase_amount', 'id', $purchases_id).'`###';
-				$old_data .= '`Currency`=>`'.get_col('purchases', 'currency', 'id', $purchases_id).'`###';
-				$old_data .= '`Description`=>`'.get_col('purchases', 'description', 'id', $purchases_id).'`###';
-
-
-				$new_data .= '`Logistic Cash`=>`'.holu_escape($operation_array['data_array']['logistic_cashes_id']).'`###';
-				$new_data .= '`Province`=>`'.holu_escape($operation_array['data_array']['province']).'`###';
-				$new_data .= '`Sub Category`=>`'.holu_escape($operation_array['data_array']['sub_categories_id']).'`###';
-		    $new_data .= '`Purchase Date`=>`'.holu_escape($operation_array['data_array']['purchase_date']).'`###';
-				$new_data .= '`Purchase Amount`=>`'.holu_escape($operation_array['data_array']['purchase_amount']).'`###';
-		    $new_data .= '`Currency`=>`'.holu_escape($operation_array['data_array']['currency']).'`###';
-		    $new_data .= '`Description`=>`'.holu_escape($operation_array['data_array']['description']).'`###';
-
-	    	$transaction_edition_iq = $db->prepare(
-	    		"INSERT INTO `transaction_editions` (
-	    			reference_type,
-	    			reference_id,
-	    			old_data,
-	    			new_data,
-	    			insertion_date, 
-				    insertion_time, 
-				    users_id
-		    	) VALUES (
-		    		:reference_type, 
-			    	:reference_id, 
-			    	:old_data, 
-			    	:new_data, 
-			    	:holu_date, 
-			    	:holu_time,
-			    	:holu_users_id
-		    	)"
-	    	);
-
-	    	$transaction_edition_iqx = $transaction_edition_iq->execute([
-		    	'reference_type'=>'Purchase',
-		    	'reference_id'=>$purchases_id,
-		    	'old_data'=>$old_data,
-		    	'new_data'=>$new_data,
-		    	'holu_date'=>$holu_date,
-		    	'holu_time'=>$holu_time,
-		    	'holu_users_id'=>$holu_users_id
-		    ]);
-
-
-			}break;
-
 			case 'edit_transfer':{
 
 
@@ -4569,36 +4281,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	    	$transaction_deletion_iqx = $transaction_deletion_iq->execute([
 		    	'reference_type'=>'Exchange',
 		    	'reference_id'=>$exchanges_id,
-		    	'holu_date'=>$holu_date,
-		    	'holu_time'=>$holu_time,
-		    	'holu_users_id'=>$holu_users_id
-		    ]);
-
-			}break;
-
-			case 'delete_purchase':{
-
-				$purchases_id = holu_escape(holu_decode($operation_array['purchases_id']));
-
-				$transaction_deletion_iq = $db->prepare(
-	    		"INSERT INTO `transaction_deletions` (
-	    			reference_type,
-	    			reference_id,
-	    			insertion_date, 
-				    insertion_time, 
-				    users_id
-		    	) VALUES (
-		    		:reference_type, 
-			    	:reference_id,
-			    	:holu_date, 
-			    	:holu_time,
-			    	:holu_users_id
-		    	)"
-	    	);
-
-	    	$transaction_deletion_iqx = $transaction_deletion_iq->execute([
-		    	'reference_type'=>'Purchase',
-		    	'reference_id'=>$purchases_id,
 		    	'holu_date'=>$holu_date,
 		    	'holu_time'=>$holu_time,
 		    	'holu_users_id'=>$holu_users_id
@@ -5011,7 +4693,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 
 	$accessed_sub_categories_expense = set_sub_category_portion('Expense');
 
-	$accessed_sub_categories_purchase = set_sub_category_portion('Purchase');
 
 	if(check_access('sub_category_accessibility/exchange/')==1){
 		$accessed_sub_categories_exchange = "";

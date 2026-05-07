@@ -277,7 +277,6 @@ if(isset($_POST['flag_request'])){
           (SELECT COUNT(id) FROM `incomes` WHERE province='$province_name') +
           (SELECT COUNT(id) FROM `expenses` WHERE province='$province_name') +
           (SELECT COUNT(id) FROM `exchanges` WHERE province='$province_name') +
-          (SELECT COUNT(id) FROM `purchases` WHERE province='$province_name') +
           (SELECT COUNT(id) FROM `transfers` WHERE from_province='$province_name' OR to_province='$province_name') AS reference_count
         ");
 

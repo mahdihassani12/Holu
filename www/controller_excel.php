@@ -37,7 +37,6 @@
         $income_filtering_data = "";
         $expense_filtering_data = "";
         $exchange_filtering_data = "";
-        $purchase_filtering_data = "";
         $transfer_filtering_data = "";
 
         $loaded_transaction_components = '';
@@ -66,14 +65,12 @@
           $income_filtering_data .= " AND incomes.province='".$province."' ";
           $expense_filtering_data .= " AND expenses.province='".$province."' ";
           $exchange_filtering_data .= " AND exchanges.province='".$province."' ";
-          $purchase_filtering_data .= " AND purchases.province='".$province."' ";
         }
         if(isset($_GET['branch']) AND !empty($_GET['branch'])){
           $branch = $_GET['branch'];
           $income_filtering_data .= " AND incomes.branch='".$branch."' ";
           $expense_filtering_data .= " AND expenses.branch='".$branch."' ";
           $exchange_filtering_data .= " AND exchanges.branch='".$branch."' ";
-          $purchase_filtering_data .= " AND 0 ";
           $transfer_filtering_data .= " AND (transfers.from_branch='".$branch."' OR transfers.to_branch='".$branch."') ";
         }
         if(isset($_GET['from_date']) AND !empty($_GET['from_date'])){
@@ -81,7 +78,6 @@
           $income_filtering_data .= " AND incomes.income_date>='".$from_date."' ";
           $expense_filtering_data .= " AND expenses.expense_date>='".$from_date."' ";
           $exchange_filtering_data .= " AND exchanges.exchange_date>='".$from_date."' ";
-          $purchase_filtering_data .= " AND purchases.purchase_date>='".$from_date."' ";
           $transfer_filtering_data .= " AND transfers.transfer_date>='".$from_date."' ";
     
         }
@@ -90,7 +86,6 @@
           $income_filtering_data .= " AND incomes.income_date<='".$to_date."' ";
           $expense_filtering_data .= " AND expenses.expense_date<='".$to_date."' ";
           $exchange_filtering_data .= " AND exchanges.exchange_date<='".$to_date."' ";
-          $purchase_filtering_data .= " AND purchases.purchase_date<='".$to_date."' ";
           $transfer_filtering_data .= " AND transfers.transfer_date<='".$to_date."' ";
         }
         if(isset($_GET['customer_name']) AND !empty($_GET['customer_name'])){
@@ -98,7 +93,6 @@
           $income_filtering_data .= " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info='Customer Name' AND value_info LIKE '%$customer_name%' AND deleted='0') ";
           $expense_filtering_data .= " AND expenses.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Expense' AND key_info='Customer Name' AND value_info LIKE '%$customer_name%' AND deleted='0') ";
           $exchange_filtering_data .= " AND 0 ";
-          $purchase_filtering_data .= " AND 0 ";
           $transfer_filtering_data .= " AND 0 ";
         }
 
@@ -107,7 +101,6 @@
           $income_filtering_data .= " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info='Customer ID' AND value_info='$customer_id' AND deleted='0') ";
           $expense_filtering_data .= " AND expenses.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Expense' AND key_info='Customer ID' AND value_info='$customer_id' AND deleted='0') ";
           $exchange_filtering_data .= " AND 0 ";
-          $purchase_filtering_data .= " AND 0 ";
           $transfer_filtering_data .= " AND 0 ";
         }
         if(isset($_GET['description']) AND !empty($_GET['description'])){
@@ -115,7 +108,6 @@
           $income_filtering_data .= " AND incomes.description LIKE '%".$description."%' ";
           $expense_filtering_data .= " AND expenses.description LIKE '%".$description."%' ";
           $exchange_filtering_data .= " AND exchanges.description LIKE '%".$description."%' ";
-          $purchase_filtering_data .= " AND purchases.description LIKE '%".$description."%' ";
           $transfer_filtering_data .= " AND transfers.description LIKE '%".$description."%' ";
         }
         if(isset($_GET['markup']) AND !empty($_GET['markup'])){
@@ -123,7 +115,6 @@
           $income_filtering_data .= "AND incomes.id IN (SELECT reference_id FROM markups WHERE reference_type = 'Income' AND markup_type = '".$markup."' AND deleted = '0')";
           $expense_filtering_data .= "AND expenses.id IN (SELECT reference_id FROM markups WHERE reference_type = 'Expense' AND markup_type = '".$markup."' AND deleted = '0')";
           $exchange_filtering_data .= "AND exchanges.id IN (SELECT reference_id FROM markups WHERE reference_type = 'Exchange' AND markup_type = '".$markup."' AND deleted = '0')";
-          $purchase_filtering_data .= "AND purchases.id IN (SELECT reference_id FROM markups WHERE reference_type = 'Purchase' AND markup_type = '".$markup."' AND deleted = '0')";
           $transfer_filtering_data .= "AND transfers.id IN (SELECT reference_id FROM markups WHERE reference_type = 'Transfer' AND markup_type = '".$markup."' AND deleted = '0')";
         }
         if(isset($_GET['unmark']) AND !empty($_GET['unmark'])){
@@ -131,7 +122,6 @@
           $income_filtering_data .= " AND ( incomes.id IN (SELECT reference_id FROM markups WHERE reference_type = 'Income' AND markup_type = '".$unmark."' AND deleted = '1') OR incomes.id NOT IN (SELECT reference_id FROM markups WHERE reference_type = 'Income' AND markup_type = '".$unmark."')) ";
           $expense_filtering_data .= " AND ( expenses.id IN (SELECT reference_id FROM markups WHERE reference_type = 'Expense' AND markup_type = '".$unmark."' AND deleted = '1') OR expenses.id NOT IN (SELECT reference_id FROM markups WHERE reference_type = 'Expense' AND markup_type = '".$unmark."')) ";
           $exchange_filtering_data .= " AND ( exchanges.id IN (SELECT reference_id FROM markups WHERE reference_type = 'Exchange' AND markup_type = '".$unmark."' AND deleted = '1') OR exchanges.id NOT IN (SELECT reference_id FROM markups WHERE reference_type = 'Exchange' AND markup_type = '".$unmark."')) ";
-          $purchase_filtering_data .= " AND ( purchases.id IN (SELECT reference_id FROM markups WHERE reference_type = 'Purchase' AND markup_type = '".$unmark."' AND deleted = '1') OR purchases.id NOT IN (SELECT reference_id FROM markups WHERE reference_type = 'Purchase' AND markup_type = '".$unmark."')) ";
           $transfer_filtering_data .= " AND ( transfers.id IN (SELECT reference_id FROM markups WHERE reference_type = 'Transfer' AND markup_type = '".$unmark."' AND deleted = '1') OR transfers.id NOT IN (SELECT reference_id FROM markups WHERE reference_type = 'Transfer' AND markup_type = '".$unmark."')) ";    
         }
 
@@ -140,7 +130,6 @@
           $income_filtering_data .= " AND incomes.currency='".$currency."' ";
           $expense_filtering_data .= " AND expenses.currency='".$currency."' ";
           $exchange_filtering_data .= "";
-          $purchase_filtering_data .= " AND purchases.currency='".$currency."' ";
           $transfer_filtering_data .= " AND transfers.currency='".$currency."' ";    
         }
 
@@ -151,7 +140,6 @@
           $income_sub_categories_id_array = '';
           $expense_sub_categories_id_array = '';
           $exchange_sub_categories_id_counter = 0;
-          $purchase_sub_categories_id_array = '';
           $transfer_sub_categories_id_counter = 0;
     
           
@@ -178,12 +166,6 @@
                 $exchange_sub_categories_id_counter ++;
               }break;
 
-              case 'purchase':{
-                if(count(explode("/", $transaction_component))>3){
-                  $purchase_sub_categories_id_array .= "'".explode("/", $transaction_component)[3]."',";
-                }
-              }break;
-
               case 'transfer':{
                 $transfer_sub_categories_id_counter ++;
               }break;
@@ -198,7 +180,6 @@
           }
           $income_sub_categories_id_array = rtrim($income_sub_categories_id_array, ",");
           $expense_sub_categories_id_array = rtrim($expense_sub_categories_id_array, ",");
-          $purchase_sub_categories_id_array = rtrim($purchase_sub_categories_id_array, ",");
     
     
           $loaded_transaction_components = rtrim($loaded_transaction_components, ",");
@@ -222,13 +203,6 @@
             // $closing_expense_filtering_data .= " AND 0 ";
           }
     
-          if($purchase_sub_categories_id_array!=""){
-            $purchase_filtering_data .= " AND sub_categories_id IN (".$purchase_sub_categories_id_array.") ";
-            // $closing_purchase_filtering_data .= " AND sub_categories_id IN (".$purchase_sub_categories_id_array.") ";
-          }else{
-            $purchase_filtering_data .= " AND 0 ";
-            // $closing_purchase_filtering_data .= " AND 0 ";
-          }
     
           
           
@@ -259,31 +233,21 @@
             $income_filtering_data .= "";
             $expense_filtering_data .= " AND 0 ";
             $exchange_filtering_data .= " AND 0 ";
-            $purchase_filtering_data .= " AND 0 ";
             $transfer_filtering_data .= " AND 0 ";
           }else if($transaction_type=="Expense"){
             $income_filtering_data .= " AND 0 ";
             $expense_filtering_data .= "";
             $exchange_filtering_data .= " AND 0 ";
-            $purchase_filtering_data .= " AND 0 ";
             $transfer_filtering_data .= " AND 0 ";
           }else if($transaction_type=="Exchange"){
             $income_filtering_data .= " AND 0 ";
             $expense_filtering_data .= " AND 0 ";
             $exchange_filtering_data .= "";
-            $purchase_filtering_data .= " AND 0 ";
-            $transfer_filtering_data .= " AND 0 ";
-          }else if($transaction_type=="Purchase"){
-            $income_filtering_data .= " AND 0 ";
-            $expense_filtering_data .= " AND 0 ";
-            $exchange_filtering_data .= " AND 0 ";
-            $purchase_filtering_data .= "";
             $transfer_filtering_data .= " AND 0 ";
           }else if($transaction_type=="Transfer"){
             $income_filtering_data .= " AND 0 ";
             $expense_filtering_data .= " AND 0 ";
             $exchange_filtering_data .= " AND 0 ";
-            $purchase_filtering_data .= " AND 0 ";
             $transfer_filtering_data .= "";
           }
         }
@@ -312,7 +276,6 @@
           $income_filtering_data .= " AND incomes.sub_categories_id IN (".$sub_categories.") ";
           $expense_filtering_data .= " AND expenses.sub_categories_id IN (".$sub_categories.") ";
           $exchange_filtering_data .= " AND 0 ";
-          $purchase_filtering_data .= " AND 0 ";
           $transfer_filtering_data .= " AND 0 ";
         }
 
@@ -321,7 +284,6 @@
           $income_filtering_data .= " AND incomes.sub_categories_id='".$sub_categories_id."' ";
           $expense_filtering_data .= " AND expenses.sub_categories_id='".$sub_categories_id."' ";
           $exchange_filtering_data .= " AND 0 ";
-          $purchase_filtering_data .= " AND 0 ";
           $transfer_filtering_data .= " AND 0 ";
         }
 
@@ -337,7 +299,6 @@
             $income_filtering_data .= " AND incomes.users_id IN (".$users_id_items.") ";
             $expense_filtering_data .= " AND expenses.users_id IN (".$users_id_items.") ";
             $exchange_filtering_data .= " AND exchanges.users_id IN (".$users_id_items.") ";
-            $purchase_filtering_data .= " AND purchases.users_id IN (".$users_id_items.") ";
             $transfer_filtering_data .= " AND (transfers.users_id IN (".$users_id_items.") OR transfers.approved_by IN (".$users_id_items.")) ";
           }
 
@@ -348,7 +309,6 @@
           $income_filtering_data .= " AND incomes.income_amount='".$amount."' ";
           $expense_filtering_data .= " AND expenses.expense_amount='".$amount."' ";
           $exchange_filtering_data .= " AND (exchanges.from_amount='".$amount."' OR exchanges.to_amount='".$amount."') ";
-          $purchase_filtering_data .= " AND purchases.purchase_amount='".$amount."' ";
           $transfer_filtering_data .= " AND transfers.transfer_amount='".$amount."' ";    
         }
 
@@ -357,7 +317,6 @@
           $income_filtering_data .= " AND incomes.sib_number='$sib_number' ";
           $expense_filtering_data .= " AND 0 ";
           $exchange_filtering_data .= " AND 0 ";
-          $purchase_filtering_data .= " AND 0 ";
           $transfer_filtering_data .= " AND 0 ";
         }
 
@@ -366,7 +325,6 @@
           $income_filtering_data .= " AND incomes.check_number='$check_number' ";
           $expense_filtering_data .= " AND expenses.check_number='$check_number' ";
           $exchange_filtering_data .= " AND 0 ";
-          $purchase_filtering_data .= " AND 0 ";
           $transfer_filtering_data .= " AND 0 ";
         }
        
@@ -458,38 +416,6 @@
         AND exchanges.province IN ($accessed_provinces) 
         $exchange_filtering_data
         $accessed_sub_categories_exchange
-        UNION
-        SELECT 
-        purchases.id AS transaction_id,
-        'Purchase' AS transaction_type,
-        purchases.sub_categories_id AS transaction_sub_categories_id,
-        purchases.province AS transaction_province,
-        '' AS transaction_branch,
-        purchases.purchase_date AS transaction_date,
-        purchases.purchase_amount AS transaction_amount,
-        purchases.currency AS transaction_currency,
-        purchases.description AS transaction_description,
-        purchases.users_id AS transaction_users_id,
-        '' AS transaction_check_number,
-        '' AS transaction_sib_number,
-        purchases.tms_markup AS transaction_tms_markup,
-        purchases.qb_markup AS transaction_qb_markup,
-        purchases.sib_markup AS transaction_sib_markup,
-        purchases.ad_markup AS transaction_ad_markup,
-        '' AS transaction_additional_informations,
-        '' AS transaction_approve_description,
-        '' AS transaction_from_province,
-        '' AS transaction_to_province,
-        '' AS transaction_from_branch,
-        '' AS transaction_to_branch
-        FROM `purchases`
-        WHERE purchases.deleted='0' 
-        AND purchases.is_approved='1'
-        AND purchases.is_included='1'
-        AND purchases.province IN ($accessed_provinces) 
-        AND purchases.logistic_cashes_id IN ($accessed_logistic_cashes)
-        $purchase_filtering_data
-        AND purchases.sub_categories_id IN ($accessed_sub_categories_purchase)
         UNION
         SELECT 
         transfers.id AS transaction_id,
@@ -661,17 +587,7 @@
           FROM `exchanges`
           WHERE exchanges.deleted='0'
           AND $exchange_access_condition
-          $accessed_sub_categories_exchange
-          UNION ALL
-          SELECT purchases.id AS transaction_id, 'Purchase' AS transaction_type, purchases.sub_categories_id AS transaction_sub_categories_id, purchases.province AS transaction_province, '' AS transaction_branch, purchases.purchase_date AS transaction_date, purchases.purchase_amount AS transaction_amount, purchases.currency AS transaction_currency, purchases.description AS transaction_description, purchases.users_id AS transaction_users_id, '' AS transaction_check_number, '' AS transaction_sib_number, '' AS transaction_additional_informations, '' AS transaction_approve_description
-          FROM `purchases`
-          WHERE purchases.deleted='0'
-          AND purchases.is_approved='1'
-          AND purchases.is_included='1'
-          AND purchases.province IN ($accessed_provinces)
-          AND purchases.logistic_cashes_id IN ($accessed_logistic_cashes)
-          AND purchases.sub_categories_id IN ($accessed_sub_categories_purchase)
-          UNION ALL
+          $accessed_sub_categories_exchangeUNION ALL
           SELECT transfers.id AS transaction_id, 'Transfer' AS transaction_type, 0 AS transaction_sub_categories_id, CONCAT(transfers.from_province, ' to ', transfers.to_province) AS transaction_province, CONCAT(transfers.from_branch, ' to ', transfers.to_branch) AS transaction_branch, transfers.transfer_date AS transaction_date, transfers.transfer_amount AS transaction_amount, transfers.currency AS transaction_currency, transfers.description AS transaction_description, transfers.users_id AS transaction_users_id, '' AS transaction_check_number, '' AS transaction_sib_number, '' AS transaction_additional_informations, transfers.approve_description AS transaction_approve_description
           FROM `transfers`
           WHERE transfers.deleted='0'
