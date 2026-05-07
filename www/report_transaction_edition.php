@@ -6,7 +6,6 @@
   $income_filtering_data = "";
   $expense_filtering_data = "";
   $exchange_filtering_data = "";
-  $purchase_filtering_data = "";
   $transfer_filtering_data = "";
 
   $province = "0";
@@ -28,7 +27,6 @@
     $income_filtering_data .= " AND incomes.province='".$province."' ";
     $expense_filtering_data .= " AND expenses.province='".$province."' ";
     $exchange_filtering_data .= " AND exchanges.province='".$province."' ";
-    $purchase_filtering_data .= " AND purchases.province='".$province."' ";
     $transfer_filtering_data .= " AND (transfers.from_province='".$province."' OR to_province='".$province."') ";
   }
   if(isset($_GET['branch']) AND !empty($_GET['branch'])){
@@ -36,7 +34,6 @@
     $income_filtering_data .= " AND incomes.branch='".$branch."' ";
     $expense_filtering_data .= " AND expenses.branch='".$branch."' ";
     $exchange_filtering_data .= " AND exchanges.branch='".$branch."' ";
-    $purchase_filtering_data .= " AND 0 ";
     $transfer_filtering_data .= " AND (transfers.from_branch='".$branch."' OR transfers.to_branch='".$branch."') ";
   }
   if(isset($_GET['start_edition_date']) AND !empty($_GET['start_edition_date'])){
@@ -53,31 +50,21 @@
       $income_filtering_data .= "";
       $expense_filtering_data .= " AND 0 ";
       $exchange_filtering_data .= " AND 0 ";
-      $purchase_filtering_data .= " AND 0 ";
       $transfer_filtering_data .= " AND 0 ";
     }else if($transaction_type=="Expense"){
       $income_filtering_data .= " AND 0 ";
       $expense_filtering_data .= "";
       $exchange_filtering_data .= " AND 0 ";
-      $purchase_filtering_data .= " AND 0 ";
       $transfer_filtering_data .= " AND 0 ";
     }else if($transaction_type=="Exchange"){
       $income_filtering_data .= " AND 0 ";
       $expense_filtering_data .= " AND 0 ";
       $exchange_filtering_data .= "";
-      $purchase_filtering_data .= " AND 0 ";
-      $transfer_filtering_data .= " AND 0 ";
-    }else if($transaction_type=="Purchase"){
-      $income_filtering_data .= " AND 0 ";
-      $expense_filtering_data .= " AND 0 ";
-      $exchange_filtering_data .= " AND 0 ";
-      $purchase_filtering_data .= "";
       $transfer_filtering_data .= " AND 0 ";
     }else if($transaction_type=="Transfer"){
       $income_filtering_data .= " AND 0 ";
       $expense_filtering_data .= " AND 0 ";
       $exchange_filtering_data .= " AND 0 ";
-      $purchase_filtering_data .= " AND 0 ";
       $transfer_filtering_data .= "";
     }
   }
@@ -86,7 +73,6 @@
     $income_filtering_data .= " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info='Customer Name' AND value_info LIKE '%$customer_name%' ) ";
     $expense_filtering_data .= " AND 0 ";
     $exchange_filtering_data .= " AND 0 ";
-    $purchase_filtering_data .= " AND 0 ";
     $transfer_filtering_data .= " AND 0 ";
   }
 
@@ -95,7 +81,6 @@
     $income_filtering_data .= " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info='Customer ID' AND value_info LIKE '%$customer_id' AND deleted='0') ";
     $expense_filtering_data .= " AND expenses.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Expense' AND key_info='Customer ID' AND value_info LIKE '%$customer_id' AND deleted='0') ";
     $exchange_filtering_data .= " AND 0 ";
-    $purchase_filtering_data .= " AND 0 ";
     $transfer_filtering_data .= " AND 0 ";
   }
   if(isset($_GET['check_number']) AND !empty($_GET['check_number'])){
@@ -103,7 +88,6 @@
     $income_filtering_data .= " AND incomes.check_number='".$check_number."' ";
     $expense_filtering_data .= " AND expenses.check_number='".$check_number."' ";
     $exchange_filtering_data .= " AND 0 ";
-    $purchase_filtering_data .= " AND 0 ";
     $transfer_filtering_data .= " AND 0 ";
   }
   if(isset($_GET['markup']) AND !empty($_GET['markup'])){
@@ -119,7 +103,6 @@
     $income_filtering_data .= " AND incomes.income_amount='".$amount."' ";
     $expense_filtering_data .= " AND expenses.expense_amount='".$amount."' ";
     $exchange_filtering_data .= " AND (exchanges.from_amount='".$amount."' OR exchanges.to_amount='".$amount."') ";
-    $purchase_filtering_data .= " AND purchases.purchase_amount='".$amount."' ";
     $transfer_filtering_data .= " AND transfers.transfer_amount='".$amount."' ";
   }
   if(isset($_GET['currency']) AND !empty($_GET['currency'])){
@@ -127,7 +110,6 @@
     $income_filtering_data .= " AND incomes.currency='".$currency."' ";
     $expense_filtering_data .= " AND expenses.currency='".$currency."' ";
     $exchange_filtering_data .= "";
-    $purchase_filtering_data .= " AND purchases.currency='".$currency."' ";
     $transfer_filtering_data .= " AND transfers.currency='".$currency."' ";
   }
   if(isset($_GET['description']) AND !empty($_GET['description'])){
@@ -135,7 +117,6 @@
     $income_filtering_data .= " AND incomes.description LIKE '%".$description."%' ";
     $expense_filtering_data .= " AND expenses.description LIKE '%".$description."%' ";
     $exchange_filtering_data .= " AND exchanges.description LIKE '%".$description."%' ";
-    $purchase_filtering_data .= " AND purchases.description LIKE '%".$description."%' ";
     $transfer_filtering_data .= " AND transfers.description LIKE '%".$description."%' ";
   }
 
@@ -177,13 +158,7 @@
         )
       )
       OR (
-        transaction_editions.reference_type = 'Purchase'
         AND transaction_editions.reference_id IN (
-          SELECT purchases.id 
-          FROM `purchases` 
-          WHERE purchases.province IN ($accessed_provinces) 
-          AND purchases.sub_categories_id IN ($accessed_sub_categories_purchase)
-          $purchase_filtering_data
         )
       )
       OR (
@@ -239,13 +214,7 @@
         )
       )
       OR (
-        transaction_editions.reference_type = 'Purchase'
         AND transaction_editions.reference_id IN (
-          SELECT purchases.id 
-          FROM `purchases` 
-          WHERE purchases.province IN ($accessed_provinces) 
-          AND purchases.sub_categories_id IN ($accessed_sub_categories_purchase)
-          $purchase_filtering_data
         )
       )
       OR (
@@ -521,10 +490,6 @@
 
                               case 'Exchange':{
                                 $operation_destination = 'controller_exchange.php';
-                              }break;
-
-                              case 'Purchase':{
-                                $operation_destination = 'controller_purchase.php';
                               }break;
 
                               case 'Transfer':{

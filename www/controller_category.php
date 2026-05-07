@@ -39,7 +39,6 @@
 	              	<option selected hidden value="">Select an option</option>
 	              	<option value="Income">Income</option>
 	              	<option value="Expense">Expense</option>
-	              	<option value="Purchase">Purchase</option>
 	              </select>
 	            </div>
 	          </div>
@@ -102,7 +101,6 @@
 			              	<option selected hidden value="">Select an option</option>
 			              	<option <?php echo $category_row['category_type']=="Income"?"selected":""; ?> value="Income">Income</option>
 			              	<option <?php echo $category_row['category_type']=="Expense"?"selected":""; ?> value="Expense">Expense</option>
-			              	<option <?php echo $category_row['category_type']=="Purchase"?"selected":""; ?> value="Purchase">Purchase</option>
 			              </select>
 			            </div>
 			          </div>

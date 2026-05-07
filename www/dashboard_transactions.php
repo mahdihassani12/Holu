@@ -35,12 +35,307 @@
   $dashboard_to_date = $dashboard_date_range_data['to_date'];
   $holu_filtering_array[] = $dashboard_date_range_data['filter_label'];
 
+  $dashboard_filtering_data = [
+    'income' => '',
+    'expense' => '',
+    'exchange' => '',
+    'transfer' => '',
+  ];
+  $dashboard_filter_values = [
+    'province' => '',
+    'branch' => '',
+    'from_date' => '',
+    'to_date' => '',
+    'customer_name' => '',
+    'customer_id' => '',
+    'description' => '',
+    'markup' => '',
+    'unmark' => '',
+    'currency' => '',
+    'transaction_type' => '',
+    'amount' => '',
+    'sib_number' => '',
+    'check_number' => '',
+    'users_id' => [],
+  ];
+  $dashboard_advanced_filter_query = '';
+
+  function dashboard_filter_input($key, $default=''){
+    return isset($_GET[$key]) ? holu_escape($_GET[$key]) : $default;
+  }
+
+  function dashboard_filter_sql_value($value){
+    global $db;
+    return $db->quote((string)$value);
+  }
+
+  function dashboard_filter_like_value($value){
+    return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], (string)$value);
+  }
+
+  function dashboard_filter_date_value($value){
+    $value = trim((string)$value);
+    if($value===''){
+      return '';
+    }
+    if(is_holu_date_value($value)){
+      return $value;
+    }
+    $timestamp = strtotime($value);
+    if($timestamp===false){
+      return '';
+    }
+    return date('Y-m-d', $timestamp);
+  }
+
+  function dashboard_add_table_filter($condition_by_type){
+    global $dashboard_filtering_data;
+    foreach($dashboard_filtering_data as $transaction_key => $existing_filter){
+      $dashboard_filtering_data[$transaction_key] .= isset($condition_by_type[$transaction_key]) ? $condition_by_type[$transaction_key] : ' AND 0 ';
+    }
+  }
+
+  function dashboard_add_filter_query($key, $value){
+    global $dashboard_advanced_filter_query;
+    if(is_array($value)){
+      foreach($value as $item){
+        $dashboard_advanced_filter_query .= '&'.urlencode($key).'[]='.urlencode((string)$item);
+      }
+    }else{
+      $dashboard_advanced_filter_query .= '&'.urlencode($key).'='.urlencode((string)$value);
+    }
+  }
+
+  function dashboard_add_filter_label($label, $value){
+    global $holu_filtering_array;
+    $holu_filtering_array[] = $label.': '.htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+  }
+
 
   $income_access_condition = set_province_branch_portion('incomes.province', 'incomes.branch');
   $expense_access_condition = set_province_branch_portion('expenses.province', 'expenses.branch');
   $exchange_access_condition = set_province_branch_portion('exchanges.province', 'exchanges.branch');
   $transfer_from_access_condition = set_province_branch_portion('transfers.from_province', 'transfers.from_branch');
   $transfer_to_access_condition = set_province_branch_portion('transfers.to_province', 'transfers.to_branch');
+
+  $dashboard_filter_values['province'] = dashboard_filter_input('dashboard_filter_province');
+  if($dashboard_filter_values['province']!='' && $dashboard_filter_values['province']!='0'){
+    $province_sql = dashboard_filter_sql_value($dashboard_filter_values['province']);
+    dashboard_add_table_filter([
+      'income' => " AND incomes.province=$province_sql ",
+      'expense' => " AND expenses.province=$province_sql ",
+      'exchange' => " AND exchanges.province=$province_sql ",
+      'transfer' => " AND (transfers.from_province=$province_sql OR transfers.to_province=$province_sql) ",
+    ]);
+    dashboard_add_filter_query('dashboard_filter_province', $dashboard_filter_values['province']);
+    dashboard_add_filter_label('Province', $dashboard_filter_values['province']);
+  }
+
+  $dashboard_filter_values['branch'] = dashboard_filter_input('dashboard_filter_branch');
+  if($dashboard_filter_values['branch']!='' && $dashboard_filter_values['branch']!='0'){
+    $branch_sql = dashboard_filter_sql_value($dashboard_filter_values['branch']);
+    dashboard_add_table_filter([
+      'income' => " AND incomes.branch=$branch_sql ",
+      'expense' => " AND expenses.branch=$branch_sql ",
+      'exchange' => " AND exchanges.branch=$branch_sql ",
+      'transfer' => " AND (transfers.from_branch=$branch_sql OR transfers.to_branch=$branch_sql) ",
+    ]);
+    dashboard_add_filter_query('dashboard_filter_branch', $dashboard_filter_values['branch']);
+    dashboard_add_filter_label('Branch', $dashboard_filter_values['branch']);
+  }
+
+  $dashboard_filter_values['from_date'] = dashboard_filter_date_value(dashboard_filter_input('dashboard_filter_from_date'));
+  if($dashboard_filter_values['from_date']!=''){
+    $from_date_sql = dashboard_filter_sql_value($dashboard_filter_values['from_date']);
+    dashboard_add_table_filter([
+      'income' => " AND incomes.income_date>=$from_date_sql ",
+      'expense' => " AND expenses.expense_date>=$from_date_sql ",
+      'exchange' => " AND exchanges.exchange_date>=$from_date_sql ",
+      'transfer' => " AND transfers.transfer_date>=$from_date_sql ",
+    ]);
+    dashboard_add_filter_query('dashboard_filter_from_date', $dashboard_filter_values['from_date']);
+    dashboard_add_filter_label('Filter From', $dashboard_filter_values['from_date']);
+  }
+
+  $dashboard_filter_values['to_date'] = dashboard_filter_date_value(dashboard_filter_input('dashboard_filter_to_date'));
+  if($dashboard_filter_values['to_date']!=''){
+    $to_date_sql = dashboard_filter_sql_value($dashboard_filter_values['to_date']);
+    dashboard_add_table_filter([
+      'income' => " AND incomes.income_date<=$to_date_sql ",
+      'expense' => " AND expenses.expense_date<=$to_date_sql ",
+      'exchange' => " AND exchanges.exchange_date<=$to_date_sql ",
+      'transfer' => " AND transfers.transfer_date<=$to_date_sql ",
+    ]);
+    dashboard_add_filter_query('dashboard_filter_to_date', $dashboard_filter_values['to_date']);
+    dashboard_add_filter_label('Filter To', $dashboard_filter_values['to_date']);
+  }
+
+  $dashboard_filter_values['customer_name'] = dashboard_filter_input('dashboard_filter_customer_name');
+  if($dashboard_filter_values['customer_name']!=''){
+    $customer_name_sql = dashboard_filter_sql_value('%'.dashboard_filter_like_value($dashboard_filter_values['customer_name']).'%');
+    dashboard_add_table_filter([
+      'income' => " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info='Customer Name' AND value_info LIKE $customer_name_sql ESCAPE '\\\\' AND deleted='0') ",
+      'expense' => " AND expenses.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Expense' AND key_info='Customer Name' AND value_info LIKE $customer_name_sql ESCAPE '\\\\' AND deleted='0') ",
+      'exchange' => " AND 0 ",
+      'transfer' => " AND 0 ",
+    ]);
+    dashboard_add_filter_query('dashboard_filter_customer_name', $dashboard_filter_values['customer_name']);
+    dashboard_add_filter_label('Customer Name', $dashboard_filter_values['customer_name']);
+  }
+
+  $dashboard_filter_values['customer_id'] = dashboard_filter_input('dashboard_filter_customer_id');
+  if($dashboard_filter_values['customer_id']!=''){
+    $customer_id_sql = dashboard_filter_sql_value('%'.dashboard_filter_like_value($dashboard_filter_values['customer_id']).'%');
+    dashboard_add_table_filter([
+      'income' => " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info='Customer ID' AND value_info LIKE $customer_id_sql ESCAPE '\\\\' AND deleted='0') ",
+      'expense' => " AND expenses.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Expense' AND key_info='Customer ID' AND value_info LIKE $customer_id_sql ESCAPE '\\\\' AND deleted='0') ",
+      'exchange' => " AND 0 ",
+      'transfer' => " AND 0 ",
+    ]);
+    dashboard_add_filter_query('dashboard_filter_customer_id', $dashboard_filter_values['customer_id']);
+    dashboard_add_filter_label('Customer ID', $dashboard_filter_values['customer_id']);
+  }
+
+  $dashboard_filter_values['description'] = dashboard_filter_input('dashboard_filter_description');
+  if($dashboard_filter_values['description']!=''){
+    $description_sql = dashboard_filter_sql_value('%'.dashboard_filter_like_value($dashboard_filter_values['description']).'%');
+    dashboard_add_table_filter([
+      'income' => " AND incomes.description LIKE $description_sql ESCAPE '\\\\' ",
+      'expense' => " AND expenses.description LIKE $description_sql ESCAPE '\\\\' ",
+      'exchange' => " AND exchanges.description LIKE $description_sql ESCAPE '\\\\' ",
+      'transfer' => " AND transfers.description LIKE $description_sql ESCAPE '\\\\' ",
+    ]);
+    dashboard_add_filter_query('dashboard_filter_description', $dashboard_filter_values['description']);
+    dashboard_add_filter_label('Description', $dashboard_filter_values['description']);
+  }
+
+  $dashboard_filter_values['markup'] = dashboard_filter_input('dashboard_filter_markup');
+  if($dashboard_filter_values['markup']!=''){
+    $markup_sql = dashboard_filter_sql_value($dashboard_filter_values['markup']);
+    dashboard_add_table_filter([
+      'income' => " AND incomes.id IN (SELECT reference_id FROM markups WHERE reference_type='Income' AND markup_type=$markup_sql AND deleted='0') ",
+      'expense' => " AND expenses.id IN (SELECT reference_id FROM markups WHERE reference_type='Expense' AND markup_type=$markup_sql AND deleted='0') ",
+      'exchange' => " AND exchanges.id IN (SELECT reference_id FROM markups WHERE reference_type='Exchange' AND markup_type=$markup_sql AND deleted='0') ",
+      'transfer' => " AND transfers.id IN (SELECT reference_id FROM markups WHERE reference_type='Transfer' AND markup_type=$markup_sql AND deleted='0') ",
+    ]);
+    dashboard_add_filter_query('dashboard_filter_markup', $dashboard_filter_values['markup']);
+    dashboard_add_filter_label('Markup', $dashboard_filter_values['markup']);
+  }
+
+  $dashboard_filter_values['unmark'] = dashboard_filter_input('dashboard_filter_unmark');
+  if($dashboard_filter_values['unmark']!=''){
+    $unmark_sql = dashboard_filter_sql_value($dashboard_filter_values['unmark']);
+    dashboard_add_table_filter([
+      'income' => " AND (incomes.id IN (SELECT reference_id FROM markups WHERE reference_type='Income' AND markup_type=$unmark_sql AND deleted='1') OR incomes.id NOT IN (SELECT reference_id FROM markups WHERE reference_type='Income' AND markup_type=$unmark_sql)) ",
+      'expense' => " AND (expenses.id IN (SELECT reference_id FROM markups WHERE reference_type='Expense' AND markup_type=$unmark_sql AND deleted='1') OR expenses.id NOT IN (SELECT reference_id FROM markups WHERE reference_type='Expense' AND markup_type=$unmark_sql)) ",
+      'exchange' => " AND (exchanges.id IN (SELECT reference_id FROM markups WHERE reference_type='Exchange' AND markup_type=$unmark_sql AND deleted='1') OR exchanges.id NOT IN (SELECT reference_id FROM markups WHERE reference_type='Exchange' AND markup_type=$unmark_sql)) ",
+      'transfer' => " AND (transfers.id IN (SELECT reference_id FROM markups WHERE reference_type='Transfer' AND markup_type=$unmark_sql AND deleted='1') OR transfers.id NOT IN (SELECT reference_id FROM markups WHERE reference_type='Transfer' AND markup_type=$unmark_sql)) ",
+    ]);
+    dashboard_add_filter_query('dashboard_filter_unmark', $dashboard_filter_values['unmark']);
+    dashboard_add_filter_label('Unmark', $dashboard_filter_values['unmark']);
+  }
+
+  $dashboard_filter_values['currency'] = dashboard_filter_input('dashboard_filter_currency');
+  if($dashboard_filter_values['currency']!=''){
+    $currency_sql = dashboard_filter_sql_value($dashboard_filter_values['currency']);
+    dashboard_add_table_filter([
+      'income' => " AND incomes.currency=$currency_sql ",
+      'expense' => " AND expenses.currency=$currency_sql ",
+      'exchange' => " AND (exchanges.from_currency=$currency_sql OR exchanges.to_currency=$currency_sql) ",
+      'transfer' => " AND transfers.currency=$currency_sql ",
+    ]);
+    dashboard_add_filter_query('dashboard_filter_currency', $dashboard_filter_values['currency']);
+    dashboard_add_filter_label('Currency', $dashboard_filter_values['currency']);
+  }
+
+  $dashboard_filter_values['transaction_type'] = dashboard_filter_input('dashboard_filter_transaction_type');
+  if($dashboard_filter_values['transaction_type']!=''){
+    $selected_transaction_type = strtolower($dashboard_filter_values['transaction_type']);
+    foreach($dashboard_filtering_data as $transaction_key => $existing_filter){
+      if($transaction_key!=$selected_transaction_type){
+        $dashboard_filtering_data[$transaction_key] .= " AND 0 ";
+      }
+    }
+    dashboard_add_filter_query('dashboard_filter_transaction_type', $dashboard_filter_values['transaction_type']);
+    dashboard_add_filter_label('Transaction Type', $dashboard_filter_values['transaction_type']);
+  }
+
+  $dashboard_filter_values['amount'] = dashboard_filter_input('dashboard_filter_amount');
+  if($dashboard_filter_values['amount']!=''){
+    $amount_sql = dashboard_filter_sql_value($dashboard_filter_values['amount']);
+    dashboard_add_table_filter([
+      'income' => " AND incomes.income_amount=$amount_sql ",
+      'expense' => " AND expenses.expense_amount=$amount_sql ",
+      'exchange' => " AND (exchanges.from_amount=$amount_sql OR exchanges.to_amount=$amount_sql) ",
+      'transfer' => " AND transfers.transfer_amount=$amount_sql ",
+    ]);
+    dashboard_add_filter_query('dashboard_filter_amount', $dashboard_filter_values['amount']);
+    dashboard_add_filter_label('Amount', $dashboard_filter_values['amount']);
+  }
+
+  $dashboard_filter_values['sib_number'] = dashboard_filter_input('dashboard_filter_sib_number');
+  if($dashboard_filter_values['sib_number']!=''){
+    $sib_number_sql = dashboard_filter_sql_value($dashboard_filter_values['sib_number']);
+    dashboard_add_table_filter([
+      'income' => " AND incomes.sib_number=$sib_number_sql ",
+      'expense' => " AND 0 ",
+      'exchange' => " AND 0 ",
+      'transfer' => " AND 0 ",
+    ]);
+    dashboard_add_filter_query('dashboard_filter_sib_number', $dashboard_filter_values['sib_number']);
+    dashboard_add_filter_label('SIB Number', $dashboard_filter_values['sib_number']);
+  }
+
+  $dashboard_filter_values['check_number'] = dashboard_filter_input('dashboard_filter_check_number');
+  if($dashboard_filter_values['check_number']!=''){
+    $check_number_sql = dashboard_filter_sql_value($dashboard_filter_values['check_number']);
+    dashboard_add_table_filter([
+      'income' => " AND incomes.check_number=$check_number_sql ",
+      'expense' => " AND expenses.check_number=$check_number_sql ",
+      'exchange' => " AND 0 ",
+      'transfer' => " AND 0 ",
+    ]);
+    dashboard_add_filter_query('dashboard_filter_check_number', $dashboard_filter_values['check_number']);
+    dashboard_add_filter_label('Check Number', $dashboard_filter_values['check_number']);
+  }
+
+  if(isset($_GET['dashboard_filter_users_id']) && is_array($_GET['dashboard_filter_users_id']) && count($_GET['dashboard_filter_users_id'])>0){
+    $users_id_items = [];
+    foreach($_GET['dashboard_filter_users_id'] as $users_id_item){
+      $users_id_item = holu_escape($users_id_item);
+      if($users_id_item!==''){
+        $dashboard_filter_values['users_id'][] = $users_id_item;
+        $users_id_items[] = dashboard_filter_sql_value($users_id_item);
+      }
+    }
+    if(count($users_id_items)>0){
+      $users_id_sql = implode(',', $users_id_items);
+      dashboard_add_table_filter([
+        'income' => " AND incomes.users_id IN ($users_id_sql) ",
+        'expense' => " AND expenses.users_id IN ($users_id_sql) ",
+        'exchange' => " AND exchanges.users_id IN ($users_id_sql) ",
+        'transfer' => " AND (transfers.users_id IN ($users_id_sql) OR transfers.approved_by IN ($users_id_sql)) ",
+      ]);
+      dashboard_add_filter_query('dashboard_filter_users_id', $dashboard_filter_values['users_id']);
+      dashboard_add_filter_label('Added By', implode(', ', $dashboard_filter_values['users_id']));
+    }
+  }
+
+  $dashboard_excel_data .= $dashboard_advanced_filter_query;
+  $dashboard_filter_panel_is_open = $dashboard_advanced_filter_query!='';
+
+  $dashboard_transfer_out_scope = "(($transfer_from_access_condition) OR (transfers.users_id='$holu_users_id' AND NOT ($transfer_to_access_condition)))";
+  $dashboard_transfer_in_scope = "($transfer_to_access_condition)";
+
+  if($dashboard_filter_values['branch']!='' && $dashboard_filter_values['branch']!='0'){
+    $dashboard_transfer_branch_sql = dashboard_filter_sql_value($dashboard_filter_values['branch']);
+    $dashboard_transfer_out_scope = "transfers.from_branch=$dashboard_transfer_branch_sql";
+    $dashboard_transfer_in_scope = "transfers.to_branch=$dashboard_transfer_branch_sql";
+  }elseif($dashboard_filter_values['province']!='' && $dashboard_filter_values['province']!='0'){
+    $dashboard_transfer_province_sql = dashboard_filter_sql_value($dashboard_filter_values['province']);
+    $dashboard_transfer_out_scope = "transfers.from_province=$dashboard_transfer_province_sql";
+    $dashboard_transfer_in_scope = "transfers.to_province=$dashboard_transfer_province_sql";
+  }
 
   $transactions_query = "
     SELECT * FROM (
@@ -71,6 +366,7 @@
       WHERE incomes.deleted='0'
       AND $income_access_condition
       AND incomes.sub_categories_id IN ($accessed_sub_categories_income)
+      {$dashboard_filtering_data['income']}
       UNION ALL
       SELECT 
         expenses.id AS transaction_id,
@@ -99,6 +395,7 @@
       WHERE expenses.deleted='0'
       AND $expense_access_condition
       AND expenses.sub_categories_id IN ($accessed_sub_categories_expense)
+      {$dashboard_filtering_data['expense']}
       UNION ALL
       SELECT 
         exchanges.id AS transaction_id,
@@ -127,37 +424,7 @@
       WHERE exchanges.deleted='0'
       AND $exchange_access_condition
       $accessed_sub_categories_exchange
-      UNION ALL
-      SELECT 
-        purchases.id AS transaction_id,
-        'Purchase' AS transaction_type,
-        purchases.sub_categories_id AS transaction_sub_categories_id,
-        purchases.province AS transaction_province,
-        '' AS transaction_branch,
-        purchases.purchase_date AS transaction_date,
-        purchases.purchase_amount AS transaction_amount,
-        purchases.currency AS transaction_currency,
-        purchases.description AS transaction_description,
-        purchases.users_id AS transaction_users_id,
-        '' AS transaction_check_number,
-        '' AS transaction_sib_number,
-        purchases.tms_markup AS transaction_tms_markup,
-        purchases.qb_markup AS transaction_qb_markup,
-        purchases.sib_markup AS transaction_sib_markup,
-        purchases.ad_markup AS transaction_ad_markup,
-        '' AS transaction_additional_informations,
-        '' AS transaction_approve_description,
-        '' AS transaction_from_province,
-        '' AS transaction_to_province,
-        '' AS transaction_from_branch,
-        '' AS transaction_to_branch
-      FROM `purchases`
-      WHERE purchases.deleted='0'
-      AND purchases.is_approved='1'
-      AND purchases.is_included='1'
-      AND purchases.province IN ($accessed_provinces)
-      AND purchases.logistic_cashes_id IN ($accessed_logistic_cashes)
-      AND purchases.sub_categories_id IN ($accessed_sub_categories_purchase)
+      {$dashboard_filtering_data['exchange']}
       UNION ALL
       SELECT 
         transfers.id AS transaction_id,
@@ -187,6 +454,7 @@
       AND transfers.is_approved='1'
       AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR transfers.users_id='$holu_users_id')
       $accessed_sub_categories_transfer
+      {$dashboard_filtering_data['transfer']}
     ) AS dashboard_transactions
   ";
 
@@ -234,7 +502,8 @@
     WHERE incomes.deleted='0'
     AND $income_access_condition
     AND incomes.sub_categories_id IN ($accessed_sub_categories_income)
-    $dashboard_income_date_filter"
+    $dashboard_income_date_filter
+    {$dashboard_filtering_data['income']}"
   );
   $dashboard_total_income_row = $dashboard_total_income_sq->fetch();
 
@@ -247,7 +516,8 @@
     WHERE expenses.deleted='0'
     AND $expense_access_condition
     AND expenses.sub_categories_id IN ($accessed_sub_categories_expense)
-    $dashboard_expense_date_filter"
+    $dashboard_expense_date_filter
+    {$dashboard_filtering_data['expense']}"
   );
   $dashboard_total_expense_row = $dashboard_total_expense_sq->fetch();
 
@@ -265,12 +535,11 @@
     WHERE exchanges.deleted='0'
     AND $exchange_access_condition
     $dashboard_exchange_date_filter
-    $accessed_sub_categories_exchange"
+    $accessed_sub_categories_exchange
+    {$dashboard_filtering_data['exchange']}"
   );
   $dashboard_total_exchange_row = $dashboard_total_exchange_sq->fetch();
 
-  $dashboard_transfer_out_scope = "(($transfer_from_access_condition) OR (transfers.users_id='$holu_users_id' AND NOT ($transfer_to_access_condition)))";
-  $dashboard_transfer_in_scope = "($transfer_to_access_condition)";
   $dashboard_total_transfer_sq = $db->query(
     "SELECT
       SUM(CASE WHEN currency='AFN' AND $dashboard_transfer_out_scope THEN transfer_amount ELSE 0 END) AS total_transfer_out_afn,
@@ -283,7 +552,8 @@
     WHERE transfers.deleted='0'
     AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR transfers.users_id='$holu_users_id')
     $dashboard_transfer_date_filter
-    $accessed_sub_categories_transfer"
+    $accessed_sub_categories_transfer
+    {$dashboard_filtering_data['transfer']}"
   );
   $dashboard_total_transfer_row = $dashboard_total_transfer_sq->fetch();
 
@@ -317,7 +587,8 @@
     WHERE incomes.deleted='0'
     AND $income_access_condition
     AND incomes.sub_categories_id IN ($accessed_sub_categories_income)
-    $dashboard_closing_income_date_filter"
+    $dashboard_closing_income_date_filter
+    {$dashboard_filtering_data['income']}"
   );
   $dashboard_closing_income_row = $dashboard_closing_income_sq->fetch();
 
@@ -330,7 +601,8 @@
     WHERE expenses.deleted='0'
     AND $expense_access_condition
     AND expenses.sub_categories_id IN ($accessed_sub_categories_expense)
-    $dashboard_closing_expense_date_filter"
+    $dashboard_closing_expense_date_filter
+    {$dashboard_filtering_data['expense']}"
   );
   $dashboard_closing_expense_row = $dashboard_closing_expense_sq->fetch();
 
@@ -348,7 +620,8 @@
     WHERE exchanges.deleted='0'
     AND $exchange_access_condition
     $dashboard_closing_exchange_date_filter
-    $accessed_sub_categories_exchange"
+    $accessed_sub_categories_exchange
+    {$dashboard_filtering_data['exchange']}"
   );
   $dashboard_closing_exchange_row = $dashboard_closing_exchange_sq->fetch();
 
@@ -364,7 +637,8 @@
     WHERE transfers.deleted='0'
     AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR transfers.users_id='$holu_users_id')
     $dashboard_closing_transfer_date_filter
-    $accessed_sub_categories_transfer"
+    $accessed_sub_categories_transfer
+    {$dashboard_filtering_data['transfer']}"
   );
   $dashboard_closing_transfer_row = $dashboard_closing_transfer_sq->fetch();
 
@@ -481,7 +755,7 @@
 
                 <a id="dashboard_export_excel_btn" href="controller_excel.php?excel_type=dashboard_transactions<?php echo $dashboard_excel_data; ?>"><button type="button" class="btn waves-effect waves-light adder_button"><i class="far fa-file-excel"></i> Export Excel</button></a>
 
-                <button type="button" class="btn waves-effect waves-light adder_button dashboard-filter-toggle" id="dashboard_transaction_filter_toggle" aria-expanded="false" aria-controls="dashboard_transaction_filter_panel"><i class="fa fa-filter"></i> Filter</button>
+                <button type="button" class="btn waves-effect waves-light adder_button dashboard-filter-toggle" id="dashboard_transaction_filter_toggle" aria-expanded="<?php echo $dashboard_filter_panel_is_open ? 'true' : 'false'; ?>" aria-controls="dashboard_transaction_filter_panel"><i class="fa fa-filter"></i> Filter</button>
 
                 <div class="dropdown dashboard-date-range-dropdown">
                   <button class="btn dropdown-toggle waves-effect waves-light dashboard-date-range-toggle" type="button" id="dashboardDateRangeDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -535,31 +809,36 @@
                 </div>
               </div>
 
-              <div class="dashboard-filter-panel" id="dashboard_transaction_filter_panel" aria-hidden="true">
-                <form class="dashboard-filter-form" id="dashboard_transaction_filter_form" role="form" action="javascript:void(0);" method="GET">
+              <div class="dashboard-filter-panel <?php echo $dashboard_filter_panel_is_open ? 'is-open' : ''; ?>" id="dashboard_transaction_filter_panel" aria-hidden="<?php echo $dashboard_filter_panel_is_open ? 'false' : 'true'; ?>">
+                <form class="dashboard-filter-form" id="dashboard_transaction_filter_form" role="form" action="dashboard_transactions.php" method="GET">
                   <div class="dashboard-filter-panel-topline"></div>
+                  <input type="hidden" name="date_range" value="<?php echo htmlspecialchars($dashboard_date_range, ENT_QUOTES, 'UTF-8'); ?>">
+                  <?php if($dashboard_date_range=='custom'){ ?>
+                    <input type="hidden" name="from_date" value="<?php echo htmlspecialchars($dashboard_custom_from_date, ENT_QUOTES, 'UTF-8'); ?>">
+                    <input type="hidden" name="to_date" value="<?php echo htmlspecialchars($dashboard_custom_to_date, ENT_QUOTES, 'UTF-8'); ?>">
+                  <?php } ?>
                   <div class="dashboard-filter-form-header">
                     <div>
                       <span class="dashboard-filter-eyebrow"><i class="fa fa-sliders-h"></i> Advanced filters</span>
                       <h5>Refine report transactions</h5>
-                      <p>Design-ready controls for the transaction report. Filtering logic will be connected later.</p>
+                      <p>Choose filters and apply them to the transaction list and balance summary.</p>
                     </div>
-                    <span class="dashboard-filter-status"><i class="far fa-clock"></i> Form only</span>
+                    <span class="dashboard-filter-status"><i class="fa fa-check-circle"></i> Active filters</span>
                   </div>
 
                   <div class="dashboard-filter-grid">
                     <div class="dashboard-filter-field dashboard-filter-field-wide">
                       <label for="dashboard_filter_province">Province</label>
-                      <select id="dashboard_filter_province" name="dashboard_filter_province" class="form-control" data-branch-target="dashboard_filter_branch" data-branch-value="0">
-                        <option selected hidden value="">Select an option</option>
-                        <?php echo get_province_option('0'); ?>
+                      <select id="dashboard_filter_province" name="dashboard_filter_province" class="form-control" data-branch-target="dashboard_filter_branch" data-branch-value="<?php echo htmlspecialchars($dashboard_filter_values['branch'], ENT_QUOTES, 'UTF-8'); ?>">
+                        <option <?php echo ($dashboard_filter_values['province']=='' || $dashboard_filter_values['province']=='0') ? 'selected' : ''; ?> hidden value="">Select an option</option>
+                        <?php echo get_province_option($dashboard_filter_values['province']!='' ? $dashboard_filter_values['province'] : '0'); ?>
                       </select>
                     </div>
 
                     <div class="dashboard-filter-field dashboard-filter-field-wide">
                       <label for="dashboard_filter_branch">Branch</label>
                       <select id="dashboard_filter_branch" name="dashboard_filter_branch" class="form-control">
-                        <?php echo get_branch_option('0', '0'); ?>
+                        <?php echo get_branch_option($dashboard_filter_values['province']!='' ? $dashboard_filter_values['province'] : '0', $dashboard_filter_values['branch']!='' ? $dashboard_filter_values['branch'] : '0'); ?>
                       </select>
                     </div>
 
@@ -567,7 +846,7 @@
                       <label for="dashboard_filter_from_date">Date from</label>
                       <div class="dashboard-filter-input-icon">
                         <i class="far fa-calendar-alt"></i>
-                        <input type="text" id="dashboard_filter_from_date" name="dashboard_filter_from_date" class="form-control date_picker" placeholder="From">
+                        <input type="text" id="dashboard_filter_from_date" name="dashboard_filter_from_date" class="form-control date_picker" placeholder="From" value="<?php echo htmlspecialchars($dashboard_filter_values['from_date'], ENT_QUOTES, 'UTF-8'); ?>">
                       </div>
                     </div>
 
@@ -575,84 +854,84 @@
                       <label for="dashboard_filter_to_date">Date to</label>
                       <div class="dashboard-filter-input-icon">
                         <i class="far fa-calendar-check"></i>
-                        <input type="text" id="dashboard_filter_to_date" name="dashboard_filter_to_date" class="form-control date_picker" placeholder="To">
+                        <input type="text" id="dashboard_filter_to_date" name="dashboard_filter_to_date" class="form-control date_picker" placeholder="To" value="<?php echo htmlspecialchars($dashboard_filter_values['to_date'], ENT_QUOTES, 'UTF-8'); ?>">
                       </div>
                     </div>
 
                     <div class="dashboard-filter-field">
                       <label for="dashboard_filter_customer_name">Customer Name</label>
-                      <input type="text" id="dashboard_filter_customer_name" name="dashboard_filter_customer_name" class="form-control" placeholder="Type here...">
+                      <input type="text" id="dashboard_filter_customer_name" name="dashboard_filter_customer_name" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values['customer_name'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type here...">
                     </div>
 
                     <div class="dashboard-filter-field">
                       <label for="dashboard_filter_customer_id">Customer ID</label>
-                      <input type="text" id="dashboard_filter_customer_id" name="dashboard_filter_customer_id" class="form-control" placeholder="Type here...">
+                      <input type="text" id="dashboard_filter_customer_id" name="dashboard_filter_customer_id" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values['customer_id'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type here...">
                     </div>
 
                     <div class="dashboard-filter-field dashboard-filter-field-wide">
                       <label for="dashboard_filter_description">Description</label>
-                      <input type="text" id="dashboard_filter_description" name="dashboard_filter_description" class="form-control" placeholder="Search the transaction description...">
+                      <input type="text" id="dashboard_filter_description" name="dashboard_filter_description" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values['description'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Search the transaction description...">
                     </div>
 
                     <div class="dashboard-filter-field">
                       <label for="dashboard_filter_markup">Markup</label>
                       <select id="dashboard_filter_markup" name="dashboard_filter_markup" class="form-control">
-                        <?php echo get_markup_option('system_accessibility/report/report_transaction/', ''); ?>
+                        <?php echo get_markup_option('system_accessibility/report/report_transaction/', $dashboard_filter_values['markup']); ?>
                       </select>
                     </div>
 
                     <div class="dashboard-filter-field">
                       <label for="dashboard_filter_unmark">Unmark</label>
                       <select id="dashboard_filter_unmark" name="dashboard_filter_unmark" class="form-control">
-                        <?php echo get_markup_option('system_accessibility/report/report_transaction/', ''); ?>
+                        <?php echo get_markup_option('system_accessibility/report/report_transaction/', $dashboard_filter_values['unmark']); ?>
                       </select>
                     </div>
 
                     <div class="dashboard-filter-field">
                       <label for="dashboard_filter_currency">Currency</label>
                       <select id="dashboard_filter_currency" name="dashboard_filter_currency" class="form-control">
-                        <option selected value="">Select an option</option>
-                        <?php echo get_currency_option(''); ?>
+                        <option <?php echo $dashboard_filter_values['currency']=='' ? 'selected' : ''; ?> value="">Select an option</option>
+                        <?php echo get_currency_option($dashboard_filter_values['currency']); ?>
                       </select>
                     </div>
 
                     <div class="dashboard-filter-field">
                       <label for="dashboard_filter_transaction_type">Transaction Type</label>
                       <select id="dashboard_filter_transaction_type" name="dashboard_filter_transaction_type" class="form-control">
-                        <option selected value="">Select an option</option>
-                        <?php echo get_transaction_type_option(''); ?>
+                        <option <?php echo $dashboard_filter_values['transaction_type']=='' ? 'selected' : ''; ?> value="">Select an option</option>
+                        <?php echo get_transaction_type_option($dashboard_filter_values['transaction_type']); ?>
                       </select>
                     </div>
 
                     <div class="dashboard-filter-field">
                       <label for="dashboard_filter_amount">Amount</label>
-                      <input type="text" id="dashboard_filter_amount" name="dashboard_filter_amount" class="form-control" placeholder="Type amount...">
+                      <input type="text" id="dashboard_filter_amount" name="dashboard_filter_amount" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values['amount'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type amount...">
                     </div>
 
                     <div class="dashboard-filter-field">
                       <label for="dashboard_filter_sib_number">SIB Number</label>
-                      <input type="text" id="dashboard_filter_sib_number" name="dashboard_filter_sib_number" class="form-control" placeholder="Type SIB number...">
+                      <input type="text" id="dashboard_filter_sib_number" name="dashboard_filter_sib_number" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values['sib_number'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type SIB number...">
                     </div>
 
                     <div class="dashboard-filter-field">
                       <label for="dashboard_filter_check_number">Check Number</label>
-                      <input type="text" id="dashboard_filter_check_number" name="dashboard_filter_check_number" class="form-control" placeholder="Type check number...">
+                      <input type="text" id="dashboard_filter_check_number" name="dashboard_filter_check_number" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values['check_number'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type check number...">
                     </div>
 
                     <div class="dashboard-filter-field dashboard-filter-field-wide">
                       <label for="dashboard_filter_users_id">Added By</label>
                       <select id="dashboard_filter_users_id" name="dashboard_filter_users_id[]" class="form-control select2" multiple data-placeholder="Select user(s)">
-                        <?php echo get_user_option([]); ?>
+                        <?php echo get_user_option($dashboard_filter_values['users_id']); ?>
                       </select>
                     </div>
                   </div>
 
                   <div class="dashboard-filter-actions">
-                    <small><i class="fa fa-info-circle"></i> These inputs are visual only for now and will not change report results.</small>
+                    <small><i class="fa fa-info-circle"></i> Filters are applied to both the table and the summary totals above.</small>
                     <div>
-                      <button type="reset" class="btn dashboard-filter-reset"><i class="fa fa-undo"></i> Clear</button>
+                      <a class="btn dashboard-filter-reset" href="dashboard_transactions.php?date_range=<?php echo urlencode($dashboard_date_range); ?><?php echo $dashboard_date_range=='custom' ? '&from_date='.urlencode($dashboard_custom_from_date).'&to_date='.urlencode($dashboard_custom_to_date) : ''; ?>"><i class="fa fa-undo"></i> Clear</a>
                       <button type="button" class="btn dashboard-filter-close" id="dashboard_transaction_filter_close"><i class="fa fa-times"></i> Close</button>
-                      <button type="button" class="btn dashboard-filter-apply" disabled><i class="fa fa-search"></i> Apply filters soon</button>
+                      <button type="submit" class="btn dashboard-filter-apply"><i class="fa fa-search"></i> Apply filters</button>
                     </div>
                   </div>
                 </form>
@@ -792,9 +1071,6 @@
       $('#dashboard_transaction_filter_toggle').attr('aria-expanded', 'false');
     });
 
-    $('#dashboard_transaction_filter_form').on('submit', function(event){
-      event.preventDefault();
-    });
 
     $('#dashboard_custom_date_range').on('submit', function(){
       var fromDate = $('#dashboard_from_date').val();

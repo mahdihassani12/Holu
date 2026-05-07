@@ -50,9 +50,6 @@
                         <th>Name</th>
                         <th>Total Cash Reservation</th>
                         <th>Total Approved Cash Reservation</th>
-                        <th>Total Purchases</th>
-                        <th>Total Approved Purchases</th>
-                        <th>Total Included Purchases</th>
                         <th>Remaining</th>
                       </tr>
                     </thead>
@@ -78,23 +75,6 @@
                           );
                           $cash_reservation_row = $cash_reservation_sq->fetch();
 
-                          $purchase_sq = $db->query(
-                            "SELECT 
-                              SUM(CASE WHEN currency='AFN' THEN purchase_amount ELSE 0 END) as total_purchase_afn,
-                              SUM(CASE WHEN currency='USD' THEN purchase_amount ELSE 0 END) as total_purchase_usd,
-                              SUM(CASE WHEN currency='IRT' THEN purchase_amount ELSE 0 END) as total_purchase_irt,
-                              SUM(CASE WHEN currency='AFN' AND is_approved='1' THEN purchase_amount ELSE 0 END) as total_approved_purchase_afn,
-                              SUM(CASE WHEN currency='USD' AND is_approved='1' THEN purchase_amount ELSE 0 END) as total_approved_purchase_usd,
-                              SUM(CASE WHEN currency='IRT' AND is_approved='1' THEN purchase_amount ELSE 0 END) as total_approved_purchase_irt,
-                              SUM(CASE WHEN currency='AFN' AND is_approved='1' AND is_included='1' THEN purchase_amount ELSE 0 END) as total_included_purchase_afn,
-                              SUM(CASE WHEN currency='USD' AND is_approved='1' AND is_included='1' THEN purchase_amount ELSE 0 END) as total_included_purchase_usd,
-                              SUM(CASE WHEN currency='IRT' AND is_approved='1' AND is_included='1' THEN purchase_amount ELSE 0 END) as total_included_purchase_irt
-                            FROM `purchases` 
-                            WHERE deleted='0' 
-                            AND logistic_cashes_id = '$logistic_cashes_id' "
-                          );
-                          $purchase_row = $purchase_sq->fetch();
-
                           ?>
                           <tr>
                             <th class="text-center"><?php echo ++$row_count; ?></th>
@@ -110,24 +90,9 @@
                               <?php echo $cash_reservation_row['total_approved_cash_reservation_irt'].' IRT'.'<br/>'; ?>
                             </td>
                             <td class="text-right">
-                              <?php echo $purchase_row['total_purchase_afn'].' AFN'.'<br/>'; ?>
-                              <?php echo $purchase_row['total_purchase_usd'].' USD'.'<br/>'; ?>
-                              <?php echo $purchase_row['total_purchase_irt'].' IRT'.'<br/>'; ?>
-                            </td>
-                            <td class="text-right">
-                              <?php echo $purchase_row['total_approved_purchase_afn'].' AFN'.'<br/>'; ?>
-                              <?php echo $purchase_row['total_approved_purchase_usd'].' USD'.'<br/>'; ?>
-                              <?php echo $purchase_row['total_approved_purchase_irt'].' IRT'.'<br/>'; ?>
-                            </td>
-                            <td class="text-right">
-                              <?php echo $purchase_row['total_included_purchase_afn'].' AFN'.'<br/>'; ?>
-                              <?php echo $purchase_row['total_included_purchase_usd'].' USD'.'<br/>'; ?>
-                              <?php echo $purchase_row['total_included_purchase_irt'].' IRT'.'<br/>'; ?>
-                            </td>
-                            <td class="text-right">
-                              <?php echo ($cash_reservation_row['total_cash_reservation_afn']-$purchase_row['total_included_purchase_afn']).' AFN'.'<br/>'; ?>
-                              <?php echo ($cash_reservation_row['total_cash_reservation_usd']-$purchase_row['total_included_purchase_usd']).' USD'.'<br/>'; ?>
-                              <?php echo ($cash_reservation_row['total_cash_reservation_irt']-$purchase_row['total_included_purchase_irt']).' IRT'.'<br/>'; ?>
+                              <?php echo $cash_reservation_row['total_cash_reservation_afn'].' AFN'.'<br/>'; ?>
+                              <?php echo $cash_reservation_row['total_cash_reservation_usd'].' USD'.'<br/>'; ?>
+                              <?php echo $cash_reservation_row['total_cash_reservation_irt'].' IRT'.'<br/>'; ?>
                             </td>
                           </tr>
                           <?php
