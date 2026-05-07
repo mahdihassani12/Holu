@@ -144,31 +144,8 @@
     dashboard_add_filter_label('Branch', $dashboard_filter_values['branch']);
   }
 
-  $dashboard_filter_values['from_date'] = dashboard_filter_date_value(dashboard_filter_input('dashboard_filter_from_date'));
-  if($dashboard_filter_values['from_date']!=''){
-    $from_date_sql = dashboard_filter_sql_value($dashboard_filter_values['from_date']);
-    dashboard_add_table_filter([
-      'income' => " AND incomes.income_date>=$from_date_sql ",
-      'expense' => " AND expenses.expense_date>=$from_date_sql ",
-      'exchange' => " AND exchanges.exchange_date>=$from_date_sql ",
-      'transfer' => " AND transfers.transfer_date>=$from_date_sql ",
-    ]);
-    dashboard_add_filter_query('dashboard_filter_from_date', $dashboard_filter_values['from_date']);
-    dashboard_add_filter_label('Filter From', $dashboard_filter_values['from_date']);
-  }
-
-  $dashboard_filter_values['to_date'] = dashboard_filter_date_value(dashboard_filter_input('dashboard_filter_to_date'));
-  if($dashboard_filter_values['to_date']!=''){
-    $to_date_sql = dashboard_filter_sql_value($dashboard_filter_values['to_date']);
-    dashboard_add_table_filter([
-      'income' => " AND incomes.income_date<=$to_date_sql ",
-      'expense' => " AND expenses.expense_date<=$to_date_sql ",
-      'exchange' => " AND exchanges.exchange_date<=$to_date_sql ",
-      'transfer' => " AND transfers.transfer_date<=$to_date_sql ",
-    ]);
-    dashboard_add_filter_query('dashboard_filter_to_date', $dashboard_filter_values['to_date']);
-    dashboard_add_filter_label('Filter To', $dashboard_filter_values['to_date']);
-  }
+  $dashboard_filter_values['from_date'] = $dashboard_from_date;
+  $dashboard_filter_values['to_date'] = $dashboard_to_date;
 
   $dashboard_filter_values['customer_name'] = dashboard_filter_input('dashboard_filter_customer_name');
   if($dashboard_filter_values['customer_name']!=''){
@@ -793,11 +770,11 @@
                       <div class="dashboard-custom-date-grid">
                         <div>
                           <label for="dashboard_from_date">Start date</label>
-                          <input type="date" class="form-control form-control-sm" id="dashboard_from_date" name="from_date" value="<?php echo $dashboard_custom_from_date; ?>">
+                          <input type="date" class="form-control form-control-sm" id="dashboard_from_date" name="from_date" value="<?php echo htmlspecialchars($dashboard_from_date, ENT_QUOTES, 'UTF-8'); ?>">
                         </div>
                         <div>
                           <label for="dashboard_to_date">End date</label>
-                          <input type="date" class="form-control form-control-sm" id="dashboard_to_date" name="to_date" value="<?php echo $dashboard_custom_to_date; ?>">
+                          <input type="date" class="form-control form-control-sm" id="dashboard_to_date" name="to_date" value="<?php echo htmlspecialchars($dashboard_to_date, ENT_QUOTES, 'UTF-8'); ?>">
                         </div>
                       </div>
                       <small class="dashboard-date-range-help">Leave one side empty for an open-ended date filter.</small>
