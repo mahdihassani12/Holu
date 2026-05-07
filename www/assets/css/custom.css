@@ -538,24 +538,24 @@ a{
 .dashboard-summary-title{
 	align-items: center;
 	display: flex;
-	font-size: 12px;
+	font-size: 13px;
 	font-weight: 800;
 	gap: 5px;
-	line-height: 1.15;
-	margin-bottom: 5px;
+	line-height: 1.2;
+	margin-bottom: 6px;
 	position: relative;
 	z-index: 1;
 }
 
 .dashboard-summary-title i{
-	font-size: 11px;
+	font-size: 12px;
 	opacity: 0.86;
 }
 
 .dashboard-summary-values{
 	display: flex;
 	flex-direction: column;
-	font-size: 10px;
+	font-size: 11px;
 	font-weight: 700;
 	gap: 2px;
 	line-height: 1.25;
@@ -564,7 +564,7 @@ a{
 }
 
 .dashboard-summary-routes{
-	font-size: 9px;
+	font-size: 10px;
 	gap: 1px;
 }
 
