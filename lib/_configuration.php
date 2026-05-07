@@ -2361,7 +2361,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			'last_180_days' => 'Last 180 days',
 			'last_year' => 'Last Year',
 			'life_time' => 'Life time',
-			'custom' => 'Custom',
+			'custom' => 'Custom range',
 		];
 	}
 
@@ -2382,6 +2382,48 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		return date('M j, Y', strtotime($date_value));
 	}
 
+	function normalize_holu_date_value($date_value){
+		$date_value = trim((string)$date_value);
+		if($date_value===''){
+			return '';
+		}
+		if(is_holu_date_value($date_value)){
+			return $date_value;
+		}
+
+		$timestamp = strtotime($date_value);
+		if($timestamp===false){
+			return '';
+		}
+
+		$date_value = date('Y-m-d', $timestamp);
+		return is_holu_date_value($date_value) ? $date_value : '';
+	}
+
+	function get_dashboard_transaction_preset_date_ranges(){
+		$today = date('Y-m-d');
+
+		return [
+			'last_7_days' => [date('Y-m-d', strtotime('-6 days')), $today],
+			'last_30_days' => [date('Y-m-d', strtotime('-29 days')), $today],
+			'last_60_days' => [date('Y-m-d', strtotime('-59 days')), $today],
+			'last_90_days' => [date('Y-m-d', strtotime('-89 days')), $today],
+			'last_180_days' => [date('Y-m-d', strtotime('-179 days')), $today],
+			'last_year' => [date('Y-m-d', strtotime('-1 year')), $today],
+			'life_time' => ['', ''],
+		];
+	}
+
+	function match_dashboard_transaction_date_range($from_date, $to_date){
+		foreach(get_dashboard_transaction_preset_date_ranges() as $preset_key => $preset_dates){
+			if($from_date===$preset_dates[0] && $to_date===$preset_dates[1]){
+				return $preset_key;
+			}
+		}
+
+		return 'custom';
+	}
+
 	function resolve_dashboard_transaction_date_range(){
 		$options = get_dashboard_transaction_date_range_options();
 		$date_range = isset($_GET['date_range']) ? holu_escape($_GET['date_range']) : 'last_90_days';
@@ -2394,53 +2436,38 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			$date_range = 'last_90_days';
 		}
 
-		$custom_from_date = isset($_GET['from_date']) ? holu_escape($_GET['from_date']) : '';
-		$custom_to_date = isset($_GET['to_date']) ? holu_escape($_GET['to_date']) : '';
-		if(!is_holu_date_value($custom_from_date)){
+		$custom_from_date = isset($_GET['from_date']) ? normalize_holu_date_value(holu_escape($_GET['from_date'])) : '';
+		$custom_to_date = isset($_GET['to_date']) ? normalize_holu_date_value(holu_escape($_GET['to_date'])) : '';
+		$advanced_from_date_was_submitted = array_key_exists('dashboard_filter_from_date', $_GET);
+		$advanced_to_date_was_submitted = array_key_exists('dashboard_filter_to_date', $_GET);
+		$advanced_from_date = $advanced_from_date_was_submitted ? normalize_holu_date_value(holu_escape($_GET['dashboard_filter_from_date'])) : '';
+		$advanced_to_date = $advanced_to_date_was_submitted ? normalize_holu_date_value(holu_escape($_GET['dashboard_filter_to_date'])) : '';
+
+		if($advanced_from_date_was_submitted || $advanced_to_date_was_submitted){
+			$from_date = $advanced_from_date;
+			$to_date = $advanced_to_date;
+		}elseif($date_range=='custom'){
+			$from_date = $custom_from_date;
+			$to_date = $custom_to_date;
+		}else{
+			$preset_ranges = get_dashboard_transaction_preset_date_ranges();
+			$from_date = isset($preset_ranges[$date_range]) ? $preset_ranges[$date_range][0] : '';
+			$to_date = isset($preset_ranges[$date_range]) ? $preset_ranges[$date_range][1] : '';
+		}
+
+		if($from_date!='' && $to_date!='' && strtotime($from_date)>strtotime($to_date)){
+			$swap_date = $from_date;
+			$from_date = $to_date;
+			$to_date = $swap_date;
+		}
+
+		$date_range = match_dashboard_transaction_date_range($from_date, $to_date);
+		if($date_range=='custom'){
+			$custom_from_date = $from_date;
+			$custom_to_date = $to_date;
+		}else{
 			$custom_from_date = '';
-		}
-		if(!is_holu_date_value($custom_to_date)){
 			$custom_to_date = '';
-		}
-		if($custom_from_date!='' && $custom_to_date!='' && strtotime($custom_from_date)>strtotime($custom_to_date)){
-			$swap_date = $custom_from_date;
-			$custom_from_date = $custom_to_date;
-			$custom_to_date = $swap_date;
-		}
-
-		$from_date = '';
-		$to_date = '';
-		$today = date('Y-m-d');
-
-		switch($date_range){
-			case 'last_7_days':{
-				$from_date = date('Y-m-d', strtotime('-6 days'));
-				$to_date = $today;
-			}break;
-			case 'last_30_days':{
-				$from_date = date('Y-m-d', strtotime('-29 days'));
-				$to_date = $today;
-			}break;
-			case 'last_60_days':{
-				$from_date = date('Y-m-d', strtotime('-59 days'));
-				$to_date = $today;
-			}break;
-			case 'last_90_days':{
-				$from_date = date('Y-m-d', strtotime('-89 days'));
-				$to_date = $today;
-			}break;
-			case 'last_180_days':{
-				$from_date = date('Y-m-d', strtotime('-179 days'));
-				$to_date = $today;
-			}break;
-			case 'last_year':{
-				$from_date = date('Y-m-d', strtotime('-1 year'));
-				$to_date = $today;
-			}break;
-			case 'custom':{
-				$from_date = $custom_from_date;
-				$to_date = $custom_to_date;
-			}break;
 		}
 
 		$sql_filter = '';
