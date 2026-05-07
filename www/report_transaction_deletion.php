@@ -156,10 +156,6 @@
         )
       )
       OR (
-        AND transaction_deletions.reference_id IN (
-        )
-      )
-      OR (
         transaction_deletions.reference_type = 'Transfer'
         AND transaction_deletions.reference_id IN (
           SELECT transfers.id 
@@ -207,10 +203,6 @@
           WHERE exchanges.province IN ($accessed_provinces) 
           $accessed_sub_categories_exchange
           $exchange_filtering_data
-        )
-      )
-      OR (
-        AND transaction_deletions.reference_id IN (
         )
       )
       OR (
