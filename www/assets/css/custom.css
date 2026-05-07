@@ -261,6 +261,17 @@ a{
 	z-index: 10;
 }
 
+.dashboard-transactions-header .header-title{
+	line-height: 1.4;
+	max-width: calc(100% - 560px);
+	overflow-wrap: anywhere;
+}
+
+.dashboard-transactions-header .header-title .badge{
+	display: inline-block;
+	vertical-align: middle;
+}
+
 .dashboard-transactions-header .adder_button,
 .dashboard-date-range-toggle{
 	height: 38px !important;
@@ -467,6 +478,12 @@ a{
 	font-weight: 800 !important;
 	margin-top: 10px;
 	width: 100%;
+}
+
+@media (max-width: 991.98px){
+	.dashboard-transactions-header .header-title{
+		max-width: 100%;
+	}
 }
 
 @media (max-width: 575.98px){

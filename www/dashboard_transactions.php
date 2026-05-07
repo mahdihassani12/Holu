@@ -111,6 +111,25 @@
     $holu_filtering_array[] = $label.': '.htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
   }
 
+  function dashboard_report_header_label($date_range_display, $province, $branch){
+    $header_parts = [
+      'Report of Transactions',
+      (string)$date_range_display,
+    ];
+
+    $province = trim((string)$province);
+    if($province!=='' && $province!=='0'){
+      $header_parts[] = $province;
+    }
+
+    $branch = trim((string)$branch);
+    if($branch!=='' && $branch!=='0'){
+      $header_parts[] = $branch;
+    }
+
+    return htmlspecialchars(implode(' • ', $header_parts), ENT_QUOTES, 'UTF-8');
+  }
+
 
   $income_access_condition = set_province_branch_portion('incomes.province', 'incomes.branch');
   $expense_access_condition = set_province_branch_portion('expenses.province', 'expenses.branch');
@@ -143,6 +162,12 @@
     dashboard_add_filter_query('dashboard_filter_branch', $dashboard_filter_values['branch']);
     dashboard_add_filter_label('Branch', $dashboard_filter_values['branch']);
   }
+
+  $dashboard_report_header = dashboard_report_header_label(
+    $dashboard_date_range_display,
+    $dashboard_filter_values['province'],
+    $dashboard_filter_values['branch']
+  );
 
   $dashboard_filter_values['from_date'] = $dashboard_from_date;
   $dashboard_filter_values['to_date'] = $dashboard_to_date;
@@ -726,8 +751,8 @@
                 </div>
               </div>
               <div class="card-box card-box-header dashboard-transactions-header">
-                <h4 class="header-title">
-                  <?php echo get_table_header('fa fa-list', 'Report of Transactions • '.$dashboard_date_range_display, $transaction_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
+                <h4 class="header-title" id="dashboard_transactions_report_header" data-report-base="Report of Transactions" data-report-date-range="<?php echo htmlspecialchars($dashboard_date_range_display, ENT_QUOTES, 'UTF-8'); ?>">
+                  <?php echo get_table_header('fa fa-list', $dashboard_report_header, $transaction_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
                 </h4>
 
                 <a id="dashboard_export_excel_btn" href="controller_excel.php?excel_type=dashboard_transactions<?php echo $dashboard_excel_data; ?>"><button type="button" class="btn waves-effect waves-light adder_button"><i class="far fa-file-excel"></i> Export Excel</button></a>
@@ -1041,6 +1066,56 @@
       var isOpen = $panel.toggleClass('is-open').hasClass('is-open');
       $(this).attr('aria-expanded', isOpen ? 'true' : 'false');
       $panel.attr('aria-hidden', isOpen ? 'false' : 'true');
+    });
+
+    function updateDashboardTransactionsReportHeader(){
+      var $header = $('#dashboard_transactions_report_header');
+      if(!$header.length){
+        return;
+      }
+
+      var parts = [
+        $header.data('report-base') || 'Report of Transactions',
+        $header.data('report-date-range') || ''
+      ];
+
+      var province = $('#dashboard_filter_province').val();
+      var branch = $('#dashboard_filter_branch').val();
+
+      if(province && province !== '0'){
+        parts.push($('#dashboard_filter_province option:selected').text());
+      }
+
+      if(branch && branch !== '0'){
+        parts.push($('#dashboard_filter_branch option:selected').text());
+      }
+
+      var headerText = $.map(parts, function(part){
+        return $.trim(part);
+      }).filter(function(part){
+        return part.length > 0;
+      }).join(' • ');
+
+      var iconNode = $header.children('i').first().get(0);
+      if(iconNode && iconNode.nextSibling && iconNode.nextSibling.nodeType === 3){
+        iconNode.nextSibling.nodeValue = ' ' + headerText + ' ';
+      }
+    }
+
+    $('#dashboard_filter_province, #dashboard_filter_branch').on('change', updateDashboardTransactionsReportHeader);
+    $(document).ajaxComplete(function(event, xhr, settings){
+      var requestData = settings && settings.data ? settings.data : '';
+      var branchOptionsReloaded = false;
+
+      if(typeof requestData === 'string'){
+        branchOptionsReloaded = requestData.indexOf('operation=get_branch_option') !== -1;
+      }else if(requestData.operation){
+        branchOptionsReloaded = requestData.operation === 'get_branch_option';
+      }
+
+      if(branchOptionsReloaded){
+        updateDashboardTransactionsReportHeader();
+      }
     });
 
     $('#dashboard_transaction_filter_close').on('click', function(){
