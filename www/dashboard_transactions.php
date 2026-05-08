@@ -52,6 +52,7 @@
     'markup' => '',
     'unmark' => '',
     'currency' => '',
+    'transaction_components' => '',
     'transaction_type' => '',
     'amount' => '',
     'sib_number' => '',
@@ -109,6 +110,38 @@
   function dashboard_add_filter_label($label, $value){
     global $holu_filtering_array;
     $holu_filtering_array[] = $label.': '.htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+  }
+
+
+  function dashboard_filter_component_labels($component_ids){
+    $labels = [];
+    foreach($component_ids as $component_id){
+      $parts = explode('/', trim((string)$component_id, '/'));
+      if(count($parts)<2 || $parts[0]!='sub_category_accessibility'){
+        continue;
+      }
+
+      $transaction_type = ucfirst($parts[1]);
+      if(count($parts)>=4 && $parts[3]!=='' && is_numeric($parts[3])){
+        $sub_category_name = get_col('sub_categories', 'sub_category_name', 'id', $parts[3]);
+        if($sub_category_name!=''){
+          $labels[] = $transaction_type.' / '.$sub_category_name;
+          continue;
+        }
+      }
+
+      if(count($parts)>=3 && $parts[2]!=='' && is_numeric($parts[2])){
+        $category_name = get_col('categories', 'category_name', 'id', $parts[2]);
+        if($category_name!=''){
+          $labels[] = $transaction_type.' / '.$category_name;
+          continue;
+        }
+      }
+
+      $labels[] = $transaction_type;
+    }
+
+    return implode(', ', array_unique($labels));
   }
 
   function dashboard_report_header_label($date_range_display, $province, $branch){
@@ -250,16 +283,78 @@
     dashboard_add_filter_label('Currency', $dashboard_filter_values['currency']);
   }
 
-  $dashboard_filter_values['transaction_type'] = dashboard_filter_input('dashboard_filter_transaction_type');
-  if($dashboard_filter_values['transaction_type']!=''){
-    $selected_transaction_type = strtolower($dashboard_filter_values['transaction_type']);
-    foreach($dashboard_filtering_data as $transaction_key => $existing_filter){
-      if($transaction_key!=$selected_transaction_type){
-        $dashboard_filtering_data[$transaction_key] .= " AND 0 ";
+  $dashboard_filter_values['transaction_components'] = dashboard_filter_input('dashboard_filter_transaction_components');
+  if($dashboard_filter_values['transaction_components']!=''){
+    $transaction_components = array_filter(explode(',', $dashboard_filter_values['transaction_components']));
+    $income_sub_categories_id_array = [];
+    $expense_sub_categories_id_array = [];
+    $exchange_sub_categories_id_counter = 0;
+    $transfer_sub_categories_id_counter = 0;
+
+    foreach($transaction_components as $transaction_component){
+      $transaction_component_parts = explode('/', $transaction_component);
+      if(count($transaction_component_parts)<2){
+        continue;
+      }
+
+      $transaction_component_type = $transaction_component_parts[1];
+      switch($transaction_component_type){
+        case 'income':
+          if(count($transaction_component_parts)>3 && $transaction_component_parts[3]!=''){
+            $income_sub_categories_id_array[] = dashboard_filter_sql_value($transaction_component_parts[3]);
+          }
+        break;
+
+        case 'expense':
+          if(count($transaction_component_parts)>3 && $transaction_component_parts[3]!=''){
+            $expense_sub_categories_id_array[] = dashboard_filter_sql_value($transaction_component_parts[3]);
+          }
+        break;
+
+        case 'exchange':
+          $exchange_sub_categories_id_counter++;
+        break;
+
+        case 'transfer':
+          $transfer_sub_categories_id_counter++;
+        break;
       }
     }
-    dashboard_add_filter_query('dashboard_filter_transaction_type', $dashboard_filter_values['transaction_type']);
-    dashboard_add_filter_label('Transaction Type', $dashboard_filter_values['transaction_type']);
+
+    if(count($income_sub_categories_id_array)>0){
+      $dashboard_filtering_data['income'] .= " AND incomes.sub_categories_id IN (".implode(',', array_unique($income_sub_categories_id_array)).") ";
+    }else{
+      $dashboard_filtering_data['income'] .= " AND 0 ";
+    }
+
+    if(count($expense_sub_categories_id_array)>0){
+      $dashboard_filtering_data['expense'] .= " AND expenses.sub_categories_id IN (".implode(',', array_unique($expense_sub_categories_id_array)).") ";
+    }else{
+      $dashboard_filtering_data['expense'] .= " AND 0 ";
+    }
+
+    if($exchange_sub_categories_id_counter<=0){
+      $dashboard_filtering_data['exchange'] .= " AND 0 ";
+    }
+
+    if($transfer_sub_categories_id_counter<=0){
+      $dashboard_filtering_data['transfer'] .= " AND 0 ";
+    }
+
+    dashboard_add_filter_query('dashboard_filter_transaction_components', $dashboard_filter_values['transaction_components']);
+    dashboard_add_filter_label('Transaction Components', dashboard_filter_component_labels($transaction_components));
+  }else{
+    $dashboard_filter_values['transaction_type'] = dashboard_filter_input('dashboard_filter_transaction_type');
+    if($dashboard_filter_values['transaction_type']!=''){
+      $selected_transaction_type = strtolower($dashboard_filter_values['transaction_type']);
+      foreach($dashboard_filtering_data as $transaction_key => $existing_filter){
+        if($transaction_key!=$selected_transaction_type){
+          $dashboard_filtering_data[$transaction_key] .= " AND 0 ";
+        }
+      }
+      dashboard_add_filter_query('dashboard_filter_transaction_type', $dashboard_filter_values['transaction_type']);
+      dashboard_add_filter_label('Transaction Type', $dashboard_filter_values['transaction_type']);
+    }
   }
 
   $dashboard_filter_values['amount'] = dashboard_filter_input('dashboard_filter_amount');
@@ -897,12 +992,17 @@
                       </select>
                     </div>
 
-                    <div class="dashboard-filter-field">
-                      <label for="dashboard_filter_transaction_type">Transaction Type</label>
-                      <select id="dashboard_filter_transaction_type" name="dashboard_filter_transaction_type" class="form-control">
-                        <option <?php echo $dashboard_filter_values['transaction_type']=='' ? 'selected' : ''; ?> value="">Select an option</option>
-                        <?php echo get_transaction_type_option($dashboard_filter_values['transaction_type']); ?>
-                      </select>
+                    <div class="dashboard-filter-field dashboard-filter-field-wide">
+                      <label for="dashboard_filter_transaction_component_search">Transaction Components</label>
+                      <input type="hidden" id="dashboard_filter_transaction_components" name="dashboard_filter_transaction_components" value="<?php echo htmlspecialchars($dashboard_filter_values['transaction_components'], ENT_QUOTES, 'UTF-8'); ?>">
+                      <div class="dashboard-component-selector">
+                        <div class="dashboard-component-search">
+                          <i class="fa fa-search"></i>
+                          <input type="text" id="dashboard_filter_transaction_component_search" class="form-control" placeholder="Search income, expense, transfer, exchange, or child components..." autocomplete="off">
+                        </div>
+                        <div class="dashboard-component-tree" id="dashboard_filter_transaction_components_container"></div>
+                        <small class="dashboard-component-help" id="dashboard_filter_transaction_components_summary">Select parent or child transaction components.</small>
+                      </div>
                     </div>
 
                     <div class="dashboard-filter-field">
@@ -1116,6 +1216,59 @@
       if(branchOptionsReloaded){
         updateDashboardTransactionsReportHeader();
       }
+    });
+
+
+    var dashboardTransactionComponents = <?php echo print_access_sub_categories(); ?>;
+    var dashboardSelectedTransactionComponents = <?php echo json_encode(array_values(array_filter(explode(',', $dashboard_filter_values['transaction_components'])))); ?>;
+    var dashboardTransactionComponentsTree = new Tree('#dashboard_filter_transaction_components_container', {
+      data: [{ id: 'dashboard_filter_transaction_components_root', text: 'Transaction Components', children: dashboardTransactionComponents }],
+      closeDepth: 2,
+      loaded: function(){
+        this.values = dashboardSelectedTransactionComponents;
+        $('#dashboard_filter_transaction_components').val(this.values.join(','));
+        updateDashboardTransactionComponentSummary(this.selectedNodes || []);
+      },
+      onChange: function(){
+        $('#dashboard_filter_transaction_components').val(this.values.join(','));
+        updateDashboardTransactionComponentSummary(this.selectedNodes || []);
+      }
+    });
+
+    function updateDashboardTransactionComponentSummary(selectedNodes){
+      var $summary = $('#dashboard_filter_transaction_components_summary');
+      var selectedLabels = $.map(selectedNodes, function(node){
+        return node && node.text ? node.text : null;
+      });
+
+      if(selectedLabels.length === 0){
+        $summary.text('Select parent or child transaction components.');
+      }else if(selectedLabels.length <= 3){
+        $summary.text('Selected: ' + selectedLabels.join(', '));
+      }else{
+        $summary.text(selectedLabels.length + ' transaction components selected.');
+      }
+    }
+
+    $('#dashboard_filter_transaction_component_search').on('input', function(){
+      var term = $.trim($(this).val()).toLowerCase();
+      var $tree = $('#dashboard_filter_transaction_components_container');
+
+      if(term === ''){
+        $tree.find('.treejs-node').show();
+        return;
+      }
+
+      $tree.find('.treejs-node').hide();
+      $tree.find('.treejs-label').each(function(){
+        var $label = $(this);
+        var isMatch = $label.text().toLowerCase().indexOf(term) !== -1;
+        if(isMatch){
+          $label.closest('.treejs-node').show().parents('.treejs-node').show();
+          $label.closest('.treejs-node').parents('.treejs-node__close').removeClass('treejs-node__close');
+          $label.closest('.treejs-nodes').show();
+        }
+      });
     });
 
     $('#dashboard_transaction_filter_close').on('click', function(){
