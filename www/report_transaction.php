@@ -1364,24 +1364,14 @@
     }
   }
 
-  var transaction_components = <?php echo print_access_sub_categories(); ?>
-
-    return components
-      .filter(function(component){
-      })
-      .map(function(component){
-        if(component.children && component.children.length){
-        }
-        return component;
-      });
-  }
-
+  var transaction_components = <?php echo print_access_sub_categories(); ?>;
 
   var transaction_components_tree = new Tree('#transaction_components_container', {
     data: [{ id: 'transaction_components', text: 'Transaction Components', children: transaction_components }],
     closeDepth: 2,
     loaded: function () {
       this.values = [<?php echo $loaded_transaction_components; ?>];
+      $('#transaction_components').val(this.values);
     },
     onChange: function () {
       var transaction_components = this.values;
