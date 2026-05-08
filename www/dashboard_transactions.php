@@ -647,6 +647,7 @@
       SUM(CASE WHEN currency='IRT' AND $dashboard_transfer_in_scope THEN transfer_amount ELSE 0 END) AS total_transfer_in_irt
     FROM `transfers`
     WHERE transfers.deleted='0'
+    AND transfers.is_approved='1'
     AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR transfers.users_id='$holu_users_id')
     $dashboard_transfer_date_filter
     $accessed_sub_categories_transfer
@@ -732,6 +733,7 @@
       SUM(CASE WHEN currency='IRT' AND $dashboard_transfer_in_scope THEN transfer_amount ELSE 0 END) AS closing_transfer_in_irt
     FROM `transfers`
     WHERE transfers.deleted='0'
+    AND transfers.is_approved='1'
     AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR transfers.users_id='$holu_users_id')
     $dashboard_closing_transfer_date_filter
     $accessed_sub_categories_transfer
