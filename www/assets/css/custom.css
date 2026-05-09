@@ -954,7 +954,7 @@ a{
 .attachment-pdf-actions{
 	display: grid;
 	gap: 8px;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
 	margin-top: 16px;
 }
 
@@ -965,7 +965,12 @@ a{
 	font-size: 12px;
 	font-weight: 800;
 	justify-content: center;
+	line-height: 1.2;
+	min-width: 0;
 	padding: 8px 10px !important;
+	text-align: center;
+	white-space: normal;
+	width: 100%;
 }
 
 .attachment-pdf-action i{

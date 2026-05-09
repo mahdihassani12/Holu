@@ -71,7 +71,7 @@
     }else{
       $attachment_size = holu_attachment_escape(holu_attachment_file_size($attachment_path));
       ?>
-      <div class="attachment-preview-col col-sm-6 col-xl-3 filter-item all web illustrator">
+      <div class="attachment-preview-col col-sm-6 col-lg-4 filter-item all web illustrator">
         <div class="gal-box attachment-image-card">
           <a class="attachment-image-thumb" href="<?php echo $attachment_url; ?>" title="<?php echo $attachment_title; ?>" target="_blank" rel="noopener">
             <img src="<?php echo $attachment_url; ?>" class="img-fluid" alt="<?php echo $attachment_title; ?>">
