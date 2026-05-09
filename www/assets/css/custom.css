@@ -883,3 +883,132 @@ a{
 		width: 100%;
 	}
 }
+
+.attachment-preview-col{
+	margin-bottom: 18px;
+}
+
+.attachment-pdf-card{
+	background: linear-gradient(135deg, #ffffff 0%, #fbfdfe 100%);
+	border: 1px solid #e6eef2;
+	border-radius: 14px;
+	box-shadow: 0 12px 30px rgba(42, 71, 86, 0.08);
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	justify-content: space-between;
+	overflow: hidden;
+	padding: 16px;
+	transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.attachment-pdf-card:hover{
+	border-color: rgba(54, 184, 203, 0.45);
+	box-shadow: 0 16px 36px rgba(42, 71, 86, 0.14);
+	transform: translateY(-2px);
+}
+
+.attachment-pdf-main{
+	align-items: center;
+	display: flex;
+	min-width: 0;
+}
+
+.attachment-pdf-icon{
+	align-items: center;
+	background: linear-gradient(135deg, #ffedf0 0%, #fff6f7 100%);
+	border: 1px solid #ffd8df;
+	border-radius: 14px;
+	color: #dc3545;
+	display: inline-flex;
+	flex: 0 0 56px;
+	font-size: 30px;
+	height: 56px;
+	justify-content: center;
+	margin-right: 13px;
+	width: 56px;
+}
+
+.attachment-pdf-details{
+	min-width: 0;
+}
+
+.attachment-pdf-name{
+	color: #2f3f4a;
+	font-size: 14px;
+	font-weight: 800;
+	line-height: 1.35;
+	margin: 0 0 5px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.attachment-pdf-size{
+	color: #7d8d96;
+	display: block;
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.attachment-pdf-actions{
+	display: grid;
+	gap: 8px;
+	grid-template-columns: 1fr 1fr;
+	margin-top: 16px;
+}
+
+.attachment-pdf-action{
+	align-items: center;
+	border-radius: 8px !important;
+	display: inline-flex;
+	font-size: 12px;
+	font-weight: 800;
+	justify-content: center;
+	padding: 8px 10px !important;
+}
+
+.attachment-pdf-action i{
+	font-size: 11px;
+	margin-right: 6px;
+}
+
+.attachment-pdf-preview{
+	background: #36b8cb !important;
+	border-color: #36b8cb !important;
+	color: #fff !important;
+}
+
+.attachment-pdf-preview:hover,
+.attachment-pdf-preview:focus{
+	background: #2f8f9d !important;
+	border-color: #2f8f9d !important;
+	color: #fff !important;
+}
+
+.attachment-pdf-download{
+	background: #fff !important;
+	border: 1px solid #d9edf1 !important;
+	color: #2f8f9d !important;
+}
+
+.attachment-pdf-download:hover,
+.attachment-pdf-download:focus{
+	background: #f1fbfc !important;
+	border-color: #36b8cb !important;
+	color: #258fa0 !important;
+}
+
+@media (max-width: 575.98px){
+	.attachment-preview-col{
+		margin-bottom: 14px;
+	}
+
+	.attachment-pdf-card{
+		padding: 14px;
+	}
+
+	.attachment-pdf-actions{
+		grid-template-columns: 1fr;
+	}
+}

@@ -1,6 +1,7 @@
 <?php
 
   include("../lib/_configuration.php");
+  include_once("_attachment_preview.php");
 
   if(isset($_POST['flag_request'])){
   	
@@ -445,19 +446,7 @@
 
 	        	if($expense_attachment_sq->rowCount()>0){
 	        		while($expense_attachment_row = $expense_attachment_sq->fetch()){
-	        			$attachment_name = basename($expense_attachment_row['path']);
-	        			?>
-	        			<div class="col-sm-6 col-xl-3 filter-item all web illustrator">
-		              <div class="gal-box">
-		                <a title="Screenshot-1">
-		                  <img src="<?php echo $expense_attachment_row['path']; ?>" class="img-fluid" alt="work-thumbnail">
-		                </a>
-		                <div class="gall-info">
-		                  <h4 class="font-16 mt-0"><?php echo $attachment_name; ?></h4>
-		                </div> <!-- gallery info -->
-		              </div> <!-- end gal-box -->
-		            </div> <!-- end col -->
-	        			<?php
+								holu_render_attachment_preview($expense_attachment_row['path']);
 	        		}
 	        	}else{
 	        		?>
