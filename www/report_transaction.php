@@ -422,7 +422,8 @@
   }
 
   $dashboard_excel_data .= $dashboard_advanced_filter_query;
-  $dashboard_filter_panel_is_open = $dashboard_advanced_filter_query!='';
+  // Keep applied filters active while rendering the advanced filter panel closed after form submission.
+  $dashboard_filter_panel_is_open = false;
 
   $dashboard_transfer_out_scope = "(($transfer_from_access_condition) OR (transfers.users_id='$holu_users_id' AND NOT ($transfer_to_access_condition)))";
   $dashboard_transfer_in_scope = "($transfer_to_access_condition)";
