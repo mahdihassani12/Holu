@@ -1,7 +1,7 @@
 <?php
 
   function holu_attachment_escape($value){
-    return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
   }
 
   function holu_attachment_file_size($path){
@@ -73,10 +73,10 @@
       <div class="col-sm-6 col-xl-3 filter-item all web illustrator">
         <div class="gal-box">
           <a title="Screenshot-1">
-            <img src="<?php echo $attachment_path; ?>" class="img-fluid" alt="work-thumbnail">
+            <img src="<?php echo $attachment_url; ?>" class="img-fluid" alt="work-thumbnail">
           </a>
           <div class="gall-info">
-            <h4 class="font-16 mt-0"><?php echo $attachment_name; ?></h4>
+            <h4 class="font-16 mt-0"><?php echo $attachment_title; ?></h4>
           </div> <!-- gallery info -->
         </div> <!-- end gal-box -->
       </div> <!-- end col -->
