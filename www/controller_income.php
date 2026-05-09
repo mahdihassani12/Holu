@@ -787,9 +787,7 @@
 								holu_render_attachment_preview($income_attachment_row['path']);
 	        		}
 	        	}else{
-	        		?>
-	        			<h2 class="text-center">No attachment</h2>
-	        		<?php
+								holu_render_no_attachment();
 	        	}
 
 	        	?>

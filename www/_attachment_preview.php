@@ -69,17 +69,46 @@
       </div>
       <?php
     }else{
+      $attachment_size = holu_attachment_escape(holu_attachment_file_size($attachment_path));
       ?>
-      <div class="col-sm-6 col-xl-3 filter-item all web illustrator">
-        <div class="gal-box">
-          <a title="Screenshot-1">
-            <img src="<?php echo $attachment_url; ?>" class="img-fluid" alt="work-thumbnail">
+      <div class="attachment-preview-col col-sm-6 col-xl-3 filter-item all web illustrator">
+        <div class="gal-box attachment-image-card">
+          <a class="attachment-image-thumb" href="<?php echo $attachment_url; ?>" title="<?php echo $attachment_title; ?>" target="_blank" rel="noopener">
+            <img src="<?php echo $attachment_url; ?>" class="img-fluid" alt="<?php echo $attachment_title; ?>">
           </a>
-          <div class="gall-info">
-            <h4 class="font-16 mt-0"><?php echo $attachment_title; ?></h4>
+          <div class="gall-info attachment-image-info">
+            <h4 class="font-16 mt-0 attachment-image-name" title="<?php echo $attachment_title; ?>"><?php echo $attachment_title; ?></h4>
+            <span class="attachment-image-size"><?php echo $attachment_size; ?></span>
           </div> <!-- gallery info -->
+          <div class="attachment-pdf-actions attachment-image-actions">
+            <a class="btn btn-sm attachment-pdf-action attachment-pdf-preview" href="<?php echo $attachment_url; ?>" target="_blank" rel="noopener">
+              <i class="far fa-eye"></i> Preview
+            </a>
+            <a class="btn btn-sm attachment-pdf-action attachment-pdf-download" href="<?php echo $attachment_url; ?>" download="<?php echo $attachment_title; ?>">
+              <i class="fas fa-download"></i> Download
+            </a>
+          </div>
         </div> <!-- end gal-box -->
       </div> <!-- end col -->
       <?php
     }
+  }
+
+  function holu_render_no_attachment(){
+    ?>
+    <div class="col-12">
+      <div class="attachment-empty-state">
+        <div class="attachment-empty-illustration" aria-hidden="true">
+          <span class="attachment-empty-ring attachment-empty-ring-one"></span>
+          <span class="attachment-empty-ring attachment-empty-ring-two"></span>
+          <i class="far fa-folder-open"></i>
+        </div>
+        <div class="attachment-empty-copy">
+          <p class="attachment-empty-eyebrow">Attachment gallery</p>
+          <h3>No attachments found</h3>
+          <p>There are no files connected to this record yet. Once an image or PDF is uploaded, it will appear here with preview and download actions.</p>
+        </div>
+      </div>
+    </div>
+    <?php
   }

@@ -614,9 +614,7 @@
 								holu_render_attachment_preview($transfer_attachment_row['path']);
 						  }
 					  }else{
-						  ?>
-							  <h2 class="text-center">No attachment</h2>
-						  <?php
+						  holu_render_no_attachment();
 					  }
 	  
 					  ?>
