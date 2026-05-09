@@ -143,6 +143,8 @@
 
 			        	<input type="hidden" name="data_id" id="data_id" value="<?php echo holu_encode($data_id); ?>"/>
 
+                <input type="hidden" id="province" name="province" value="<?php echo $exchange_row['province']; ?>"/>
+
                 <input type="hidden" id="branch" name="branch" value="<?php echo $exchange_row['branch']; ?>"/>
 
                 <div class="form-group row">
@@ -663,15 +665,14 @@
 
 	  			track_editions('edit_exchange', ['exchanges_id'=>$_POST['data_id'], 'data_array'=>$_POST]);
 
-	  			$data_id        = holu_escape(holu_decode($post['data_id'] ?? ''));
-				$branch         = holu_escape($post['branch'] ?? '');
-				$exchange_date  = holu_escape($post['exchange_date'] ?? '');
-				$from_amount    = holu_escape($post['from_amount'] ?? '');
-				$from_currency  = holu_escape($post['from_currency'] ?? '');
-				$to_amount      = holu_escape($post['to_amount'] ?? '');
-				$to_currency    = holu_escape($post['to_currency'] ?? '');
-				$check_number   = holu_escape($post['check_number'] ?? '');
-				$description    = holu_escape($post['description'] ?? '');
+				$data_id        = holu_escape(holu_decode($_POST['data_id'] ?? ''));
+				$branch         = holu_escape($_POST['branch'] ?? '');
+				$exchange_date  = holu_escape($_POST['exchange_date'] ?? '');
+				$from_amount    = holu_escape($_POST['from_amount'] ?? '');
+				$from_currency  = holu_escape($_POST['from_currency'] ?? '');
+				$to_amount      = holu_escape($_POST['to_amount'] ?? '');
+				$to_currency    = holu_escape($_POST['to_currency'] ?? '');
+				$description    = holu_escape($_POST['description'] ?? '');
 
 	  			$exchange_uq = $db->prepare("UPDATE `exchanges` SET 
 	  				branch=:branch,
