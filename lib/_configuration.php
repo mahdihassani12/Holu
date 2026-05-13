@@ -2397,14 +2397,14 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 
 	function resolve_dashboard_transaction_date_range(){
 		$options = get_dashboard_transaction_date_range_options();
-		$date_range = isset($_GET['date_range']) ? holu_escape($_GET['date_range']) : 'last_90_days';
+		$date_range = isset($_GET['date_range']) ? holu_escape($_GET['date_range']) : 'life_time';
 
 		if($date_range=='last_6_months'){
 			$date_range = 'last_180_days';
 		}
 
 		if(!array_key_exists($date_range, $options)){
-			$date_range = 'last_90_days';
+			$date_range = 'life_time';
 		}
 
 		$custom_from_date = isset($_GET['from_date']) ? normalize_holu_date_value(holu_escape($_GET['from_date'])) : '';
