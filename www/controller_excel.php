@@ -9,6 +9,50 @@
   use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
   use Box\Spout\Common\Entity\Style\Color;
 
+  function excel_transaction_description($transaction_row, $province='0', $branch=''){
+    if($transaction_row['transaction_type']!='Transfer'){
+      return $transaction_row['transaction_description'];
+    }
+
+    if(isset($transaction_row['transaction_transfer_side']) && $transaction_row['transaction_transfer_side']=='Transfer To'){
+      return $transaction_row['transaction_approve_description'];
+    }
+
+    if($province!='0' && !empty($branch)){
+      if(
+        $province==$transaction_row['transaction_to_province'] &&
+        $branch==$transaction_row['transaction_to_branch']
+      ){
+        return $transaction_row['transaction_approve_description'];
+      }
+
+      if(
+        $province==$transaction_row['transaction_from_province'] &&
+        $branch==$transaction_row['transaction_from_branch']
+      ){
+        return $transaction_row['transaction_description'];
+      }
+    }elseif($province!='0'){
+      if($province==$transaction_row['transaction_to_province']){
+        return $transaction_row['transaction_approve_description'];
+      }
+
+      if($province==$transaction_row['transaction_from_province']){
+        return $transaction_row['transaction_description'];
+      }
+    }elseif(!empty($branch)){
+      if($branch==$transaction_row['transaction_to_branch']){
+        return $transaction_row['transaction_approve_description'];
+      }
+
+      if($branch==$transaction_row['transaction_from_branch']){
+        return $transaction_row['transaction_description'];
+      }
+    }
+
+    return $transaction_row['transaction_description'];
+  }
+
   function has_customer_reference_for_sib($additional_informations_raw){
     if(empty($additional_informations_raw)){
       return false;
@@ -498,33 +542,7 @@
 
             $transaction_row['transaction__sub_categories'] = $transaction_row['transaction_sub_categories_id']!="" ? get_col('sub_categories', 'sub_category_name', 'id', $transaction_row['transaction_sub_categories_id']) : '';
             $transaction_sib_number = $transaction_row['transaction_sib_number'];
-            $transaction_description = $transaction_row['transaction_description'];
-            if($transaction_row['transaction_type']=='Transfer' && $province!="0" && !empty($branch)){
-              if(
-                $province==$transaction_row['transaction_to_province'] &&
-                $branch==$transaction_row['transaction_to_branch'] &&
-                $transaction_row['transaction_approve_description']!=""
-              ){
-                $transaction_description = $transaction_row['transaction_approve_description'];
-              }elseif(
-                $province==$transaction_row['transaction_from_province'] &&
-                $branch==$transaction_row['transaction_from_branch']
-              ){
-                $transaction_description = $transaction_row['transaction_description'];
-              }
-            }elseif($transaction_row['transaction_type']=='Transfer' && $province!="0"){
-              if($province==$transaction_row['transaction_to_province'] && $transaction_row['transaction_approve_description']!=""){
-                $transaction_description = $transaction_row['transaction_approve_description'];
-              }elseif($province==$transaction_row['transaction_from_province']){
-                $transaction_description = $transaction_row['transaction_description'];
-              }
-            }elseif($transaction_row['transaction_type']=='Transfer' && !empty($branch)){
-              if($branch==$transaction_row['transaction_to_branch'] && $transaction_row['transaction_approve_description']!=""){
-                $transaction_description = $transaction_row['transaction_approve_description'];
-              }elseif($branch==$transaction_row['transaction_from_branch']){
-                $transaction_description = $transaction_row['transaction_description'];
-              }
-            }
+            $transaction_description = excel_transaction_description($transaction_row, $province, $branch);
             if(
               $transaction_row['transaction_type'] === 'Income' &&
               !has_customer_reference_for_sib($transaction_row['transaction_additional_informations'] ?? '')
@@ -571,24 +589,25 @@
         $transfer_to_access_condition = set_province_branch_portion('transfers.to_province', 'transfers.to_branch');
 
         $transaction_sq = $db->query("SELECT * FROM (
-          SELECT incomes.id AS transaction_id, 'Income' AS transaction_type, incomes.sub_categories_id AS transaction_sub_categories_id, incomes.province AS transaction_province, incomes.branch AS transaction_branch, incomes.income_date AS transaction_date, incomes.income_amount AS transaction_amount, incomes.currency AS transaction_currency, incomes.description AS transaction_description, incomes.users_id AS transaction_users_id, incomes.check_number AS transaction_check_number, incomes.sib_number AS transaction_sib_number, incomes.additional_informations AS transaction_additional_informations, '' AS transaction_approve_description
+          SELECT incomes.id AS transaction_id, 'Income' AS transaction_type, incomes.sub_categories_id AS transaction_sub_categories_id, incomes.province AS transaction_province, incomes.branch AS transaction_branch, incomes.income_date AS transaction_date, incomes.income_amount AS transaction_amount, incomes.currency AS transaction_currency, incomes.description AS transaction_description, incomes.users_id AS transaction_users_id, incomes.check_number AS transaction_check_number, incomes.sib_number AS transaction_sib_number, incomes.additional_informations AS transaction_additional_informations, '' AS transaction_approve_description, '' AS transaction_from_province, '' AS transaction_to_province, '' AS transaction_from_branch, '' AS transaction_to_branch, '' AS transaction_transfer_side
           FROM `incomes`
           WHERE incomes.deleted='0'
           AND $income_access_condition
           AND incomes.sub_categories_id IN ($accessed_sub_categories_income)
           UNION ALL
-          SELECT expenses.id AS transaction_id, 'Expense' AS transaction_type, expenses.sub_categories_id AS transaction_sub_categories_id, expenses.province AS transaction_province, expenses.branch AS transaction_branch, expenses.expense_date AS transaction_date, expenses.expense_amount AS transaction_amount, expenses.currency AS transaction_currency, expenses.description AS transaction_description, expenses.users_id AS transaction_users_id, expenses.check_number AS transaction_check_number, '' AS transaction_sib_number, expenses.additional_informations AS transaction_additional_informations, '' AS transaction_approve_description
+          SELECT expenses.id AS transaction_id, 'Expense' AS transaction_type, expenses.sub_categories_id AS transaction_sub_categories_id, expenses.province AS transaction_province, expenses.branch AS transaction_branch, expenses.expense_date AS transaction_date, expenses.expense_amount AS transaction_amount, expenses.currency AS transaction_currency, expenses.description AS transaction_description, expenses.users_id AS transaction_users_id, expenses.check_number AS transaction_check_number, '' AS transaction_sib_number, expenses.additional_informations AS transaction_additional_informations, '' AS transaction_approve_description, '' AS transaction_from_province, '' AS transaction_to_province, '' AS transaction_from_branch, '' AS transaction_to_branch, '' AS transaction_transfer_side
           FROM `expenses`
           WHERE expenses.deleted='0'
           AND $expense_access_condition
           AND expenses.sub_categories_id IN ($accessed_sub_categories_expense)
           UNION ALL
-          SELECT exchanges.id AS transaction_id, 'Exchange' AS transaction_type, 0 AS transaction_sub_categories_id, exchanges.province AS transaction_province, exchanges.branch AS transaction_branch, exchanges.exchange_date AS transaction_date, CONCAT(exchanges.from_amount, ' to ', exchanges.to_amount) AS transaction_amount, CONCAT(exchanges.from_currency, ' to ', exchanges.to_currency) AS transaction_currency, exchanges.description AS transaction_description, exchanges.users_id AS transaction_users_id, '' AS transaction_check_number, '' AS transaction_sib_number, '' AS transaction_additional_informations, '' AS transaction_approve_description
+          SELECT exchanges.id AS transaction_id, 'Exchange' AS transaction_type, 0 AS transaction_sub_categories_id, exchanges.province AS transaction_province, exchanges.branch AS transaction_branch, exchanges.exchange_date AS transaction_date, CONCAT(exchanges.from_amount, ' to ', exchanges.to_amount) AS transaction_amount, CONCAT(exchanges.from_currency, ' to ', exchanges.to_currency) AS transaction_currency, exchanges.description AS transaction_description, exchanges.users_id AS transaction_users_id, '' AS transaction_check_number, '' AS transaction_sib_number, '' AS transaction_additional_informations, '' AS transaction_approve_description, '' AS transaction_from_province, '' AS transaction_to_province, '' AS transaction_from_branch, '' AS transaction_to_branch, '' AS transaction_transfer_side
           FROM `exchanges`
           WHERE exchanges.deleted='0'
           AND $exchange_access_condition
-          $accessed_sub_categories_exchangeUNION ALL
-          SELECT transfers.id AS transaction_id, 'Transfer' AS transaction_type, 0 AS transaction_sub_categories_id, CONCAT(transfers.from_province, ' to ', transfers.to_province) AS transaction_province, CONCAT(transfers.from_branch, ' to ', transfers.to_branch) AS transaction_branch, transfers.transfer_date AS transaction_date, transfers.transfer_amount AS transaction_amount, transfers.currency AS transaction_currency, transfers.description AS transaction_description, transfers.users_id AS transaction_users_id, '' AS transaction_check_number, '' AS transaction_sib_number, '' AS transaction_additional_informations, transfers.approve_description AS transaction_approve_description
+          $accessed_sub_categories_exchange
+          UNION ALL
+          SELECT transfers.id AS transaction_id, 'Transfer' AS transaction_type, 0 AS transaction_sub_categories_id, CONCAT(transfers.from_province, ' to ', transfers.to_province) AS transaction_province, CONCAT(transfers.from_branch, ' to ', transfers.to_branch) AS transaction_branch, transfers.transfer_date AS transaction_date, transfers.transfer_amount AS transaction_amount, transfers.currency AS transaction_currency, transfers.description AS transaction_description, transfers.users_id AS transaction_users_id, '' AS transaction_check_number, '' AS transaction_sib_number, '' AS transaction_additional_informations, transfers.approve_description AS transaction_approve_description, transfers.from_province AS transaction_from_province, transfers.to_province AS transaction_to_province, transfers.from_branch AS transaction_from_branch, transfers.to_branch AS transaction_to_branch, CASE WHEN $transfer_to_access_condition THEN 'Transfer To' WHEN $transfer_from_access_condition THEN 'Transfer From' ELSE 'Transfer From' END AS transaction_transfer_side
           FROM `transfers`
           WHERE transfers.deleted='0'
           AND transfers.is_approved='1'
@@ -653,7 +672,7 @@
 
             $writer->addRow([
               $count++,
-              $transaction_row['transaction_description'],
+              excel_transaction_description($transaction_row),
               $transaction_row['transaction_amount'],
               $transaction_row['transaction_currency'],
               $transaction_row['transaction_type'],
