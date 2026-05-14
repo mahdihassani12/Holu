@@ -3,136 +3,358 @@
   $holu_page_paths = ["Reports", "Report of Transaction Edition"];
 
   $general_filtering_data = '';
-  $income_filtering_data = "";
-  $expense_filtering_data = "";
-  $exchange_filtering_data = "";
-  $transfer_filtering_data = "";
+  $income_filtering_data = '';
+  $expense_filtering_data = '';
+  $exchange_filtering_data = '';
+  $transfer_filtering_data = '';
 
-  $province = "0";
-  $branch = "";
-  $start_edition_date = "";
-  $end_edition_date = "";
-  $transaction_type = "";
-  $customer_name = "";
-  $customer_id = "";
-  $check_number = "";
-  $markup = "";
-  $unmark = "";
-  $amount = "";
-  $currency = "";
-  $description = "";
+  $dashboard_filter_values = [
+    'province' => '',
+    'branch' => '',
+    'from_date' => '',
+    'to_date' => '',
+    'customer_name' => '',
+    'customer_id' => '',
+    'description' => '',
+    'markup' => '',
+    'unmark' => '',
+    'currency' => '',
+    'transaction_components' => '',
+    'transaction_type' => '',
+    'amount' => '',
+    'sib_number' => '',
+    'check_number' => '',
+    'users_id' => [],
+  ];
 
-  if(isset($_GET['province']) AND !empty($_GET['province'])){
-    $province = $_GET['province'];
-    $income_filtering_data .= " AND incomes.province='".$province."' ";
-    $expense_filtering_data .= " AND expenses.province='".$province."' ";
-    $exchange_filtering_data .= " AND exchanges.province='".$province."' ";
-    $transfer_filtering_data .= " AND (transfers.from_province='".$province."' OR to_province='".$province."') ";
+  function transaction_edition_filter_input($key, $legacy_key='', $default=''){
+    if(isset($_GET[$key])){
+      return holu_escape($_GET[$key]);
+    }
+    if($legacy_key!='' && isset($_GET[$legacy_key])){
+      return holu_escape($_GET[$legacy_key]);
+    }
+    return $default;
   }
-  if(isset($_GET['branch']) AND !empty($_GET['branch'])){
-    $branch = $_GET['branch'];
-    $income_filtering_data .= " AND incomes.branch='".$branch."' ";
-    $expense_filtering_data .= " AND expenses.branch='".$branch."' ";
-    $exchange_filtering_data .= " AND exchanges.branch='".$branch."' ";
-    $transfer_filtering_data .= " AND (transfers.from_branch='".$branch."' OR transfers.to_branch='".$branch."') ";
+
+  function transaction_edition_filter_sql_value($value){
+    global $db;
+    return $db->quote((string)$value);
   }
-  if(isset($_GET['start_edition_date']) AND !empty($_GET['start_edition_date'])){
-    $start_edition_date = $_GET['start_edition_date'];
-    $general_filtering_data .= " AND transaction_editions.insertion_date>='$start_edition_date'";
+
+  function transaction_edition_filter_like_value($value){
+    return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], (string)$value);
   }
-  if(isset($_GET['end_edition_date']) AND !empty($_GET['end_edition_date'])){
-    $end_edition_date = $_GET['end_edition_date'];
-    $general_filtering_data .= " AND transaction_editions.insertion_date<='$end_edition_date'";
+
+  function transaction_edition_filter_date_value($value){
+    $value = trim((string)$value);
+    if($value===''){
+      return '';
+    }
+    if(is_holu_date_value($value)){
+      return $value;
+    }
+    $timestamp = strtotime($value);
+    if($timestamp===false){
+      return '';
+    }
+    return date('Y-m-d', $timestamp);
   }
-  if(isset($_GET['transaction_type']) AND !empty($_GET['transaction_type'])){
-    $transaction_type = $_GET['transaction_type'];
-    if($transaction_type=="Income"){
-      $income_filtering_data .= "";
-      $expense_filtering_data .= " AND 0 ";
-      $exchange_filtering_data .= " AND 0 ";
-      $transfer_filtering_data .= " AND 0 ";
-    }else if($transaction_type=="Expense"){
-      $income_filtering_data .= " AND 0 ";
-      $expense_filtering_data .= "";
-      $exchange_filtering_data .= " AND 0 ";
-      $transfer_filtering_data .= " AND 0 ";
-    }else if($transaction_type=="Exchange"){
-      $income_filtering_data .= " AND 0 ";
-      $expense_filtering_data .= " AND 0 ";
-      $exchange_filtering_data .= "";
-      $transfer_filtering_data .= " AND 0 ";
-    }else if($transaction_type=="Transfer"){
-      $income_filtering_data .= " AND 0 ";
-      $expense_filtering_data .= " AND 0 ";
-      $exchange_filtering_data .= " AND 0 ";
-      $transfer_filtering_data .= "";
+
+  function transaction_edition_add_table_filter($condition_by_type){
+    global $income_filtering_data, $expense_filtering_data, $exchange_filtering_data, $transfer_filtering_data;
+
+    $income_filtering_data .= isset($condition_by_type['income']) ? $condition_by_type['income'] : ' AND 0 ';
+    $expense_filtering_data .= isset($condition_by_type['expense']) ? $condition_by_type['expense'] : ' AND 0 ';
+    $exchange_filtering_data .= isset($condition_by_type['exchange']) ? $condition_by_type['exchange'] : ' AND 0 ';
+    $transfer_filtering_data .= isset($condition_by_type['transfer']) ? $condition_by_type['transfer'] : ' AND 0 ';
+  }
+
+  function transaction_edition_add_filter_label($label, $value){
+    global $holu_filtering_array;
+    $value = trim((string)$value);
+    if($value!==''){
+      $holu_filtering_array[] = $label.': '.htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
     }
   }
-  if(isset($_GET['customer_name']) AND !empty($_GET['customer_name'])){
-    $customer_name = $_GET['customer_name'];
-    $income_filtering_data .= " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info='Customer Name' AND value_info LIKE '%$customer_name%' ) ";
-    $expense_filtering_data .= " AND 0 ";
-    $exchange_filtering_data .= " AND 0 ";
-    $transfer_filtering_data .= " AND 0 ";
+
+  function transaction_edition_filter_component_labels($component_ids){
+    $labels = [];
+    foreach($component_ids as $component_id){
+      $parts = explode('/', trim((string)$component_id, '/'));
+      if(count($parts)<2 || $parts[0]!='sub_category_accessibility'){
+        continue;
+      }
+
+      $transaction_type_label = ucfirst($parts[1]);
+      if(count($parts)>=4 && $parts[3]!=='' && is_numeric($parts[3])){
+        $sub_category_name = get_col('sub_categories', 'sub_category_name', 'id', $parts[3]);
+        if($sub_category_name!=''){
+          $labels[] = $transaction_type_label.' / '.$sub_category_name;
+          continue;
+        }
+      }
+
+      if(count($parts)>=3 && $parts[2]!=='' && is_numeric($parts[2])){
+        $category_name = get_col('categories', 'category_name', 'id', $parts[2]);
+        if($category_name!=''){
+          $labels[] = $transaction_type_label.' / '.$category_name;
+          continue;
+        }
+      }
+
+      $labels[] = $transaction_type_label;
+    }
+
+    return implode(', ', array_unique($labels));
   }
 
-  if(isset($_GET['customer_id']) AND !empty($_GET['customer_id'])){
-    $customer_id = $_GET['customer_id'];
-    $income_filtering_data .= " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info='Customer ID' AND value_info LIKE '%$customer_id' AND deleted='0') ";
-    $expense_filtering_data .= " AND expenses.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Expense' AND key_info='Customer ID' AND value_info LIKE '%$customer_id' AND deleted='0') ";
-    $exchange_filtering_data .= " AND 0 ";
-    $transfer_filtering_data .= " AND 0 ";
-  }
-  if(isset($_GET['check_number']) AND !empty($_GET['check_number'])){
-    $check_number = $_GET['check_number'];
-    $income_filtering_data .= " AND incomes.check_number='".$check_number."' ";
-    $expense_filtering_data .= " AND expenses.check_number='".$check_number."' ";
-    $exchange_filtering_data .= " AND 0 ";
-    $transfer_filtering_data .= " AND 0 ";
-  }
-  if(isset($_GET['markup']) AND !empty($_GET['markup'])){
-    $markup = $_GET['markup'];
-    $general_filtering_data .= " AND transaction_editions.id IN (SELECT reference_id FROM markups WHERE reference_type = 'Transaction_Edition' AND markup_type = '$markup' AND deleted = '0') ";
-  }
-  if(isset($_GET['unmark']) AND !empty($_GET['unmark'])){
-    $unmark = $_GET['unmark'];
-    $general_filtering_data .= " AND ( transaction_editions.id IN (SELECT reference_id FROM markups WHERE reference_type = 'Transaction_Edition' AND markup_type = '$unmark' AND deleted = '1') OR transaction_editions.id NOT IN (SELECT reference_id FROM markups WHERE reference_type = 'Transaction_Edition' AND markup_type = '$unmark')) ";
-  }
-  if(isset($_GET['amount']) AND !empty($_GET['amount'])){
-    $amount = $_GET['amount'];
-    $income_filtering_data .= " AND incomes.income_amount='".$amount."' ";
-    $expense_filtering_data .= " AND expenses.expense_amount='".$amount."' ";
-    $exchange_filtering_data .= " AND (exchanges.from_amount='".$amount."' OR exchanges.to_amount='".$amount."') ";
-    $transfer_filtering_data .= " AND transfers.transfer_amount='".$amount."' ";
-  }
-  if(isset($_GET['currency']) AND !empty($_GET['currency'])){
-    $currency = $_GET['currency'];
-    $income_filtering_data .= " AND incomes.currency='".$currency."' ";
-    $expense_filtering_data .= " AND expenses.currency='".$currency."' ";
-    $exchange_filtering_data .= "";
-    $transfer_filtering_data .= " AND transfers.currency='".$currency."' ";
-  }
-  if(isset($_GET['description']) AND !empty($_GET['description'])){
-    $description = $_GET['description'];
-    $income_filtering_data .= " AND incomes.description LIKE '%".$description."%' ";
-    $expense_filtering_data .= " AND expenses.description LIKE '%".$description."%' ";
-    $exchange_filtering_data .= " AND exchanges.description LIKE '%".$description."%' ";
-    $transfer_filtering_data .= " AND transfers.description LIKE '%".$description."%' ";
+  $dashboard_filter_values['province'] = transaction_edition_filter_input('dashboard_filter_province', 'province');
+  if($dashboard_filter_values['province']!='' && $dashboard_filter_values['province']!='0'){
+    $province_sql = transaction_edition_filter_sql_value($dashboard_filter_values['province']);
+    transaction_edition_add_table_filter([
+      'income' => " AND incomes.province=$province_sql ",
+      'expense' => " AND expenses.province=$province_sql ",
+      'exchange' => " AND exchanges.province=$province_sql ",
+      'transfer' => " AND (transfers.from_province=$province_sql OR transfers.to_province=$province_sql) ",
+    ]);
+    transaction_edition_add_filter_label('Province', $dashboard_filter_values['province']);
   }
 
+  $dashboard_filter_values['branch'] = transaction_edition_filter_input('dashboard_filter_branch', 'branch');
+  if($dashboard_filter_values['branch']!='' && $dashboard_filter_values['branch']!='0'){
+    $branch_sql = transaction_edition_filter_sql_value($dashboard_filter_values['branch']);
+    transaction_edition_add_table_filter([
+      'income' => " AND incomes.branch=$branch_sql ",
+      'expense' => " AND expenses.branch=$branch_sql ",
+      'exchange' => " AND exchanges.branch=$branch_sql ",
+      'transfer' => " AND (transfers.from_branch=$branch_sql OR transfers.to_branch=$branch_sql) ",
+    ]);
+    transaction_edition_add_filter_label('Branch', $dashboard_filter_values['branch']);
+  }
+
+  $dashboard_filter_values['from_date'] = transaction_edition_filter_date_value(transaction_edition_filter_input('dashboard_filter_from_date', 'start_edition_date'));
+  $dashboard_filter_values['to_date'] = transaction_edition_filter_date_value(transaction_edition_filter_input('dashboard_filter_to_date', 'end_edition_date'));
+  if($dashboard_filter_values['from_date']!='' && $dashboard_filter_values['to_date']!='' && strtotime($dashboard_filter_values['from_date'])>strtotime($dashboard_filter_values['to_date'])){
+    $swap_date = $dashboard_filter_values['from_date'];
+    $dashboard_filter_values['from_date'] = $dashboard_filter_values['to_date'];
+    $dashboard_filter_values['to_date'] = $swap_date;
+  }
+  if($dashboard_filter_values['from_date']!=''){
+    $general_filtering_data .= " AND transaction_editions.insertion_date>=".transaction_edition_filter_sql_value($dashboard_filter_values['from_date'])." ";
+  }
+  if($dashboard_filter_values['to_date']!=''){
+    $general_filtering_data .= " AND transaction_editions.insertion_date<=".transaction_edition_filter_sql_value($dashboard_filter_values['to_date'])." ";
+  }
+  if($dashboard_filter_values['from_date']!='' || $dashboard_filter_values['to_date']!=''){
+    transaction_edition_add_filter_label('Edition Date', trim($dashboard_filter_values['from_date'].' - '.$dashboard_filter_values['to_date'], ' -'));
+  }
+
+  $dashboard_filter_values['customer_name'] = transaction_edition_filter_input('dashboard_filter_customer_name', 'customer_name');
+  if($dashboard_filter_values['customer_name']!=''){
+    $customer_name_sql = transaction_edition_filter_sql_value('%'.transaction_edition_filter_like_value($dashboard_filter_values['customer_name']).'%');
+    transaction_edition_add_table_filter([
+      'income' => " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info='Customer Name' AND value_info LIKE $customer_name_sql ESCAPE '\\\\' AND deleted='0') ",
+      'expense' => " AND expenses.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Expense' AND key_info='Customer Name' AND value_info LIKE $customer_name_sql ESCAPE '\\\\' AND deleted='0') ",
+      'exchange' => " AND 0 ",
+      'transfer' => " AND 0 ",
+    ]);
+    transaction_edition_add_filter_label('Customer Name', $dashboard_filter_values['customer_name']);
+  }
+
+  $dashboard_filter_values['customer_id'] = transaction_edition_filter_input('dashboard_filter_customer_id', 'customer_id');
+  if($dashboard_filter_values['customer_id']!=''){
+    $customer_id_sql = transaction_edition_filter_sql_value('%'.transaction_edition_filter_like_value($dashboard_filter_values['customer_id']).'%');
+    transaction_edition_add_table_filter([
+      'income' => " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info='Customer ID' AND value_info LIKE $customer_id_sql ESCAPE '\\\\' AND deleted='0') ",
+      'expense' => " AND expenses.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Expense' AND key_info='Customer ID' AND value_info LIKE $customer_id_sql ESCAPE '\\\\' AND deleted='0') ",
+      'exchange' => " AND 0 ",
+      'transfer' => " AND 0 ",
+    ]);
+    transaction_edition_add_filter_label('Customer ID', $dashboard_filter_values['customer_id']);
+  }
+
+  $dashboard_filter_values['description'] = transaction_edition_filter_input('dashboard_filter_description', 'description');
+  if($dashboard_filter_values['description']!=''){
+    $description_sql = transaction_edition_filter_sql_value('%'.transaction_edition_filter_like_value($dashboard_filter_values['description']).'%');
+    transaction_edition_add_table_filter([
+      'income' => " AND incomes.description LIKE $description_sql ESCAPE '\\\\' ",
+      'expense' => " AND expenses.description LIKE $description_sql ESCAPE '\\\\' ",
+      'exchange' => " AND exchanges.description LIKE $description_sql ESCAPE '\\\\' ",
+      'transfer' => " AND transfers.description LIKE $description_sql ESCAPE '\\\\' ",
+    ]);
+    transaction_edition_add_filter_label('Description', $dashboard_filter_values['description']);
+  }
+
+  $dashboard_filter_values['markup'] = transaction_edition_filter_input('dashboard_filter_markup', 'markup');
+  if($dashboard_filter_values['markup']!=''){
+    $markup_sql = transaction_edition_filter_sql_value($dashboard_filter_values['markup']);
+    $general_filtering_data .= " AND transaction_editions.id IN (SELECT reference_id FROM markups WHERE reference_type='Transaction_Edition' AND markup_type=$markup_sql AND deleted='0') ";
+    transaction_edition_add_filter_label('Markup', $dashboard_filter_values['markup']);
+  }
+
+  $dashboard_filter_values['unmark'] = transaction_edition_filter_input('dashboard_filter_unmark', 'unmark');
+  if($dashboard_filter_values['unmark']!=''){
+    $unmark_sql = transaction_edition_filter_sql_value($dashboard_filter_values['unmark']);
+    $general_filtering_data .= " AND (transaction_editions.id IN (SELECT reference_id FROM markups WHERE reference_type='Transaction_Edition' AND markup_type=$unmark_sql AND deleted='1') OR transaction_editions.id NOT IN (SELECT reference_id FROM markups WHERE reference_type='Transaction_Edition' AND markup_type=$unmark_sql)) ";
+    transaction_edition_add_filter_label('Unmark', $dashboard_filter_values['unmark']);
+  }
+
+  $dashboard_filter_values['currency'] = transaction_edition_filter_input('dashboard_filter_currency', 'currency');
+  if($dashboard_filter_values['currency']!=''){
+    $currency_sql = transaction_edition_filter_sql_value($dashboard_filter_values['currency']);
+    transaction_edition_add_table_filter([
+      'income' => " AND incomes.currency=$currency_sql ",
+      'expense' => " AND expenses.currency=$currency_sql ",
+      'exchange' => " AND (exchanges.from_currency=$currency_sql OR exchanges.to_currency=$currency_sql) ",
+      'transfer' => " AND transfers.currency=$currency_sql ",
+    ]);
+    transaction_edition_add_filter_label('Currency', $dashboard_filter_values['currency']);
+  }
+
+  $dashboard_filter_values['transaction_components'] = transaction_edition_filter_input('dashboard_filter_transaction_components');
+  if($dashboard_filter_values['transaction_components']!=''){
+    $transaction_components = array_filter(explode(',', $dashboard_filter_values['transaction_components']));
+    $income_sub_categories_id_array = [];
+    $expense_sub_categories_id_array = [];
+    $exchange_sub_categories_id_counter = 0;
+    $transfer_sub_categories_id_counter = 0;
+
+    foreach($transaction_components as $transaction_component){
+      $transaction_component_parts = explode('/', $transaction_component);
+      if(count($transaction_component_parts)<2){
+        continue;
+      }
+
+      $transaction_component_type = $transaction_component_parts[1];
+      switch($transaction_component_type){
+        case 'income':
+          if(count($transaction_component_parts)>3 && $transaction_component_parts[3]!=''){
+            $income_sub_categories_id_array[] = transaction_edition_filter_sql_value($transaction_component_parts[3]);
+          }
+        break;
+
+        case 'expense':
+          if(count($transaction_component_parts)>3 && $transaction_component_parts[3]!=''){
+            $expense_sub_categories_id_array[] = transaction_edition_filter_sql_value($transaction_component_parts[3]);
+          }
+        break;
+
+        case 'exchange':
+          $exchange_sub_categories_id_counter++;
+        break;
+
+        case 'transfer':
+          $transfer_sub_categories_id_counter++;
+        break;
+      }
+    }
+
+    if(count($income_sub_categories_id_array)>0){
+      $income_filtering_data .= " AND incomes.sub_categories_id IN (".implode(',', array_unique($income_sub_categories_id_array)).") ";
+    }else{
+      $income_filtering_data .= " AND 0 ";
+    }
+
+    if(count($expense_sub_categories_id_array)>0){
+      $expense_filtering_data .= " AND expenses.sub_categories_id IN (".implode(',', array_unique($expense_sub_categories_id_array)).") ";
+    }else{
+      $expense_filtering_data .= " AND 0 ";
+    }
+
+    if($exchange_sub_categories_id_counter<=0){
+      $exchange_filtering_data .= " AND 0 ";
+    }
+
+    if($transfer_sub_categories_id_counter<=0){
+      $transfer_filtering_data .= " AND 0 ";
+    }
+
+    transaction_edition_add_filter_label('Transaction Components', transaction_edition_filter_component_labels($transaction_components));
+  }else{
+    $dashboard_filter_values['transaction_type'] = transaction_edition_filter_input('dashboard_filter_transaction_type', 'transaction_type');
+    if($dashboard_filter_values['transaction_type']!=''){
+      $selected_transaction_type = strtolower($dashboard_filter_values['transaction_type']);
+      foreach(['income', 'expense', 'exchange', 'transfer'] as $transaction_key){
+        if($transaction_key!=$selected_transaction_type){
+          ${$transaction_key.'_filtering_data'} .= " AND 0 ";
+        }
+      }
+      transaction_edition_add_filter_label('Transaction Type', $dashboard_filter_values['transaction_type']);
+    }
+  }
+
+  $dashboard_filter_values['amount'] = transaction_edition_filter_input('dashboard_filter_amount', 'amount');
+  if($dashboard_filter_values['amount']!=''){
+    $amount_sql = transaction_edition_filter_sql_value($dashboard_filter_values['amount']);
+    transaction_edition_add_table_filter([
+      'income' => " AND incomes.income_amount=$amount_sql ",
+      'expense' => " AND expenses.expense_amount=$amount_sql ",
+      'exchange' => " AND (exchanges.from_amount=$amount_sql OR exchanges.to_amount=$amount_sql) ",
+      'transfer' => " AND transfers.transfer_amount=$amount_sql ",
+    ]);
+    transaction_edition_add_filter_label('Amount', $dashboard_filter_values['amount']);
+  }
+
+  $dashboard_filter_values['sib_number'] = transaction_edition_filter_input('dashboard_filter_sib_number');
+  if($dashboard_filter_values['sib_number']!=''){
+    $sib_number_sql = transaction_edition_filter_sql_value($dashboard_filter_values['sib_number']);
+    transaction_edition_add_table_filter([
+      'income' => " AND incomes.sib_number=$sib_number_sql ",
+      'expense' => " AND 0 ",
+      'exchange' => " AND 0 ",
+      'transfer' => " AND 0 ",
+    ]);
+    transaction_edition_add_filter_label('SIB Number', $dashboard_filter_values['sib_number']);
+  }
+
+  $dashboard_filter_values['check_number'] = transaction_edition_filter_input('dashboard_filter_check_number', 'check_number');
+  if($dashboard_filter_values['check_number']!=''){
+    $check_number_sql = transaction_edition_filter_sql_value($dashboard_filter_values['check_number']);
+    transaction_edition_add_table_filter([
+      'income' => " AND incomes.check_number=$check_number_sql ",
+      'expense' => " AND expenses.check_number=$check_number_sql ",
+      'exchange' => " AND 0 ",
+      'transfer' => " AND 0 ",
+    ]);
+    transaction_edition_add_filter_label('Check Number', $dashboard_filter_values['check_number']);
+  }
+
+  if(isset($_GET['dashboard_filter_users_id']) && is_array($_GET['dashboard_filter_users_id']) && count($_GET['dashboard_filter_users_id'])>0){
+    $users_id_items = [];
+    foreach($_GET['dashboard_filter_users_id'] as $users_id_item){
+      $users_id_item = holu_escape($users_id_item);
+      if($users_id_item!==''){
+        $dashboard_filter_values['users_id'][] = $users_id_item;
+        $users_id_items[] = transaction_edition_filter_sql_value($users_id_item);
+      }
+    }
+    if(count($users_id_items)>0){
+      $users_id_sql = implode(',', $users_id_items);
+      transaction_edition_add_table_filter([
+        'income' => " AND incomes.users_id IN ($users_id_sql) ",
+        'expense' => " AND expenses.users_id IN ($users_id_sql) ",
+        'exchange' => " AND exchanges.users_id IN ($users_id_sql) ",
+        'transfer' => " AND (transfers.users_id IN ($users_id_sql) OR transfers.approved_by IN ($users_id_sql)) ",
+      ]);
+      transaction_edition_add_filter_label('Added By', implode(', ', $dashboard_filter_values['users_id']));
+    }
+  }
+
+  $dashboard_filter_panel_is_open = false;
   set_pagination();
 
   $transaction_edition_sq = $db->query(
     "SELECT transaction_editions.*
     FROM `transaction_editions`
-    WHERE deleted='0' 
+    WHERE deleted='0'
     AND (
       (
         transaction_editions.reference_type = 'Income'
         AND transaction_editions.reference_id IN (
-          SELECT incomes.id 
-          FROM `incomes` 
-          WHERE incomes.province IN ($accessed_provinces) 
+          SELECT incomes.id
+          FROM `incomes`
+          WHERE incomes.province IN ($accessed_provinces)
           AND incomes.sub_categories_id IN ($accessed_sub_categories_income)
           $income_filtering_data
         )
@@ -140,9 +362,9 @@
       OR (
         transaction_editions.reference_type = 'Expense'
         AND transaction_editions.reference_id IN (
-          SELECT expenses.id 
-          FROM `expenses` 
-          WHERE expenses.province IN ($accessed_provinces) 
+          SELECT expenses.id
+          FROM `expenses`
+          WHERE expenses.province IN ($accessed_provinces)
           AND expenses.sub_categories_id IN ($accessed_sub_categories_expense)
           $expense_filtering_data
         )
@@ -150,9 +372,9 @@
       OR (
         transaction_editions.reference_type = 'Exchange'
         AND transaction_editions.reference_id IN (
-          SELECT exchanges.id 
-          FROM `exchanges` 
-          WHERE exchanges.province IN ($accessed_provinces) 
+          SELECT exchanges.id
+          FROM `exchanges`
+          WHERE exchanges.province IN ($accessed_provinces)
           $accessed_sub_categories_exchange
           $exchange_filtering_data
         )
@@ -160,8 +382,8 @@
       OR (
         transaction_editions.reference_type = 'Transfer'
         AND transaction_editions.reference_id IN (
-          SELECT transfers.id 
-          FROM `transfers` 
+          SELECT transfers.id
+          FROM `transfers`
           WHERE (transfers.from_province IN ($accessed_provinces) OR transfers.to_province IN ($accessed_provinces))
           AND transfers.is_approved='1'
           $accessed_sub_categories_transfer
@@ -175,16 +397,16 @@
   );
 
   $Pagenation = $db->query(
-    "SELECT count(id) as record 
+    "SELECT count(id) as record
     FROM `transaction_editions`
-    WHERE deleted='0' 
+    WHERE deleted='0'
     AND (
       (
         transaction_editions.reference_type = 'Income'
         AND transaction_editions.reference_id IN (
-          SELECT incomes.id 
-          FROM `incomes` 
-          WHERE incomes.province IN ($accessed_provinces) 
+          SELECT incomes.id
+          FROM `incomes`
+          WHERE incomes.province IN ($accessed_provinces)
           AND incomes.sub_categories_id IN ($accessed_sub_categories_income)
           $income_filtering_data
         )
@@ -192,9 +414,9 @@
       OR (
         transaction_editions.reference_type = 'Expense'
         AND transaction_editions.reference_id IN (
-          SELECT expenses.id 
-          FROM `expenses` 
-          WHERE expenses.province IN ($accessed_provinces) 
+          SELECT expenses.id
+          FROM `expenses`
+          WHERE expenses.province IN ($accessed_provinces)
           AND expenses.sub_categories_id IN ($accessed_sub_categories_expense)
           $expense_filtering_data
         )
@@ -202,9 +424,9 @@
       OR (
         transaction_editions.reference_type = 'Exchange'
         AND transaction_editions.reference_id IN (
-          SELECT exchanges.id 
-          FROM `exchanges` 
-          WHERE exchanges.province IN ($accessed_provinces) 
+          SELECT exchanges.id
+          FROM `exchanges`
+          WHERE exchanges.province IN ($accessed_provinces)
           $accessed_sub_categories_exchange
           $exchange_filtering_data
         )
@@ -212,8 +434,8 @@
       OR (
         transaction_editions.reference_type = 'Transfer'
         AND transaction_editions.reference_id IN (
-          SELECT transfers.id 
-          FROM `transfers` 
+          SELECT transfers.id
+          FROM `transfers`
           WHERE (transfers.from_province IN ($accessed_provinces) OR transfers.to_province IN ($accessed_provinces))
           AND transfers.is_approved='1'
           $accessed_sub_categories_transfer
@@ -224,7 +446,7 @@
     $general_filtering_data"
   );
   extract($Pagenation->fetch());
-  
+
 ?>
 
 <!DOCTYPE html>
@@ -252,153 +474,151 @@
           <!-- start page title -->
           <div class="row">
             <?php include("_page_title.php"); ?>
-          </div>     
+          </div>
           <!-- end page title -->
 
-          
-
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="card-box card-box-header">
-
-                <h4 class="header-title"><i class="fa fa-filter"></i> Filter Panel</h4>
-
-              </div>
-              <div class="card-box">
-                <form class="form-horizontal" id="form_report_transaction_edition" role="form" action="report_transaction_edition.php" method="GET" enctype="multipart/form-data">
-
-                  <input type="hidden" name="flag_request" id="flag_request" value="operation"/>
-
-                  <input type="hidden" name="flag_operation" id="flag_operation" value="report_transaction_edition"/>
-
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="province">Province</label>
-                    <div class="col-sm-6">
-                      <select id="province" name="province" class="form-control" required data-branch-target="branch" data-branch-value="<?php echo $branch; ?>" onchange="get_branch_option(this.value, this.getAttribute('data-branch-value') || '0', this.getAttribute('data-branch-target') || 'branch', this); this.setAttribute('data-branch-value', '0');">
-                        <option selected hidden value="">Select an option</option>
-                        <?php echo get_province_option($province); ?>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="branch">Branch</label>
-                    <div class="col-sm-6">
-                      <select id="branch" name="branch" class="form-control">
-                        <?php echo get_branch_option($province, $branch); ?>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="start_edition_date">Edition Date</label>
-                    <div class="col-sm-3">
-                      <input type="text" id="start_edition_date" name="start_edition_date" class="form-control date_picker" placeholder="Type here..." value="<?php echo $start_edition_date; ?>">
-                    </div>
-                    <div class="col-sm-3">
-                      <input type="text" id="end_edition_date" name="end_edition_date" class="form-control date_picker" placeholder="Type here..." value="<?php echo $end_edition_date; ?>">
-                    </div>
-                  </div>
-
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="transaction_type">Transaction Type</label>
-                    <div class="col-sm-6">
-                      <select id="transaction_type" name="transaction_type" class="form-control">
-                        <option selected value="">Select an option</option>
-                        <?php echo get_transaction_type_option($transaction_type); ?>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="customer_name">Customer Name</label>
-                    <div class="col-sm-6">
-                      <input type="text" id="customer_name" name="customer_name" class="form-control" placeholder="Type here..." value="<?php echo $customer_name; ?>">
-                    </div>
-                  </div>
-
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="customer_id">Customer ID</label>
-                    <div class="col-sm-6">
-                      <input type="text" id="customer_id" name="customer_id" class="form-control" placeholder="Type here..." value="<?php echo $customer_id; ?>">
-                    </div>
-                  </div>
-
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="check_number">Check Number</label>
-                    <div class="col-sm-6">
-                      <input type="text" id="check_number" name="check_number" class="form-control" placeholder="Type here..." value="<?php echo $check_number; ?>">
-                    </div>
-                  </div>
-
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="markup">Markup</label>
-                    <div class="col-sm-6">
-                      <select id="markup" name="markup" class="form-control">
-                        <?php echo get_markup_option("system_accessibility/report/report_transaction/", $markup); ?>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="unmark">Unmark</label>
-                    <div class="col-sm-6">
-                      <select id="unmark" name="unmark" class="form-control">
-                        <?php echo get_markup_option("system_accessibility/report/report_transaction/", $unmark); ?>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="amount">Amount</label>
-                    <div class="col-sm-6">
-                      <input type="text" id="amount" name="amount" class="form-control" placeholder="Type here..." value="<?php echo $amount; ?>">
-                    </div>
-                  </div>
-
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="currency">Currency</label>
-                    <div class="col-sm-6">
-                      <select id="currency" name="currency" class="form-control">
-                        <option selected value="">Select an option</option>
-                        <?php echo get_currency_option($currency); ?>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="description">Description</label>
-                    <div class="col-sm-6">
-                      <input type="text" id="description" name="description" class="form-control" placeholder="Type here..." value="<?php echo $description; ?>">
-                    </div>
-                  </div>
-
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="submit"></label>
-                    <div class="col-sm-6">
-                      <button type="submit" id="submit" name="submit" class="btn success_btn waves-effect waves-light mr-1">Filter</button>
-                      <button type="reset" class="btn btn-secondary waves-effect waves-light">Reset</button>
-                    </div>
-                  </div>
-
-                </form>
-
-              </div> <!-- end card-box -->
-            </div> <!-- end col -->
 
 
-          </div>
 
-          
+
           <div class="row">
             <div class="col-lg-12">
               <div class="card-box card-box-header">
                 <h4 class="header-title">
                   <?php echo get_table_header('fa fa-list', 'Report of Transaction Edition', $transaction_edition_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
                 </h4>
+                <button type="button" class="btn waves-effect waves-light adder_button dashboard-filter-toggle" id="dashboard_transaction_edition_filter_toggle" aria-expanded="<?php echo $dashboard_filter_panel_is_open ? 'true' : 'false'; ?>" aria-controls="dashboard_transaction_edition_filter_panel"><i class="fa fa-filter"></i> Filter</button>
+              </div>
+
+              <div class="dashboard-filter-panel <?php echo $dashboard_filter_panel_is_open ? 'is-open' : ''; ?>" id="dashboard_transaction_edition_filter_panel" aria-hidden="<?php echo $dashboard_filter_panel_is_open ? 'false' : 'true'; ?>">
+                <form class="dashboard-filter-form" id="dashboard_transaction_edition_filter_form" role="form" action="report_transaction_edition.php" method="GET">
+                  <div class="dashboard-filter-panel-topline"></div>
+                  <div class="dashboard-filter-form-header">
+                    <div>
+                      <span class="dashboard-filter-eyebrow"><i class="fa fa-sliders-h"></i> Advanced filters</span>
+                      <h5>Refine transaction editions</h5>
+                      <p>Choose filters and apply them to the transaction edition list.</p>
+                    </div>
+                    <span class="dashboard-filter-status"><i class="fa fa-check-circle"></i> Active filters</span>
+                  </div>
+
+                  <div class="dashboard-filter-grid">
+                    <div class="dashboard-filter-field dashboard-filter-field-wide">
+                      <label for="dashboard_filter_province">Province</label>
+                      <select id="dashboard_filter_province" name="dashboard_filter_province" class="form-control" data-branch-target="dashboard_filter_branch" data-branch-value="<?php echo htmlspecialchars($dashboard_filter_values['branch'], ENT_QUOTES, 'UTF-8'); ?>">
+                        <option <?php echo ($dashboard_filter_values['province']=='' || $dashboard_filter_values['province']=='0') ? 'selected' : ''; ?> hidden value="">Select an option</option>
+                        <?php echo get_province_option($dashboard_filter_values['province']!='' ? $dashboard_filter_values['province'] : '0'); ?>
+                      </select>
+                    </div>
+
+                    <div class="dashboard-filter-field dashboard-filter-field-wide">
+                      <label for="dashboard_filter_branch">Branch</label>
+                      <select id="dashboard_filter_branch" name="dashboard_filter_branch" class="form-control">
+                        <?php echo get_branch_option($dashboard_filter_values['province']!='' ? $dashboard_filter_values['province'] : '0', $dashboard_filter_values['branch']!='' ? $dashboard_filter_values['branch'] : '0'); ?>
+                      </select>
+                    </div>
+
+                    <div class="dashboard-filter-field dashboard-filter-field-half">
+                      <label for="dashboard_filter_from_date">Edition date from</label>
+                      <div class="dashboard-filter-input-icon">
+                        <i class="far fa-calendar-alt"></i>
+                        <input type="text" id="dashboard_filter_from_date" name="dashboard_filter_from_date" class="form-control date_picker" placeholder="From" value="<?php echo htmlspecialchars($dashboard_filter_values['from_date'], ENT_QUOTES, 'UTF-8'); ?>">
+                      </div>
+                    </div>
+
+                    <div class="dashboard-filter-field dashboard-filter-field-half">
+                      <label for="dashboard_filter_to_date">Edition date to</label>
+                      <div class="dashboard-filter-input-icon">
+                        <i class="far fa-calendar-alt"></i>
+                        <input type="text" id="dashboard_filter_to_date" name="dashboard_filter_to_date" class="form-control date_picker" placeholder="To" value="<?php echo htmlspecialchars($dashboard_filter_values['to_date'], ENT_QUOTES, 'UTF-8'); ?>">
+                      </div>
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_customer_name">Customer Name</label>
+                      <input type="text" id="dashboard_filter_customer_name" name="dashboard_filter_customer_name" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values['customer_name'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type here...">
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_customer_id">Customer ID</label>
+                      <input type="text" id="dashboard_filter_customer_id" name="dashboard_filter_customer_id" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values['customer_id'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type here...">
+                    </div>
+
+                    <div class="dashboard-filter-field dashboard-filter-field-wide">
+                      <label for="dashboard_filter_description">Description</label>
+                      <input type="text" id="dashboard_filter_description" name="dashboard_filter_description" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values['description'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Search the transaction description...">
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_markup">Markup</label>
+                      <select id="dashboard_filter_markup" name="dashboard_filter_markup" class="form-control">
+                        <?php echo get_markup_option('system_accessibility/report/report_transaction/', $dashboard_filter_values['markup']); ?>
+                      </select>
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_unmark">Unmark</label>
+                      <select id="dashboard_filter_unmark" name="dashboard_filter_unmark" class="form-control">
+                        <?php echo get_markup_option('system_accessibility/report/report_transaction/', $dashboard_filter_values['unmark']); ?>
+                      </select>
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_currency">Currency</label>
+                      <select id="dashboard_filter_currency" name="dashboard_filter_currency" class="form-control">
+                        <option <?php echo $dashboard_filter_values['currency']=='' ? 'selected' : ''; ?> value="">Select an option</option>
+                        <?php echo get_currency_option($dashboard_filter_values['currency']); ?>
+                      </select>
+                    </div>
+
+                    <div class="dashboard-filter-field dashboard-filter-field-wide">
+                      <label for="dashboard_filter_transaction_component_search">Transaction Components</label>
+                      <input type="hidden" id="dashboard_filter_transaction_components" name="dashboard_filter_transaction_components" value="<?php echo htmlspecialchars($dashboard_filter_values['transaction_components'], ENT_QUOTES, 'UTF-8'); ?>">
+                      <div class="dashboard-component-selector">
+                        <div class="dashboard-component-search">
+                          <i class="fa fa-search"></i>
+                          <input type="text" id="dashboard_filter_transaction_component_search" class="form-control" placeholder="Search income, expense, transfer, exchange, or child components..." autocomplete="off">
+                        </div>
+                        <div class="dashboard-component-tree" id="dashboard_filter_transaction_components_container"></div>
+                        <small class="dashboard-component-help" id="dashboard_filter_transaction_components_summary">Select parent or child transaction components.</small>
+                      </div>
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_amount">Amount</label>
+                      <input type="text" id="dashboard_filter_amount" name="dashboard_filter_amount" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values['amount'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type amount...">
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_sib_number">SIB Number</label>
+                      <input type="text" id="dashboard_filter_sib_number" name="dashboard_filter_sib_number" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values['sib_number'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type SIB number...">
+                    </div>
+
+                    <div class="dashboard-filter-field">
+                      <label for="dashboard_filter_check_number">Check Number</label>
+                      <input type="text" id="dashboard_filter_check_number" name="dashboard_filter_check_number" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values['check_number'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type check number...">
+                    </div>
+
+                    <div class="dashboard-filter-field dashboard-filter-field-wide">
+                      <label for="dashboard_filter_users_id">Added By</label>
+                      <select id="dashboard_filter_users_id" name="dashboard_filter_users_id[]" class="form-control select2" multiple data-placeholder="Select user(s)">
+                        <?php echo get_user_option($dashboard_filter_values['users_id']); ?>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="dashboard-filter-actions">
+                    <small><i class="fa fa-info-circle"></i> Filters are applied to the transaction edition table.</small>
+                    <div>
+                      <a class="btn dashboard-filter-reset" href="report_transaction_edition.php"><i class="fa fa-undo"></i> Clear</a>
+                      <button type="button" class="btn dashboard-filter-close" id="dashboard_transaction_edition_filter_close"><i class="fa fa-times"></i> Close</button>
+                      <button type="submit" class="btn dashboard-filter-apply"><i class="fa fa-search"></i> Apply filters</button>
+                    </div>
+                  </div>
+                </form>
               </div>
               <div class="card-box">
-                
+
                 <div class="table-responsive slimscroll">
                   <table class="table table-bordered table-sm mb-0" style="margin-bottom: 20px !important;">
                     <thead>
@@ -437,14 +657,14 @@
                                     case 'Logistic Cash':{
                                       $old_data .= '<b>'.str_replace('`', '', $old_data_item_array[0]).':</b> '.get_col('logistic_cashes', 'name', 'id', str_replace('`', '', $old_data_item_array[1])).'<br/>';
                                     }break;
-                                    
+
                                     default:{
                                       $old_data .= '<b>'.str_replace('`', '', $old_data_item_array[0]).':</b> '.str_replace('`', '', $old_data_item_array[1]).'<br/>';
                                     }break;
                                   }
-                                    
+
                                 }
-                                
+
                               }
                             }
 
@@ -461,13 +681,13 @@
                                     case 'Logistic Cash':{
                                       $new_data .= '<b>'.str_replace('`', '', $new_data_item_array[0]).':</b> '.get_col('logistic_cashes', 'name', 'id', str_replace('`', '', $new_data_item_array[1])).'<br/>';
                                     }break;
-                                    
+
                                     default:{
                                       $new_data .= '<b>'.str_replace('`', '', $new_data_item_array[0]).':</b> '.str_replace('`', '', $new_data_item_array[1]).'<br/>';
                                     }break;
                                   }
                                 }
-                                
+
                               }
                             }
 
@@ -487,12 +707,12 @@
                               case 'Transfer':{
                                 $operation_destination = 'controller_transfer.php';
                               }break;
-                              
+
                               default:{
                                 $operation_destination = '';
                               }break;
                             }
-                            
+
 
                             echo '
                               <tr>
@@ -503,12 +723,12 @@
                                 <td class="text-center">
                                   <a type="button"
                                     tabindex="0"
-                                    class="badge badge-success" 
-                                    role="button" 
-                                    data-html="true" 
-                                    data-toggle="popover" 
-                                    data-trigger="focus" 
-                                    title="<b>Data</b>" 
+                                    class="badge badge-success"
+                                    role="button"
+                                    data-html="true"
+                                    data-toggle="popover"
+                                    data-trigger="focus"
+                                    title="<b>Data</b>"
                                     data-content="<div>'.$old_data.'</div><hr/><div>'.$new_data.'</div>">i</a>
                                 </td>
                                 <td class="text-center" id="markupsTransaction_Edition'.$transaction_edition_row['id'].'">
@@ -561,9 +781,73 @@
   <div class="rightbar-overlay"></div>
   <?php include("_script.php"); ?>
   <script type="text/javascript">
+    $('#dashboard_transaction_edition_filter_toggle').on('click', function(){
+      var $panel = $('#dashboard_transaction_edition_filter_panel');
+      var isOpen = $panel.toggleClass('is-open').hasClass('is-open');
+      $(this).attr('aria-expanded', isOpen ? 'true' : 'false');
+      $panel.attr('aria-hidden', isOpen ? 'false' : 'true');
+    });
+
+    var dashboardTransactionEditionComponents = <?php echo print_access_sub_categories(); ?>;
+    var dashboardSelectedTransactionEditionComponents = <?php echo json_encode(array_values(array_filter(explode(',', $dashboard_filter_values['transaction_components'])))); ?>;
+    var dashboardTransactionEditionComponentsTree = new Tree('#dashboard_filter_transaction_components_container', {
+      data: [{ id: 'dashboard_filter_transaction_components_root', text: 'Transaction Components', children: dashboardTransactionEditionComponents }],
+      closeDepth: 2,
+      loaded: function(){
+        this.values = dashboardSelectedTransactionEditionComponents;
+        $('#dashboard_filter_transaction_components').val(this.values.join(','));
+        updateDashboardTransactionEditionComponentSummary(this.selectedNodes || []);
+      },
+      onChange: function(){
+        $('#dashboard_filter_transaction_components').val(this.values.join(','));
+        updateDashboardTransactionEditionComponentSummary(this.selectedNodes || []);
+      }
+    });
+
+    function updateDashboardTransactionEditionComponentSummary(selectedNodes){
+      var $summary = $('#dashboard_filter_transaction_components_summary');
+      var selectedLabels = $.map(selectedNodes, function(node){
+        return node && node.text ? node.text : null;
+      });
+
+      if(selectedLabels.length === 0){
+        $summary.text('Select parent or child transaction components.');
+      }else if(selectedLabels.length <= 3){
+        $summary.text('Selected: ' + selectedLabels.join(', '));
+      }else{
+        $summary.text(selectedLabels.length + ' transaction components selected.');
+      }
+    }
+
+    $('#dashboard_filter_transaction_component_search').on('input', function(){
+      var term = $.trim($(this).val()).toLowerCase();
+      var $tree = $('#dashboard_filter_transaction_components_container');
+
+      if(term === ''){
+        $tree.find('.treejs-node').show();
+        return;
+      }
+
+      $tree.find('.treejs-node').hide();
+      $tree.find('.treejs-label').each(function(){
+        var $label = $(this);
+        var isMatch = $label.text().toLowerCase().indexOf(term) !== -1;
+        if(isMatch){
+          $label.closest('.treejs-node').show().parents('.treejs-node').show();
+          $label.closest('.treejs-node').parents('.treejs-node__close').removeClass('treejs-node__close');
+          $label.closest('.treejs-nodes').show();
+        }
+      });
+    });
+
+    $('#dashboard_transaction_edition_filter_close').on('click', function(){
+      $('#dashboard_transaction_edition_filter_panel').removeClass('is-open').attr('aria-hidden', 'true');
+      $('#dashboard_transaction_edition_filter_toggle').attr('aria-expanded', 'false');
+    });
+
     $(function(){
       $("[data-toggle=popover]").popover();
-    }); 
+    });
   </script>
 </body>
 </html>
