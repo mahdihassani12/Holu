@@ -147,6 +147,16 @@
     return implode(', ', array_unique($labels));
   }
 
+  function dashboard_transaction_description($transaction_row){
+    if($transaction_row['transaction_type']!='Transfer'){
+      return $transaction_row['transaction_description'];
+    }
+
+    return ($transaction_row['transaction_transfer_side']=='Transfer To')
+      ? $transaction_row['transaction_approve_description']
+      : $transaction_row['transaction_description'];
+  }
+
   function dashboard_report_header_label($date_range_display, $province, $branch){
     $header_parts = [
       'Report of Transactions',
@@ -462,7 +472,8 @@
         '' AS transaction_from_province,
         '' AS transaction_to_province,
         '' AS transaction_from_branch,
-        '' AS transaction_to_branch
+        '' AS transaction_to_branch,
+        '' AS transaction_transfer_side
       FROM `incomes`
       WHERE incomes.deleted='0'
       AND $income_access_condition
@@ -491,7 +502,8 @@
         '' AS transaction_from_province,
         '' AS transaction_to_province,
         '' AS transaction_from_branch,
-        '' AS transaction_to_branch
+        '' AS transaction_to_branch,
+        '' AS transaction_transfer_side
       FROM `expenses`
       WHERE expenses.deleted='0'
       AND $expense_access_condition
@@ -520,7 +532,8 @@
         '' AS transaction_from_province,
         '' AS transaction_to_province,
         '' AS transaction_from_branch,
-        '' AS transaction_to_branch
+        '' AS transaction_to_branch,
+        '' AS transaction_transfer_side
       FROM `exchanges`
       WHERE exchanges.deleted='0'
       AND $exchange_access_condition
@@ -549,7 +562,12 @@
         transfers.from_province AS transaction_from_province,
         transfers.to_province AS transaction_to_province,
         transfers.from_branch AS transaction_from_branch,
-        transfers.to_branch AS transaction_to_branch
+        transfers.to_branch AS transaction_to_branch,
+        CASE
+          WHEN $dashboard_transfer_in_scope THEN 'Transfer To'
+          WHEN $dashboard_transfer_out_scope THEN 'Transfer From'
+          ELSE 'Transfer From'
+        END AS transaction_transfer_side
       FROM `transfers`
       WHERE transfers.deleted='0'
       AND transfers.is_approved='1'
@@ -1088,7 +1106,7 @@
                             $sib_number_container = '<p>'.$transaction_row['transaction_sib_number'].'</p>';
                           }
 
-                          $transaction_description = $transaction_row['transaction_description'];
+                          $transaction_description = dashboard_transaction_description($transaction_row);
                           ?>
                           <tr>
                             <th class="text-center"><?php echo $holu_count++; ?></th>
