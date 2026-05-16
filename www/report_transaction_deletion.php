@@ -26,6 +26,18 @@
     'check_number' => '',
     'users_id' => [],
   ];
+
+  $dashboard_date_range_data = resolve_dashboard_transaction_date_range('transaction_deletions.insertion_date', 'start_deletion_date', 'end_deletion_date');
+  $dashboard_date_range_options = $dashboard_date_range_data['options'];
+  $dashboard_date_range = $dashboard_date_range_data['selected'];
+  $dashboard_custom_from_date = $dashboard_date_range_data['custom_from_date'];
+  $dashboard_custom_to_date = $dashboard_date_range_data['custom_to_date'];
+  $dashboard_date_filtering_data = $dashboard_date_range_data['sql_filter'];
+  $dashboard_date_range_display = $dashboard_date_range_data['display_date_range'];
+  $dashboard_date_range_label = $dashboard_date_range_data['label'];
+  $dashboard_from_date = $dashboard_date_range_data['from_date'];
+  $dashboard_to_date = $dashboard_date_range_data['to_date'];
+  $holu_filtering_array[] = $dashboard_date_range_data['filter_label'];
   $dashboard_filter_panel_is_open = false;
 
   function dashboard_deletion_filter_input($dashboard_key, $legacy_key='', $default=''){
@@ -133,22 +145,9 @@
     dashboard_deletion_add_filter_label('Branch', $dashboard_filter_values['branch']);
   }
 
-  $dashboard_filter_values['from_date'] = dashboard_deletion_filter_date_value(dashboard_deletion_filter_input('dashboard_filter_from_date', 'start_deletion_date'));
-  $dashboard_filter_values['to_date'] = dashboard_deletion_filter_date_value(dashboard_deletion_filter_input('dashboard_filter_to_date', 'end_deletion_date'));
-  if($dashboard_filter_values['from_date']!='' && $dashboard_filter_values['to_date']!='' && strtotime($dashboard_filter_values['from_date'])>strtotime($dashboard_filter_values['to_date'])){
-    $swap_date = $dashboard_filter_values['from_date'];
-    $dashboard_filter_values['from_date'] = $dashboard_filter_values['to_date'];
-    $dashboard_filter_values['to_date'] = $swap_date;
-  }
-  if($dashboard_filter_values['from_date']!=''){
-    $general_filtering_data .= " AND transaction_deletions.insertion_date>=".dashboard_deletion_filter_sql_value($dashboard_filter_values['from_date'])." ";
-  }
-  if($dashboard_filter_values['to_date']!=''){
-    $general_filtering_data .= " AND transaction_deletions.insertion_date<=".dashboard_deletion_filter_sql_value($dashboard_filter_values['to_date'])." ";
-  }
-  if($dashboard_filter_values['from_date']!='' || $dashboard_filter_values['to_date']!=''){
-    dashboard_deletion_add_filter_label('Deletion Date', trim($dashboard_filter_values['from_date'].' - '.$dashboard_filter_values['to_date'], ' -'));
-  }
+  $dashboard_filter_values['from_date'] = $dashboard_from_date;
+  $dashboard_filter_values['to_date'] = $dashboard_to_date;
+  $general_filtering_data .= $dashboard_date_filtering_data;
 
   $dashboard_filter_values['customer_name'] = dashboard_deletion_filter_input('dashboard_filter_customer_name', 'customer_name');
   if($dashboard_filter_values['customer_name']!=''){
@@ -460,12 +459,67 @@
                 <h4 class="header-title">
                   <?php echo get_table_header('fa fa-list', 'Report of Transaction Deletion', $transaction_deletion_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
                 </h4>
+                <div class="dropdown dashboard-date-range-dropdown">
+                  <button class="btn dropdown-toggle waves-effect waves-light dashboard-date-range-toggle" type="button" id="dashboardDateRangeDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="far fa-calendar-alt dashboard-date-range-icon"></i>
+                    <span class="dashboard-date-range-copy">
+                      <span class="dashboard-date-range-dates"><?php echo $dashboard_date_range_display; ?></span>
+                      <span class="dashboard-date-range-label"><?php echo $dashboard_date_range_label; ?></span>
+                    </span>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right dashboard-date-range-menu" aria-labelledby="dashboardDateRangeDropdown" onclick="event.stopPropagation();">
+                    <div class="dashboard-date-range-menu-heading">
+                      <strong>Choose date range</strong>
+                      <span>Transaction deletions shown in this report</span>
+                    </div>
+                    <div class="dashboard-date-range-quick-list">
+                      <?php
+                      foreach($dashboard_date_range_options as $dashboard_date_range_key => $dashboard_date_range_option){
+                        if($dashboard_date_range_key!='custom'){
+                          ?>
+                          <a class="dashboard-date-range-option <?php echo $dashboard_date_range==$dashboard_date_range_key ? 'active' : ''; ?>" href="report_transaction_deletion.php?date_range=<?php echo $dashboard_date_range_key; ?>">
+                            <i class="far fa-clock"></i>
+                            <span><?php echo $dashboard_date_range_option; ?></span>
+                          </a>
+                          <?php
+                        }
+                      }
+                      ?>
+                    </div>
+                    <form id="dashboard_custom_date_range" class="dashboard-custom-date-range" action="report_transaction_deletion.php" method="get">
+                      <input type="hidden" name="date_range" value="custom">
+                      <div class="dashboard-custom-date-title">
+                        <i class="far fa-calendar-check"></i>
+                        <span>Custom range</span>
+                      </div>
+                      <div class="dashboard-custom-date-grid">
+                        <div>
+                          <label for="dashboard_from_date">Start date</label>
+                          <input type="date" class="form-control form-control-sm" id="dashboard_from_date" name="from_date" value="<?php echo htmlspecialchars($dashboard_from_date, ENT_QUOTES, 'UTF-8'); ?>">
+                        </div>
+                        <div>
+                          <label for="dashboard_to_date">End date</label>
+                          <input type="date" class="form-control form-control-sm" id="dashboard_to_date" name="to_date" value="<?php echo htmlspecialchars($dashboard_to_date, ENT_QUOTES, 'UTF-8'); ?>">
+                        </div>
+                      </div>
+                      <small class="dashboard-date-range-help">Leave one side empty for an open-ended date filter.</small>
+                      <button type="submit" class="btn btn-sm dashboard-custom-date-apply">
+                        <i class="fa fa-check"></i> Apply date filter
+                      </button>
+                    </form>
+                  </div>
+                </div>
                 <button type="button" class="btn waves-effect waves-light adder_button dashboard-filter-toggle" id="dashboard_transaction_deletion_filter_toggle" aria-expanded="<?php echo $dashboard_filter_panel_is_open ? 'true' : 'false'; ?>" aria-controls="dashboard_transaction_deletion_filter_panel"><i class="fa fa-filter"></i> Filter</button>
               </div>
 
               <div class="dashboard-filter-panel <?php echo $dashboard_filter_panel_is_open ? 'is-open' : ''; ?>" id="dashboard_transaction_deletion_filter_panel" aria-hidden="<?php echo $dashboard_filter_panel_is_open ? 'false' : 'true'; ?>">
                 <form class="dashboard-filter-form" id="dashboard_transaction_deletion_filter_form" role="form" action="report_transaction_deletion.php" method="GET">
                   <div class="dashboard-filter-panel-topline"></div>
+                  <input type="hidden" name="date_range" value="<?php echo htmlspecialchars($dashboard_date_range, ENT_QUOTES, 'UTF-8'); ?>">
+                  <?php if($dashboard_date_range=='custom'){ ?>
+                    <input type="hidden" name="from_date" value="<?php echo htmlspecialchars($dashboard_custom_from_date, ENT_QUOTES, 'UTF-8'); ?>">
+                    <input type="hidden" name="to_date" value="<?php echo htmlspecialchars($dashboard_custom_to_date, ENT_QUOTES, 'UTF-8'); ?>">
+                  <?php } ?>
                   <div class="dashboard-filter-form-header">
                     <div>
                       <span class="dashboard-filter-eyebrow"><i class="fa fa-sliders-h"></i> Advanced filters</span>
@@ -489,22 +543,6 @@
                       <select id="dashboard_filter_branch" name="dashboard_filter_branch" class="form-control">
                         <?php echo get_branch_option($dashboard_filter_values['province']!='' ? $dashboard_filter_values['province'] : '0', $dashboard_filter_values['branch']!='' ? $dashboard_filter_values['branch'] : '0'); ?>
                       </select>
-                    </div>
-
-                    <div class="dashboard-filter-field dashboard-filter-field-half">
-                      <label for="dashboard_filter_from_date">Date from</label>
-                      <div class="dashboard-filter-input-icon">
-                        <i class="far fa-calendar-alt"></i>
-                        <input type="text" id="dashboard_filter_from_date" name="dashboard_filter_from_date" class="form-control date_picker" placeholder="From" value="<?php echo htmlspecialchars($dashboard_filter_values['from_date'], ENT_QUOTES, 'UTF-8'); ?>">
-                      </div>
-                    </div>
-
-                    <div class="dashboard-filter-field dashboard-filter-field-half">
-                      <label for="dashboard_filter_to_date">Date to</label>
-                      <div class="dashboard-filter-input-icon">
-                        <i class="far fa-calendar-check"></i>
-                        <input type="text" id="dashboard_filter_to_date" name="dashboard_filter_to_date" class="form-control date_picker" placeholder="To" value="<?php echo htmlspecialchars($dashboard_filter_values['to_date'], ENT_QUOTES, 'UTF-8'); ?>">
-                      </div>
                     </div>
 
                     <div class="dashboard-filter-field">
@@ -759,13 +797,13 @@
       $('#dashboard_transaction_deletion_filter_toggle').attr('aria-expanded', 'false');
     });
 
-    $('#dashboard_transaction_deletion_filter_form').on('submit', function(){
-      var fromDate = $('#dashboard_filter_from_date').val();
-      var toDate = $('#dashboard_filter_to_date').val();
+    $('#dashboard_custom_date_range').on('submit', function(){
+      var fromDate = $('#dashboard_from_date').val();
+      var toDate = $('#dashboard_to_date').val();
 
       if(fromDate && toDate && fromDate > toDate){
-        $('#dashboard_filter_from_date').val(toDate);
-        $('#dashboard_filter_to_date').val(fromDate);
+        $('#dashboard_from_date').val(toDate);
+        $('#dashboard_to_date').val(fromDate);
       }
     });
   </script>

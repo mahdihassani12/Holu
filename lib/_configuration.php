@@ -2395,7 +2395,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		return 'custom';
 	}
 
-	function resolve_dashboard_transaction_date_range(){
+	function resolve_dashboard_transaction_date_range($sql_date_column='transaction_date', $legacy_from_date_key='', $legacy_to_date_key=''){
 		$options = get_dashboard_transaction_date_range_options();
 		$date_range = isset($_GET['date_range']) ? holu_escape($_GET['date_range']) : 'life_time';
 
@@ -2409,10 +2409,12 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 
 		$custom_from_date = isset($_GET['from_date']) ? normalize_holu_date_value(holu_escape($_GET['from_date'])) : '';
 		$custom_to_date = isset($_GET['to_date']) ? normalize_holu_date_value(holu_escape($_GET['to_date'])) : '';
-		$advanced_from_date_was_submitted = array_key_exists('dashboard_filter_from_date', $_GET);
-		$advanced_to_date_was_submitted = array_key_exists('dashboard_filter_to_date', $_GET);
-		$advanced_from_date = $advanced_from_date_was_submitted ? normalize_holu_date_value(holu_escape($_GET['dashboard_filter_from_date'])) : '';
-		$advanced_to_date = $advanced_to_date_was_submitted ? normalize_holu_date_value(holu_escape($_GET['dashboard_filter_to_date'])) : '';
+		$advanced_from_date_key = array_key_exists('dashboard_filter_from_date', $_GET) ? 'dashboard_filter_from_date' : $legacy_from_date_key;
+		$advanced_to_date_key = array_key_exists('dashboard_filter_to_date', $_GET) ? 'dashboard_filter_to_date' : $legacy_to_date_key;
+		$advanced_from_date_was_submitted = $advanced_from_date_key!='' && array_key_exists($advanced_from_date_key, $_GET);
+		$advanced_to_date_was_submitted = $advanced_to_date_key!='' && array_key_exists($advanced_to_date_key, $_GET);
+		$advanced_from_date = $advanced_from_date_was_submitted ? normalize_holu_date_value(holu_escape($_GET[$advanced_from_date_key])) : '';
+		$advanced_to_date = $advanced_to_date_was_submitted ? normalize_holu_date_value(holu_escape($_GET[$advanced_to_date_key])) : '';
 
 		if($advanced_from_date_was_submitted || $advanced_to_date_was_submitted){
 			$from_date = $advanced_from_date;
@@ -2443,10 +2445,10 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 
 		$sql_filter = '';
 		if($from_date!=''){
-			$sql_filter .= " AND transaction_date>='".$from_date."' ";
+			$sql_filter .= " AND ".$sql_date_column.">='".$from_date."' ";
 		}
 		if($to_date!=''){
-			$sql_filter .= " AND transaction_date<='".$to_date."' ";
+			$sql_filter .= " AND ".$sql_date_column."<='".$to_date."' ";
 		}
 
 		$query_string = '&date_range='.$date_range;
