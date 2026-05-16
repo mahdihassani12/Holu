@@ -90,6 +90,25 @@
     }
   }
 
+  function dashboard_deletion_report_header_label($date_range_display, $province, $branch){
+    $header_parts = [
+      'Report of Transaction Deletion',
+      (string)$date_range_display,
+    ];
+
+    $province = trim((string)$province);
+    if($province!=='' && $province!=='0'){
+      $header_parts[] = $province;
+    }
+
+    $branch = trim((string)$branch);
+    if($branch!=='' && $branch!=='0'){
+      $header_parts[] = $branch;
+    }
+
+    return htmlspecialchars(implode(' • ', $header_parts), ENT_QUOTES, 'UTF-8');
+  }
+
   function dashboard_deletion_filter_component_labels($component_ids){
     $labels = [];
     foreach($component_ids as $component_id){
@@ -144,6 +163,12 @@
     ]);
     dashboard_deletion_add_filter_label('Branch', $dashboard_filter_values['branch']);
   }
+
+  $dashboard_deletion_report_header = dashboard_deletion_report_header_label(
+    $dashboard_date_range_display,
+    $dashboard_filter_values['province'],
+    $dashboard_filter_values['branch']
+  );
 
   $dashboard_filter_values['from_date'] = $dashboard_from_date;
   $dashboard_filter_values['to_date'] = $dashboard_to_date;
@@ -456,9 +481,11 @@
           <div class="row">
             <div class="col-lg-12">
               <div class="card-box card-box-header dashboard-transactions-header">
-                <h4 class="header-title">
-                  <?php echo get_table_header('fa fa-list', 'Report of Transaction Deletion', $transaction_deletion_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
+                <h4 class="header-title" data-report-base="Report of Transaction Deletion" data-report-date-range="<?php echo htmlspecialchars($dashboard_date_range_display, ENT_QUOTES, 'UTF-8'); ?>">
+                  <?php echo get_table_header('fa fa-list', $dashboard_deletion_report_header, $transaction_deletion_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
                 </h4>
+                <button type="button" class="btn waves-effect waves-light adder_button dashboard-filter-toggle" id="dashboard_transaction_deletion_filter_toggle" aria-expanded="<?php echo $dashboard_filter_panel_is_open ? 'true' : 'false'; ?>" aria-controls="dashboard_transaction_deletion_filter_panel"><i class="fa fa-filter"></i> Filter</button>
+
                 <div class="dropdown dashboard-date-range-dropdown">
                   <button class="btn dropdown-toggle waves-effect waves-light dashboard-date-range-toggle" type="button" id="dashboardDateRangeDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="far fa-calendar-alt dashboard-date-range-icon"></i>
@@ -509,7 +536,6 @@
                     </form>
                   </div>
                 </div>
-                <button type="button" class="btn waves-effect waves-light adder_button dashboard-filter-toggle" id="dashboard_transaction_deletion_filter_toggle" aria-expanded="<?php echo $dashboard_filter_panel_is_open ? 'true' : 'false'; ?>" aria-controls="dashboard_transaction_deletion_filter_panel"><i class="fa fa-filter"></i> Filter</button>
               </div>
 
               <div class="dashboard-filter-panel <?php echo $dashboard_filter_panel_is_open ? 'is-open' : ''; ?>" id="dashboard_transaction_deletion_filter_panel" aria-hidden="<?php echo $dashboard_filter_panel_is_open ? 'false' : 'true'; ?>">
