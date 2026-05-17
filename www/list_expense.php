@@ -14,7 +14,7 @@
   set_pagination();
   $expense_access_condition = set_province_branch_portion('province', 'branch');
 
-  $expense_sq = $db->query("SELECT * FROM `expenses` WHERE deleted='0' $holu_filtering_data AND $expense_access_condition AND sub_categories_id IN ($accessed_sub_categories_expense) ORDER BY id DESC limit $holu_to OFFSET $holu_from");
+  $expense_sq = $db->query("SELECT expenses.*, (SELECT COUNT(id) FROM attachments WHERE deleted='0' AND type='Expense Attachment' AND reference_id=expenses.id) AS attachment_count FROM `expenses` WHERE deleted='0' $holu_filtering_data AND $expense_access_condition AND sub_categories_id IN ($accessed_sub_categories_expense) ORDER BY id DESC limit $holu_to OFFSET $holu_from");
 
   $Pagenation = $db->query("SELECT count(id) as record FROM `expenses` WHERE deleted='0' $holu_filtering_data AND $expense_access_condition AND sub_categories_id IN ($accessed_sub_categories_expense)");
   extract($Pagenation->fetch());
@@ -26,6 +26,12 @@
 <html lang="en">
 <head>
   <?php include("_head.php"); ?>
+  <style>
+    .expense-table th,
+    .expense-table td {
+      min-width: 120px;
+    }
+  </style>
 </head>
 <body class="left-side-menu-dark">
   <!-- Begin page -->
@@ -80,7 +86,7 @@
               </div>
               <div class="card-box">
                 <div class="table-responsive slimscroll">
-                  <table class="table table-bordered table-sm mb-0">
+                  <table class="table table-bordered table-sm mb-0 expense-table">
                     <thead>
                       <tr>
                         <th class="text-center">#</th>
@@ -94,6 +100,7 @@
                         <th>Check Number</th>
                         <th>Description</th>
                         <th>Additional Information</th>
+                        <th>Attachments</th>
                         <th>Created By</th>
                         <th class="text-center">Operation</th>
                       </tr>
@@ -143,6 +150,7 @@
                                 ?>
                                 </p>
                             </td>
+                            <td class="text-center"><?php echo $expense_row['attachment_count']; ?></td>
                             <td><?php echo get_col('users', 'username', 'id', $expense_row['users_id']); ?></td>
                             <td class="text-center">
                               <div class="dropdown mt-1 opertation_container">
