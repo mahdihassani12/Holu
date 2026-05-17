@@ -12,7 +12,7 @@
 
   
 
-  $transfer_sq = $db->query("SELECT * FROM `transfers` WHERE deleted='0' $holu_filtering_data AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR users_id='$holu_users_id') ORDER BY id DESC limit $holu_to OFFSET $holu_from");
+  $transfer_sq = $db->query("SELECT transfers.*, (SELECT COUNT(*) FROM `attachments` WHERE deleted='0' AND type='Transfer Attachment' AND reference_id=transfers.id) AS attachment_count FROM `transfers` WHERE deleted='0' $holu_filtering_data AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR users_id='$holu_users_id') ORDER BY id DESC limit $holu_to OFFSET $holu_from");
 
   $Pagenation = $db->query("SELECT count(id) as record FROM `transfers` WHERE deleted='0' $holu_filtering_data AND ((($transfer_from_access_condition) OR ($transfer_to_access_condition)) OR users_id='$holu_users_id')");
   extract($Pagenation->fetch());
@@ -24,6 +24,12 @@
 <html lang="en">
 <head>
   <?php include("_head.php"); ?>
+  <style>
+    .transaction-table th,
+    .transaction-table td {
+      min-width: 120px;
+    }
+  </style>
 </head>
 <body class="left-side-menu-dark">
   <!-- Begin page -->
@@ -79,7 +85,7 @@
               </div>
               <div class="card-box">
                 <div class="table-responsive slimscroll">
-                  <table class="table table-bordered table-sm mb-0">
+                  <table class="table table-bordered table-sm mb-0 transaction-table">
                     <thead>
                       <tr>
                         <th class="text-center">#</th>
@@ -92,6 +98,7 @@
                         <th>Currency</th>
                         <th>Check Number</th>
                         <th>Description</th>
+                        <th>Attachments</th>
                         <th>Created By</th>
                         <th class="text-center">Operation</th>
                       </tr>
@@ -112,6 +119,7 @@
                             <td><?php echo $transfer_row['currency']; ?></td>
                             <td><?php echo htmlspecialchars($transfer_row['check_number'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
                             <td class="text-right"><p lang="fa" dir="rtl"><?php echo $transfer_row['description']; ?></p></td>
+                            <td class="text-center"><?php echo $transfer_row['attachment_count']; ?></td>
                             <td><?php echo get_col('users', 'username', 'id', $transfer_row['users_id']); ?></td>
                             <td class="text-center">
                               <div class="dropdown mt-1 opertation_container">

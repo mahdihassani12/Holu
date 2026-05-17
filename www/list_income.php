@@ -15,7 +15,7 @@
   set_pagination();
   $income_access_condition = set_province_branch_portion('province', 'branch');
 
-  $income_sq = $db->query("SELECT * FROM `incomes` WHERE deleted='0' $holu_filtering_data AND $income_access_condition AND sub_categories_id IN ($accessed_sub_categories_income) ORDER BY id DESC limit $holu_to OFFSET $holu_from");
+  $income_sq = $db->query("SELECT incomes.*, (SELECT COUNT(*) FROM `attachments` WHERE deleted='0' AND type='Income Attachment' AND reference_id=incomes.id) AS attachment_count FROM `incomes` WHERE deleted='0' $holu_filtering_data AND $income_access_condition AND sub_categories_id IN ($accessed_sub_categories_income) ORDER BY id DESC limit $holu_to OFFSET $holu_from");
 
   $Pagenation = $db->query("SELECT count(id) as record FROM `incomes` WHERE deleted='0' $holu_filtering_data AND $income_access_condition AND sub_categories_id IN ($accessed_sub_categories_income)");
   extract($Pagenation->fetch());
@@ -27,6 +27,12 @@
 <html lang="en">
 <head>
   <?php include("_head.php"); ?>
+  <style>
+    .transaction-table th,
+    .transaction-table td {
+      min-width: 120px;
+    }
+  </style>
 </head>
 <body class="left-side-menu-dark">
   <!-- Begin page -->
@@ -86,7 +92,7 @@
                 </div>
                 <div class="card-box">
                   <div class="table-responsive slimscroll">
-                    <table class="table table-bordered table-sm mb-0">
+                    <table class="table table-bordered table-sm mb-0 transaction-table">
                       <thead>
                         <tr>
                           <th class="text-center">#</th>
@@ -100,6 +106,7 @@
                           <th>Check Number</th>
                           <th>Description</th>
                           <th>Additional Information</th>
+                          <th>Attachments</th>
                           <th>Created By</th>
                           <th class="text-center">Operation</th>
                         </tr>
@@ -122,6 +129,7 @@
                               <td><?php echo $income_row['check_number']; ?></td>
                               <td class="text-right"><p lang="fa" dir="rtl"><?php echo $income_row['description']; ?></p></td>
                               <td class="text-center"><?php echo print_ai_labels(json_decode($income_row['additional_informations'] ?? '{}')); ?></p></td>
+                              <td class="text-center"><?php echo $income_row['attachment_count']; ?></td>
                               <td><?php echo get_col('users', 'username', 'id', $income_row['users_id']); ?></td>
                               <td class="text-center">
                                 <div class="dropdown mt-1 opertation_container">
