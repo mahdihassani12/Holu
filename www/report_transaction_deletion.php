@@ -712,7 +712,7 @@
                                   <div class="dropdown mt-1 opertation_container">
                                     <button type="button" class="btn btn-primary dropdown-toggle waves-effect waves-light operation_button" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-cog"></i></button>
                                     <div class="dropdown-content dropdown-menu-right operation_list">
-                                      <a class="dropdown-item" onclick="load_modal(\''.$_SERVER['PHP_SELF'].'\', \''.$operation_destination.'\', \'view_full_info\', \'general_lg\', \''.holu_encode($transaction_deletion_row['reference_id']).'\');"><i class="fas fa-info-circle"></i> View Full Info</a>
+                                      <a class="dropdown-item" onclick="load_modal(\''.$_SERVER['PHP_SELF'].'\', \''.$operation_destination.'\', \'view_full_info\', \'general_lg\', \''.holu_encode($transaction_deletion_row['reference_id']).'\', \''.holu_encode('transaction_deletion###'.$transaction_deletion_row['id']).'\');"><i class="fas fa-info-circle"></i> View Full Info</a>
                                     </div>
                                   </div>
                                 </td>
