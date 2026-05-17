@@ -1,12 +1,13 @@
 
 //modal loader function
-function load_modal(source, destination, modal, modal_id, data_id){
+function load_modal(source, destination, modal, modal_id, data_id, data_context){
 	
 	$.ajax({
 		url:destination,
 		method:'post',
 		data:{
 			data_id:data_id, 
+			data_context:data_context || '', 
 			modal:modal, 
 			source:source, 
 			flag_request:'modal'

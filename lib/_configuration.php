@@ -3793,6 +3793,164 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	  return $flag;
 	}
 
+	function holu_transaction_info_label($key){
+		$key = trim((string)$key);
+		$labels = [
+			'sub_categories_id'=>'Sub Category',
+			'logistic_cashes_id'=>'Logistic Cash',
+			'users_id'=>'User',
+			'approved_by'=>'Approved By'
+		];
+		if(isset($labels[$key])){
+			return $labels[$key];
+		}
+		$key = str_replace('_', ' ', $key);
+		$key = preg_replace('/\s+/', ' ', $key);
+		return ucwords($key);
+	}
+
+	function holu_transaction_info_display_value($key, $value){
+		$key = trim((string)$key);
+		$value = str_replace('`', '', (string)$value);
+		if($key==='Sub Category' || $key==='sub_categories_id'){
+			$sub_category_name = get_col('sub_categories', 'sub_category_name', 'id', $value);
+			return $sub_category_name!=='' ? $sub_category_name : $value;
+		}
+		if($key==='Logistic Cash' || $key==='logistic_cashes_id'){
+			$logistic_cash_name = get_col('logistic_cashes', 'name', 'id', $value);
+			return $logistic_cash_name!=='' ? $logistic_cash_name : $value;
+		}
+		if($key==='users_id' || $key==='approved_by'){
+			$username = get_col('users', 'username', 'id', $value);
+			return $username!=='' ? $username : $value;
+		}
+		return $value;
+	}
+
+	function holu_transaction_info_parse_data_rows($data){
+		$rows = [];
+		foreach(explode('###', (string)$data) as $data_item){
+			$data_item_array = explode('=>', $data_item, 2);
+			if(sizeof($data_item_array)>1){
+				$key = str_replace('`', '', $data_item_array[0]);
+				$value = holu_transaction_info_display_value($key, $data_item_array[1]);
+				$rows[] = ['key'=>$key, 'value'=>$value];
+			}
+		}
+		return $rows;
+	}
+
+	function holu_transaction_info_context(){
+		if(empty($_POST['data_context'])){
+			return ['type'=>'', 'id'=>''];
+		}
+
+		$decoded_context = holu_decode($_POST['data_context']);
+		$context_parts = explode('###', (string)$decoded_context, 2);
+		if(sizeof($context_parts)<2){
+			return ['type'=>'', 'id'=>''];
+		}
+
+		return [
+			'type'=>holu_escape($context_parts[0]),
+			'id'=>holu_escape($context_parts[1])
+		];
+	}
+
+	function holu_transaction_info_table_name($reference_type){
+		switch($reference_type){
+			case 'Income': return 'incomes';
+			case 'Expense': return 'expenses';
+			case 'Exchange': return 'exchanges';
+			case 'Transfer': return 'transfers';
+			default: return '';
+		}
+	}
+
+	function holu_transaction_info_current_rows($reference_type, $reference_id){
+		global $db;
+
+		$table_name = holu_transaction_info_table_name($reference_type);
+		if($table_name===''){
+			return [];
+		}
+
+		$transaction_sq = $db->prepare("SELECT * FROM `$table_name` WHERE id=:reference_id LIMIT 1");
+		$transaction_sq->execute(['reference_id'=>$reference_id]);
+		if($transaction_sq->rowCount()<=0){
+			return [];
+		}
+
+		$technical_columns = [
+			'id'=>1,
+			'deleted'=>1,
+			'tms_markup'=>1,
+			'qb_markup'=>1,
+			'sib_markup'=>1,
+			'ad_markup'=>1
+		];
+
+		$rows = [];
+		$transaction_row = $transaction_sq->fetch(PDO::FETCH_ASSOC);
+		foreach($transaction_row as $key=>$value){
+			if(isset($technical_columns[$key])){
+				continue;
+			}
+			if($value===null || $value===''){
+				continue;
+			}
+			$rows[] = [
+				'key'=>holu_transaction_info_label($key),
+				'value'=>holu_transaction_info_display_value($key, $value)
+			];
+		}
+
+		return $rows;
+	}
+
+	function holu_transaction_full_info_rows($reference_type, $reference_id){
+		global $db;
+
+		$old_data_rows = [];
+		$new_data_rows = [];
+		$context = holu_transaction_info_context();
+		$edition_sql = "SELECT old_data, new_data FROM `transaction_editions` WHERE reference_type=:reference_type AND reference_id=:reference_id";
+		$params = [
+			'reference_type'=>$reference_type,
+			'reference_id'=>$reference_id
+		];
+
+		if($context['type']==='transaction_edition' && $context['id']!==''){
+			$edition_sql .= " AND id=:edition_id";
+			$params['edition_id'] = $context['id'];
+		}
+
+		$edition_sql .= " ORDER BY id DESC LIMIT 1";
+		$transaction_edition_sq = $db->prepare($edition_sql);
+		$transaction_edition_sq->execute($params);
+
+		if($transaction_edition_sq->rowCount()>0){
+			$transaction_edition_row = $transaction_edition_sq->fetch();
+			$old_data_rows = holu_transaction_info_parse_data_rows($transaction_edition_row['old_data']);
+			$new_data_rows = holu_transaction_info_parse_data_rows($transaction_edition_row['new_data']);
+		}
+
+		if($context['type']==='transaction_deletion' || sizeof($old_data_rows)===0 || sizeof($new_data_rows)===0){
+			$current_data_rows = holu_transaction_info_current_rows($reference_type, $reference_id);
+			if(sizeof($old_data_rows)===0){
+				$old_data_rows = $current_data_rows;
+			}
+			if($context['type']==='transaction_deletion' || sizeof($new_data_rows)===0){
+				$new_data_rows = $current_data_rows;
+			}
+		}
+
+		return [
+			'old_data_rows'=>$old_data_rows,
+			'new_data_rows'=>$new_data_rows
+		];
+	}
+
 	function track_editions($operation_type, $operation_array){
 
 		global $db;
@@ -4081,7 +4239,9 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				$old_data .= '`Description`=>`'.get_col('exchanges', 'description', 'id', $exchanges_id).'`###';
 
 
-				$new_data .= '`Province`=>`'.holu_escape($operation_array['data_array']['province'] ?? '').'`###';
+				$new_exchange_province = $operation_array['data_array']['province'] ?? get_col('exchanges', 'province', 'id', $exchanges_id);
+
+				$new_data .= '`Province`=>`'.holu_escape($new_exchange_province).'`###';
 				$new_data .= '`Exchange Date`=>`'.holu_escape($operation_array['data_array']['exchange_date'] ?? '').'`###';
 				$new_data .= '`From Amount`=>`'.holu_escape($operation_array['data_array']['from_amount'] ?? '').'`###';
 				$new_data .= '`To Amount`=>`'.holu_escape($operation_array['data_array']['to_amount'] ?? '').'`###';

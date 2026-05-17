@@ -462,63 +462,10 @@
 
 	      case "view_full_info":
 
-	      	
-	      	$old_data_rows = [];
-	      	$new_data_rows = [];
+		      	$transaction_full_info_rows = holu_transaction_full_info_rows('Expense', $data_id);
+		      	$old_data_rows = $transaction_full_info_rows['old_data_rows'];
+		      	$new_data_rows = $transaction_full_info_rows['new_data_rows'];
 
-	      	$transaction_edition_sq = $db->prepare("SELECT old_data, new_data FROM `transaction_editions` WHERE reference_type='Expense' AND reference_id=:data_id ORDER BY id DESC LIMIT 1");
-	      	$transaction_edition_sq->execute([
-	      		'data_id'=>$data_id
-	      	]);
-
-	      	if($transaction_edition_sq->rowCount()>0){
-	      		$transaction_edition_row = $transaction_edition_sq->fetch();
-
-	      		$old_data_array = explode('###', $transaction_edition_row['old_data']);
-	      		$new_data_array = explode('###', $transaction_edition_row['new_data']);
-
-	      		foreach($old_data_array as $old_data_item){
-	      			$old_data_item_array = explode('=>', $old_data_item);
-	      			if(sizeof($old_data_item_array)>1){
-	      				$key = str_replace('`', '', $old_data_item_array[0]);
-	      				$value = str_replace('`', '', $old_data_item_array[1]);
-
-	      				if($key == 'Sub Category'){
-	      					$value = get_col('sub_categories', 'sub_category_name', 'id', $value);
-	      				}
-
-	      				if($key == 'Logistic Cash'){
-	      					$value = get_col('logistic_cashes', 'name', 'id', $value);
-	      				}
-
-	      				$old_data_rows[] = [
-	      					'key'=>$key,
-	      					'value'=>$value
-	      				];
-	      			}
-	      		}
-
-	      		foreach($new_data_array as $new_data_item){
-	      			$new_data_item_array = explode('=>', $new_data_item);
-	      			if(sizeof($new_data_item_array)>1){
-	      				$key = str_replace('`', '', $new_data_item_array[0]);
-	      				$value = str_replace('`', '', $new_data_item_array[1]);
-
-	      				if($key == 'Sub Category'){
-	      					$value = get_col('sub_categories', 'sub_category_name', 'id', $value);
-	      				}
-
-	      				if($key == 'Logistic Cash'){
-	      					$value = get_col('logistic_cashes', 'name', 'id', $value);
-	      				}
-
-	      				$new_data_rows[] = [
-	      					'key'=>$key,
-	      					'value'=>$value
-	      				];
-	      			}
-	      		}
-	      	}
 
 	        ?>
 

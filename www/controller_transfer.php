@@ -626,30 +626,10 @@
 
 	      case "view_full_info":
 
-	      	
-	      	$old_data_rows = [];
-	      	$new_data_rows = [];
+		      	$transaction_full_info_rows = holu_transaction_full_info_rows('Transfer', $data_id);
+		      	$old_data_rows = $transaction_full_info_rows['old_data_rows'];
+		      	$new_data_rows = $transaction_full_info_rows['new_data_rows'];
 
-	      	$transaction_edition_sq = $db->prepare("SELECT old_data, new_data FROM `transaction_editions` WHERE reference_type='Transfer' AND reference_id=:data_id ORDER BY id DESC LIMIT 1");
-	      	$transaction_edition_sq->execute([
-	      		'data_id'=>$data_id
-	      	]);
-
-	      	if($transaction_edition_sq->rowCount()>0){
-	      		$transaction_edition_row = $transaction_edition_sq->fetch();
-	      		foreach(explode('###', $transaction_edition_row['old_data']) as $old_data_item){
-	      			$old_data_item_array = explode('=>', $old_data_item);
-	      			if(sizeof($old_data_item_array)>1){
-	      				$old_data_rows[] = ['key'=>str_replace('`', '', $old_data_item_array[0]), 'value'=>str_replace('`', '', $old_data_item_array[1])];
-	      			}
-	      		}
-	      		foreach(explode('###', $transaction_edition_row['new_data']) as $new_data_item){
-	      			$new_data_item_array = explode('=>', $new_data_item);
-	      			if(sizeof($new_data_item_array)>1){
-	      				$new_data_rows[] = ['key'=>str_replace('`', '', $new_data_item_array[0]), 'value'=>str_replace('`', '', $new_data_item_array[1])];
-	      			}
-	      		}
-	      	}
 
 	        ?>
 
