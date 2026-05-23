@@ -107,7 +107,7 @@
                               ?>
                               <div class="dropdown mt-1 opertation_container">
                                 <button type="button" class="btn btn-primary dropdown-toggle waves-effect waves-light operation_button" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-cog"></i></button>
-                                <div class="dropdown-content dropdown-menu dropdown-menu-right operation_list">
+                                <div class="dropdown-content dropdown-menu-right operation_list">
                                   
                                   <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_transfer.php', 'approve_transfer_form', 'general_lg', '<?php echo holu_encode($transfer_row['id']); ?>');"><i class="fas fa-circle"></i> Approve Transfer</a>
                                 </div>
