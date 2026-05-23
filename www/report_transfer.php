@@ -103,7 +103,7 @@
                             <td class="text-center">
                               <div class="dropdown mt-1 opertation_container">
                                 <button type="button" class="btn btn-primary dropdown-toggle waves-effect waves-light operation_button" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-cog"></i></button>
-                                <div class="dropdown-content dropdown-menu-right operation_list">
+                                <div class="dropdown-content dropdown-menu dropdown-menu-right operation_list">
                                   
                                   <?php
                                   if(check_access("system_accessibility/request/report_transfer/approve_transfer/")==1 AND $transfer_row['is_approved']==0){
