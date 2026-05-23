@@ -106,7 +106,7 @@
                                 <div class="dropdown-content dropdown-menu dropdown-menu-right operation_list">
                                   
                                   <?php
-                                  if(check_access("system_accessibility/request/report_transfer/approve_transfer/")==1 AND $transfer_row['is_approved']==0){
+                                  if(check_access("system_accessibility/request/report_transfer/approve_transfer")==1 AND $transfer_row['is_approved']==0){
                                   ?>
                                   <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_transfer.php', 'approve_transfer_form', 'general_lg', '<?php echo holu_encode($transfer_row['id']); ?>');"><i class="fas fa-circle"></i> Approve Transfer</a>
                                   <?php
