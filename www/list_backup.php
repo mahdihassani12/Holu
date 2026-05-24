@@ -11,9 +11,30 @@ if (check_access($backup_access_path) != 1) {
   exit;
 }
 
+function format_backup_size($bytes)
+{
+  $size = is_numeric($bytes) ? (float)$bytes : 0;
+  if ($size < 0) {
+    $size = 0;
+  }
+
+  $units = ['B', 'KB', 'MB', 'GB'];
+  $unit_index = 0;
+
+  while ($size >= 1024 && $unit_index < count($units) - 1) {
+    $size /= 1024;
+    $unit_index++;
+  }
+
+  $formatted_size = number_format($size, 2, '.', '');
+  $formatted_size = rtrim(rtrim($formatted_size, '0'), '.');
+
+  return $formatted_size . ' ' . $units[$unit_index];
+}
+
 $backup_directory = realpath(__DIR__ . "/../backups");
-if ($backup_directory === false) {
-  $backup_directory = __DIR__ . "/../backups";
+if ($backup_directory === false || !is_dir($backup_directory)) {
+  $backup_directory = null;
 }
 
 if (isset($_GET['action']) && $_GET['action'] === 'download') {
@@ -42,6 +63,11 @@ if (isset($_GET['action']) && $_GET['action'] === 'download') {
     exit("Invalid file name");
   }
 
+  if ($backup_directory === null) {
+    header("HTTP/1.1 500 Internal Server Error");
+    exit("Backups folder is not available");
+  }
+
   $file_path = $backup_directory . DIRECTORY_SEPARATOR . $safe_filename;
   $real_file_path = realpath($file_path);
   if ($real_file_path === false || strpos($real_file_path, $backup_directory . DIRECTORY_SEPARATOR) !== 0 || !is_file($real_file_path) || !is_readable($real_file_path)) {
@@ -55,7 +81,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'download') {
 
   header('Content-Description: File Transfer');
   header('Content-Type: application/octet-stream');
-  header('Content-Disposition: attachment; filename="' . rawurlencode($safe_filename) . '"');
+  header('X-Content-Type-Options: nosniff');
+  header('Content-Disposition: attachment; filename="' . addcslashes($safe_filename, "\"\\") . '"; filename*=UTF-8\'\'' . rawurlencode($safe_filename));
   header('Content-Transfer-Encoding: binary');
   header('Expires: 0');
   header('Cache-Control: must-revalidate');
@@ -73,6 +100,11 @@ if (isset($_POST['action']) && $_POST['action'] === 'delete_backup') {
   }
 
   $backup_id = isset($_POST['backup_id']) ? (int)$_POST['backup_id'] : 0;
+  if ($backup_id <= 0 || $backup_directory === null) {
+    header("location:list_backup.php?error=1");
+    exit;
+  }
+
   if ($backup_id > 0) {
     $backup_sq = $db->prepare("SELECT id, filename FROM `backups` WHERE id=:id LIMIT 1");
     $backup_sq->execute(['id' => $backup_id]);
@@ -92,10 +124,14 @@ if (isset($_POST['action']) && $_POST['action'] === 'delete_backup') {
 
       $delete_sq = $db->prepare("DELETE FROM `backups` WHERE id=:id LIMIT 1");
       $delete_sq->execute(['id' => $backup_id]);
+      if ($delete_sq->rowCount() > 0) {
+        header("location:list_backup.php?success=1");
+        exit;
+      }
     }
   }
 
-  header("location:list_backup.php");
+  header("location:list_backup.php?error=1");
   exit;
 }
 
@@ -145,7 +181,7 @@ extract($Pagenation->fetch());
                         <td class="text-center"><?php echo (int)$backup_row['id']; ?></td>
                         <td><?php echo holu_escape($backup_row['type']); ?></td>
                         <td><?php echo holu_escape($backup_row['filename']); ?></td>
-                        <td><?php echo holu_escape($backup_row['size']); ?></td>
+                        <td><?php echo holu_escape(format_backup_size($backup_row['size'])); ?></td>
                         <td><?php echo holu_escape($backup_row['status']); ?></td>
                         <td><?php echo holu_escape($backup_row['created_at']); ?></td>
                         <td class="text-center">
