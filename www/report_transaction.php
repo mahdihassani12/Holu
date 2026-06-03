@@ -600,16 +600,21 @@
     $dashboard_transfer_date_filter .= " AND transfers.transfer_date<='".$dashboard_to_date."' ";
   }
 
-  $dashboard_closing_income_date_filter = $dashboard_income_date_filter;
-  $dashboard_closing_expense_date_filter = $dashboard_expense_date_filter;
-  $dashboard_closing_exchange_date_filter = $dashboard_exchange_date_filter;
-  $dashboard_closing_transfer_date_filter = $dashboard_transfer_date_filter;
+  $dashboard_closing_income_date_filter = "";
+  $dashboard_closing_expense_date_filter = "";
+  $dashboard_closing_exchange_date_filter = "";
+  $dashboard_closing_transfer_date_filter = "";
 
   if($dashboard_to_date!=''){
     $dashboard_closing_income_date_filter = " AND incomes.income_date<='".$dashboard_to_date."' ";
     $dashboard_closing_expense_date_filter = " AND expenses.expense_date<='".$dashboard_to_date."' ";
     $dashboard_closing_exchange_date_filter = " AND exchanges.exchange_date<='".$dashboard_to_date."' ";
     $dashboard_closing_transfer_date_filter = " AND transfers.transfer_date<='".$dashboard_to_date."' ";
+  }elseif($dashboard_from_date!=''){
+    $dashboard_closing_income_date_filter = " AND incomes.income_date>='".$dashboard_from_date."' ";
+    $dashboard_closing_expense_date_filter = " AND expenses.expense_date>='".$dashboard_from_date."' ";
+    $dashboard_closing_exchange_date_filter = " AND exchanges.exchange_date>='".$dashboard_from_date."' ";
+    $dashboard_closing_transfer_date_filter = " AND transfers.transfer_date>='".$dashboard_from_date."' ";
   }
 
   $dashboard_total_income_sq = $db->query(
@@ -783,6 +788,14 @@
     - ($dashboard_closing_exchange_row['closing_from_irt'] ?? 0)
     - ($dashboard_closing_transfer_row['closing_transfer_out_irt'] ?? 0)
     + ($dashboard_closing_transfer_row['closing_transfer_in_irt'] ?? 0);
+
+  if($dashboard_to_date==''){
+    // Open-ended ranges do not have a closing end date, so Total with Closing
+    // should mirror the filtered transaction total shown in the neighboring card.
+    $dashboard_closing_afn = $dashboard_total_afn;
+    $dashboard_closing_usd = $dashboard_total_usd;
+    $dashboard_closing_irt = $dashboard_total_irt;
+  }
 ?>
 
 <!DOCTYPE html>
