@@ -2485,6 +2485,10 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			$to_date = isset($preset_ranges[$date_range]) ? $preset_ranges[$date_range][1] : '';
 		}
 
+		if($from_date!='' && $to_date==''){
+			$to_date = date('Y-m-d');
+		}
+
 		if($from_date!='' && $to_date!='' && strtotime($from_date)>strtotime($to_date)){
 			$swap_date = $from_date;
 			$from_date = $to_date;
