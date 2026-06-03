@@ -600,16 +600,21 @@
     $dashboard_transfer_date_filter .= " AND transfers.transfer_date<='".$dashboard_to_date."' ";
   }
 
-  $dashboard_closing_income_date_filter = $dashboard_income_date_filter;
-  $dashboard_closing_expense_date_filter = $dashboard_expense_date_filter;
-  $dashboard_closing_exchange_date_filter = $dashboard_exchange_date_filter;
-  $dashboard_closing_transfer_date_filter = $dashboard_transfer_date_filter;
+  $dashboard_closing_income_date_filter = "";
+  $dashboard_closing_expense_date_filter = "";
+  $dashboard_closing_exchange_date_filter = "";
+  $dashboard_closing_transfer_date_filter = "";
 
   if($dashboard_to_date!=''){
     $dashboard_closing_income_date_filter = " AND incomes.income_date<='".$dashboard_to_date."' ";
     $dashboard_closing_expense_date_filter = " AND expenses.expense_date<='".$dashboard_to_date."' ";
     $dashboard_closing_exchange_date_filter = " AND exchanges.exchange_date<='".$dashboard_to_date."' ";
     $dashboard_closing_transfer_date_filter = " AND transfers.transfer_date<='".$dashboard_to_date."' ";
+  }elseif($dashboard_from_date!=''){
+    $dashboard_closing_income_date_filter = " AND incomes.income_date>='".$dashboard_from_date."' ";
+    $dashboard_closing_expense_date_filter = " AND expenses.expense_date>='".$dashboard_from_date."' ";
+    $dashboard_closing_exchange_date_filter = " AND exchanges.exchange_date>='".$dashboard_from_date."' ";
+    $dashboard_closing_transfer_date_filter = " AND transfers.transfer_date>='".$dashboard_from_date."' ";
   }
 
   $dashboard_total_income_sq = $db->query(
