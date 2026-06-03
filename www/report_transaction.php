@@ -788,6 +788,14 @@
     - ($dashboard_closing_exchange_row['closing_from_irt'] ?? 0)
     - ($dashboard_closing_transfer_row['closing_transfer_out_irt'] ?? 0)
     + ($dashboard_closing_transfer_row['closing_transfer_in_irt'] ?? 0);
+
+  if($dashboard_to_date==''){
+    // Open-ended ranges do not have a closing end date, so Total with Closing
+    // should mirror the filtered transaction total shown in the neighboring card.
+    $dashboard_closing_afn = $dashboard_total_afn;
+    $dashboard_closing_usd = $dashboard_total_usd;
+    $dashboard_closing_irt = $dashboard_total_irt;
+  }
 ?>
 
 <!DOCTYPE html>
