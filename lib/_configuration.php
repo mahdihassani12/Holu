@@ -2696,10 +2696,6 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	function transfer_can_be_approved_by_user($transfer_id){
 		global $db;
 
-		if(check_access("system_accessibility/transaction/transfer/approve_transfer")!=1){
-			return false;
-		}
-
 		if(check_access('sub_category_accessibility/transfer/')!=1){
 			return false;
 		}
