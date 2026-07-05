@@ -185,7 +185,7 @@
 	      case "edit_transfer_form":
 
 	      	if(!transfer_is_accessible_to_user($data_id)){
-			?>
+	      		?>
 	      		<div class="modal-header">
 			        <h4 class="modal-title">Not Allowed</h4>
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -197,7 +197,7 @@
 			      </div>
 	      		<?php
 	      		break;
-		}
+	      	}
 
 		    	$transfer_sq = $db->prepare(
 		    		"SELECT * 
@@ -362,7 +362,7 @@
 	      case "delete_transfer_form":
 
 	      	if(!transfer_is_accessible_to_user($data_id)){
-			?>
+	      		?>
 	      		<div class="modal-header">
 			        <h4 class="modal-title">Not Allowed</h4>
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -374,7 +374,7 @@
 			      </div>
 	      		<?php
 	      		break;
-		}
+	      	}
 
 		    	
 	        ?>
@@ -417,21 +417,6 @@
 	      break;
 
 	      case "approve_transfer_form":
-
-		if(!transfer_can_be_approved_by_user($data_id)){
-			?>
-		        <div class="modal-header">
-			        <h4 class="modal-title">Approve Transfer</h4>
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			          <span aria-hidden="true">&times;</span>
-			        </button>
-			      </div>
-			      <div class="modal-body">
-				<div class="alert alert-danger mb-0">You do not have permission to approve this transfer.</div>
-			      </div>
-		        <?php
-		        break;
-		}
 
 		    	
 	        ?>
@@ -1043,7 +1028,9 @@
   			case "approve_transfer":
 
   			$data_id = holu_escape(holu_decode($_POST['data_id']));
-			if(!transfer_can_be_approved_by_user($data_id)){
+  			$approve_access_sq = $db->prepare("SELECT id FROM `transfers` WHERE deleted='0' AND id=:data_id AND to_province IN ($accessed_provinces) LIMIT 1");
+  			$approve_access_sq->execute(['data_id'=>$data_id]);
+  			if($approve_access_sq->rowCount()==0){
   				header("location:".set_referer($_SERVER['HTTP_REFERER'])."error");
   				exit();
   			}

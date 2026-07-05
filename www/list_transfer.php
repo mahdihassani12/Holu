@@ -124,7 +124,7 @@
                             <td class="text-center">
                               <div class="dropdown mt-1 opertation_container">
                                 <button type="button" class="btn btn-primary dropdown-toggle waves-effect waves-light operation_button" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-cog"></i></button>
-                                <div class="dropdown-content dropdown-menu dropdown-menu-right operation_list">
+                                <div class="dropdown-content dropdown-menu-right operation_list">
                                   
                                   <?php
                                   if(check_access("system_accessibility/transaction/transfer/edit_transfer")==1){
@@ -160,17 +160,6 @@
                                   <?php
                                   }
                                   ?>
-
-                                  <?php
-                                  if(transfer_can_be_approved_by_user($transfer_row['id'])){
-                                  ?>
-                                  <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_transfer.php', 'approve_transfer_form', 'general_md', '<?php echo holu_encode($transfer_row['id']); ?>');"><i class="fas fa-check-circle"></i> Approve Transfer</a>
-                                  <?php
-                                  }
-                                  ?>
-
-                                  <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_transfer.php', 'view_full_info', 'general_lg', '<?php echo holu_encode($transfer_row['id']); ?>');"><i class="fas fa-info-circle"></i> View Full Info</a>
-
                                   <!-- End Item -->
 
                                 </div>
