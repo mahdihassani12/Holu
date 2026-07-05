@@ -9,11 +9,9 @@
 
   set_pagination();
 
-  $transfer_source_access_condition = set_province_branch_portion('from_province', 'from_branch');
+  $transfer_sq = $db->query("SELECT * FROM `transfers` WHERE deleted='0' $holu_filtering_data AND (to_province IN ($accessed_provinces) OR users_id='$holu_users_id') ORDER BY is_approved ASC, id DESC limit $holu_to OFFSET $holu_from");
 
-  $transfer_sq = $db->query("SELECT * FROM `transfers` WHERE deleted='0' $holu_filtering_data AND (($transfer_source_access_condition) OR to_province IN ($accessed_provinces) OR users_id='$holu_users_id') ORDER BY is_approved ASC, id DESC limit $holu_to OFFSET $holu_from");
-
-  $Pagenation = $db->query("SELECT count(id) as record FROM `transfers` WHERE deleted='0' $holu_filtering_data AND (($transfer_source_access_condition) OR to_province IN ($accessed_provinces) OR users_id='$holu_users_id')");
+  $Pagenation = $db->query("SELECT count(id) as record FROM `transfers` WHERE deleted='0' $holu_filtering_data AND (to_province IN ($accessed_provinces) OR users_id='$holu_users_id')");
   extract($Pagenation->fetch());
 
   
@@ -103,22 +101,20 @@
                             <td><?php echo ($transfer_row['is_approved']==0?"No":"Yes"); ?></td>
                             <td class="text-right"><p lang="fa" dir="rtl"><?php echo $transfer_row['approve_description']; ?></p></td>
                             <td class="text-center">
-                              <?php
-                              $can_approve_transfer = (check_access("system_accessibility/request/report_transfer/approve_transfer")==1 AND $transfer_row['is_approved']==0 AND transfer_source_is_accessible_to_user($transfer_row['id']));
-                              if($can_approve_transfer){
-                              ?>
                               <div class="dropdown mt-1 opertation_container">
                                 <button type="button" class="btn btn-primary dropdown-toggle waves-effect waves-light operation_button" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-cog"></i></button>
                                 <div class="dropdown-content dropdown-menu-right operation_list">
                                   
+                                  <?php
+                                  if($transfer_row['is_approved']==0){
+                                  ?>
                                   <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_transfer.php', 'approve_transfer_form', 'general_lg', '<?php echo holu_encode($transfer_row['id']); ?>');"><i class="fas fa-circle"></i> Approve Transfer</a>
+                                  <?php
+                                  }
+                                  ?>
+
                                 </div>
                               </div>
-                              <?php
-                              }else{
-                                echo '-';
-                              }
-                              ?>
                             </td>
                           </tr>
                           <?php
