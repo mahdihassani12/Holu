@@ -9,11 +9,11 @@
 
   set_pagination();
 
-  $transfer_destination_access_condition = set_province_branch_portion('to_province', 'to_branch');
+  $transfer_source_access_condition = set_province_branch_portion('from_province', 'from_branch');
 
-  $transfer_sq = $db->query("SELECT * FROM `transfers` WHERE deleted='0' $holu_filtering_data AND (($transfer_destination_access_condition) OR users_id='$holu_users_id') ORDER BY is_approved ASC, id DESC limit $holu_to OFFSET $holu_from");
+  $transfer_sq = $db->query("SELECT * FROM `transfers` WHERE deleted='0' $holu_filtering_data AND (($transfer_source_access_condition) OR to_province IN ($accessed_provinces) OR users_id='$holu_users_id') ORDER BY is_approved ASC, id DESC limit $holu_to OFFSET $holu_from");
 
-  $Pagenation = $db->query("SELECT count(id) as record FROM `transfers` WHERE deleted='0' $holu_filtering_data AND (($transfer_destination_access_condition) OR users_id='$holu_users_id')");
+  $Pagenation = $db->query("SELECT count(id) as record FROM `transfers` WHERE deleted='0' $holu_filtering_data AND (($transfer_source_access_condition) OR to_province IN ($accessed_provinces) OR users_id='$holu_users_id')");
   extract($Pagenation->fetch());
 
   
@@ -104,7 +104,7 @@
                             <td class="text-right"><p lang="fa" dir="rtl"><?php echo $transfer_row['approve_description']; ?></p></td>
                             <td class="text-center">
                               <?php
-                              $can_approve_transfer = (check_access("system_accessibility/request/report_transfer/")==1 AND $transfer_row['is_approved']==0 AND transfer_destination_is_accessible_to_user($transfer_row['id']));
+                              $can_approve_transfer = (check_access("system_accessibility/request/report_transfer/approve_transfer")==1 AND $transfer_row['is_approved']==0 AND transfer_source_is_accessible_to_user($transfer_row['id']));
                               if($can_approve_transfer){
                               ?>
                               <div class="dropdown mt-1 opertation_container">

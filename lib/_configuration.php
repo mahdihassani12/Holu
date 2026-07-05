@@ -1523,16 +1523,16 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		return $branch_options;
 	}
 
-	function transfer_destination_is_accessible_to_user($transfer_id){
+	function transfer_source_is_accessible_to_user($transfer_id){
 		global $db;
 
-		$destination_access_condition = set_province_branch_portion('to_province', 'to_branch');
+		$source_access_condition = set_province_branch_portion('from_province', 'from_branch');
 		$transfer_access_sq = $db->prepare(
 			"SELECT id
 			FROM `transfers`
 			WHERE deleted='0'
 			AND id=:transfer_id
-			AND $destination_access_condition
+			AND $source_access_condition
 			LIMIT 1"
 		);
 

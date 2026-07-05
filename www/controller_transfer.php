@@ -419,7 +419,7 @@
 	      case "approve_transfer_form":
 
 
-			if(!(check_access("system_accessibility/request/report_transfer/")==1 AND transfer_destination_is_accessible_to_user($data_id))){
+			if(!transfer_source_is_accessible_to_user($data_id)){
 				?>
 				<div class="modal-header">
 		        <h4 class="modal-title">Not Allowed</h4>
@@ -1042,7 +1042,7 @@
   			case "approve_transfer":
 
   			$data_id = holu_escape(holu_decode($_POST['data_id']));
-			if(!(check_access("system_accessibility/request/report_transfer/")==1 AND transfer_destination_is_accessible_to_user($data_id))){
+			if(!transfer_source_is_accessible_to_user($data_id)){
   				header("location:".set_referer($_SERVER['HTTP_REFERER'])."error");
   				exit();
   			}
