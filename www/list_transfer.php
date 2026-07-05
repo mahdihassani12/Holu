@@ -162,7 +162,7 @@
                                   ?>
 
                                   <?php
-                                  if(check_access("system_accessibility/transaction/transfer/approve_transfer")==1 && $transfer_row['is_approved']!=1){
+                                  if(transfer_can_be_approved_by_user($transfer_row['id'])){
                                   ?>
                                   <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_transfer.php', 'approve_transfer_form', 'general_md', '<?php echo holu_encode($transfer_row['id']); ?>');"><i class="fas fa-check-circle"></i> Approve Transfer</a>
                                   <?php

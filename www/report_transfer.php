@@ -101,20 +101,20 @@
                             <td><?php echo ($transfer_row['is_approved']==0?"No":"Yes"); ?></td>
                             <td class="text-right"><p lang="fa" dir="rtl"><?php echo $transfer_row['approve_description']; ?></p></td>
                             <td class="text-center">
+                              <?php
+                              if(transfer_can_be_approved_by_user($transfer_row['id'])){
+                              ?>
                               <div class="dropdown mt-1 opertation_container">
                                 <button type="button" class="btn btn-primary dropdown-toggle waves-effect waves-light operation_button" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-cog"></i></button>
                                 <div class="dropdown-content dropdown-menu-right operation_list">
                                   
-                                  <?php
-                                  if($transfer_row['is_approved']==0){
-                                  ?>
                                   <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_transfer.php', 'approve_transfer_form', 'general_lg', '<?php echo holu_encode($transfer_row['id']); ?>');"><i class="fas fa-circle"></i> Approve Transfer</a>
-                                  <?php
-                                  }
-                                  ?>
 
                                 </div>
                               </div>
+                              <?php
+                              }
+                              ?>
                             </td>
                           </tr>
                           <?php
