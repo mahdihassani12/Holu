@@ -1523,6 +1523,26 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		return $branch_options;
 	}
 
+	function transfer_source_is_accessible_to_user($transfer_id){
+		global $db;
+
+		$source_access_condition = set_province_branch_portion('from_province', 'from_branch');
+		$transfer_access_sq = $db->prepare(
+			"SELECT id
+			FROM `transfers`
+			WHERE deleted='0'
+			AND id=:transfer_id
+			AND $source_access_condition
+			LIMIT 1"
+		);
+
+		$transfer_access_sq->execute([
+			'transfer_id'=>$transfer_id
+		]);
+
+		return ($transfer_access_sq->rowCount()>0);
+	}
+
 	function get_additional_information_option($additional_information){
 		global $holu_additional_informations;
 		$additional_information_options = "";
