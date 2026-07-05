@@ -1,2 +1,2 @@
-*.sql
+uploads/
 lib/_db.php
