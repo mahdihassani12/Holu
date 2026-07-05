@@ -2693,6 +2693,34 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		return "(".implode(" OR ", $result_conditions).")";
 	}
 
+	function transfer_can_be_approved_by_user($transfer_id){
+		global $db;
+
+		if(check_access("system_accessibility/transaction/transfer/approve_transfer")!=1){
+			return false;
+		}
+
+		if(check_access('sub_category_accessibility/transfer/')!=1){
+			return false;
+		}
+
+		$transfer_to_access_condition = set_province_branch_portion('to_province', 'to_branch');
+		$transfer_approval_sq = $db->prepare(
+			"SELECT id
+			FROM `transfers`
+			WHERE deleted='0'
+			AND is_approved!='1'
+			AND id=:transfer_id
+			AND ($transfer_to_access_condition)
+			LIMIT 1"
+		);
+		$transfer_approval_sq->execute([
+			'transfer_id'=>$transfer_id
+		]);
+
+		return ($transfer_approval_sq->rowCount()>0);
+	}
+
 	function set_sub_category_portion($category_type){
 		global $db;
 		$result = "";
