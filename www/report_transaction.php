@@ -231,6 +231,19 @@
     'employee_id' => 'Employee ID',
   ];
 
+  $dashboard_party_filter_field = dashboard_filter_input('dashboard_party_filter_field', 'customer_name');
+  if(!isset($party_filters[$dashboard_party_filter_field])){
+    $dashboard_party_filter_field = 'customer_name';
+  }
+  if(!isset($_GET['dashboard_party_filter_field'])){
+    foreach($party_filters as $party_filter_key => $party_information_key){
+      if(dashboard_filter_input('dashboard_filter_'.$party_filter_key)!=''){
+        $dashboard_party_filter_field = $party_filter_key;
+        break;
+      }
+    }
+  }
+
   foreach($party_filters as $party_filter_key => $party_information_key){
     $dashboard_filter_values[$party_filter_key] = dashboard_filter_input('dashboard_filter_'.$party_filter_key);
     if($dashboard_filter_values[$party_filter_key]==''){
@@ -1001,23 +1014,20 @@
 
                     <fieldset class="dashboard-party-filters">
                       <legend><i class="far fa-address-card"></i> Party details</legend>
-                      <p>Filter by any customer, vendor, or employee reference. Multiple fields are combined.</p>
+                      <p>Choose one customer, vendor, or employee reference to filter by.</p>
                       <div class="dashboard-party-filter-grid">
-                        <?php foreach(['Customer' => 'customer', 'Vendor' => 'vendor', 'Employee' => 'employee'] as $party_label => $party_key){ ?>
-                          <div class="dashboard-party-filter-card">
-                            <strong><?php echo $party_label; ?></strong>
-                            <div class="dashboard-party-filter-inputs">
-                              <div class="dashboard-filter-field">
-                                <label for="dashboard_filter_<?php echo $party_key; ?>_name">Name</label>
-                                <input type="text" id="dashboard_filter_<?php echo $party_key; ?>_name" name="dashboard_filter_<?php echo $party_key; ?>_name" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values[$party_key.'_name'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type name...">
-                              </div>
-                              <div class="dashboard-filter-field">
-                                <label for="dashboard_filter_<?php echo $party_key; ?>_id">ID</label>
-                                <input type="text" id="dashboard_filter_<?php echo $party_key; ?>_id" name="dashboard_filter_<?php echo $party_key; ?>_id" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values[$party_key.'_id'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type ID...">
-                              </div>
-                            </div>
-                          </div>
-                        <?php } ?>
+                        <div class="dashboard-filter-field">
+                          <label for="dashboard_party_filter_field">Reference field</label>
+                          <select id="dashboard_party_filter_field" name="dashboard_party_filter_field" class="form-control">
+                            <?php foreach($party_filters as $party_filter_key => $party_information_key){ ?>
+                              <option value="<?php echo $party_filter_key; ?>" <?php echo $dashboard_party_filter_field===$party_filter_key ? 'selected' : ''; ?>><?php echo $party_information_key; ?></option>
+                            <?php } ?>
+                          </select>
+                        </div>
+                        <div class="dashboard-filter-field">
+                          <label id="dashboard_party_filter_value_label" for="dashboard_party_filter_value"><?php echo $party_filters[$dashboard_party_filter_field]; ?></label>
+                          <input type="text" id="dashboard_party_filter_value" name="dashboard_filter_<?php echo $dashboard_party_filter_field; ?>" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values[$dashboard_party_filter_field], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type <?php echo strtolower($party_filters[$dashboard_party_filter_field]); ?>...">
+                        </div>
                       </div>
                     </fieldset>
 

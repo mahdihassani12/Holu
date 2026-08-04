@@ -390,3 +390,15 @@ function get_sub_cat_conf(){
 }
 
 //End of functions
+$(document).on('change', '#dashboard_party_filter_field', function(){
+  var fieldName = $(this).val();
+  var fieldLabel = $(this).find('option:selected').text();
+  var $valueInput = $('#dashboard_party_filter_value');
+
+  $('#dashboard_party_filter_value_label').text(fieldLabel);
+  $valueInput
+    .attr('name', 'dashboard_filter_' + fieldName)
+    .attr('placeholder', 'Type ' + fieldLabel.toLowerCase() + '...')
+    .val('')
+    .trigger('focus');
+});
