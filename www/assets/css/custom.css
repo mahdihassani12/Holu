@@ -1198,44 +1198,61 @@ a{
 	}
 }
 
-/* Compact customer, vendor, and employee filters shared by transaction reports. */
+/* Customer, vendor, and employee selector shared by transaction reports. */
 .dashboard-party-filters{
-	background: #f7fcfd;
+	background: #fff;
 	border: 1px solid #d7e8ed;
 	border-radius: 10px;
 	grid-column: 1 / -1;
 	margin: 0;
 	min-width: 0;
-	padding: 11px 13px 13px;
+	padding: 9px;
+	box-shadow: 0 3px 10px rgba(36, 88, 101, 0.04);
 }
 
-.dashboard-party-filters legend{
-	color: #2f8f9d;
+.dashboard-party-options{
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.dashboard-party-option{
+	align-items: center;
+	background: #f7fcfd;
+	border: 1px solid #e2eff2;
+	border-radius: 8px;
+	color: #395763;
+	cursor: pointer;
+	display: inline-flex;
 	font-size: 12px;
-	font-weight: 900;
-	letter-spacing: .03em;
+	font-weight: 700;
+	gap: 7px;
 	margin: 0;
-	padding: 0 5px;
-	width: auto;
+	padding: 8px 11px;
 }
 
-.dashboard-party-filters > p{
-	color: #708891;
-	font-size: 11px;
-	margin: 0 0 9px;
+.dashboard-party-option.is-selected{
+	background: #eaf9fb;
+	border-color: #8edce7;
+	color: #247d8a;
 }
 
-.dashboard-party-filter-grid{
-	display: grid;
-	gap: 10px;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+.dashboard-party-option input{
+	accent-color: #36b8cb;
+	margin: 0;
 }
 
 .dashboard-party-filter-card{
-	background: #fff;
-	border: 1px solid #e2eff2;
+	background: #f9fcfd;
+	border: 1px solid #edf6f8;
 	border-radius: 9px;
+	margin-top: 8px;
 	padding: 9px;
+}
+
+.dashboard-party-filter-card[hidden]{
+	display: none;
 }
 
 .dashboard-party-filter-card > strong{
@@ -1249,12 +1266,6 @@ a{
 	display: grid;
 	gap: 8px;
 	grid-template-columns: minmax(0, 2fr) minmax(80px, 1fr);
-}
-
-@media (max-width: 991.98px){
-	.dashboard-party-filter-grid{
-		grid-template-columns: 1fr;
-	}
 }
 
 @media (max-width: 575.98px){
