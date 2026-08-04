@@ -15,6 +15,10 @@
     'to_date' => '',
     'customer_name' => '',
     'customer_id' => '',
+    'vendor_name' => '',
+    'vendor_id' => '',
+    'employee_name' => '',
+    'employee_id' => '',
     'description' => '',
     'markup' => '',
     'unmark' => '',
@@ -174,28 +178,30 @@
   $dashboard_filter_values['to_date'] = $dashboard_to_date;
   $general_filtering_data .= $dashboard_date_filtering_data;
 
-  $dashboard_filter_values['customer_name'] = dashboard_deletion_filter_input('dashboard_filter_customer_name', 'customer_name');
-  if($dashboard_filter_values['customer_name']!=''){
-    $customer_name_sql = dashboard_deletion_filter_sql_value('%'.dashboard_deletion_filter_like_value($dashboard_filter_values['customer_name']).'%');
-    dashboard_deletion_add_table_filter([
-      'income' => " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info='Customer Name' AND value_info LIKE $customer_name_sql ESCAPE '\\\\' AND deleted='0') ",
-      'expense' => " AND expenses.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Expense' AND key_info='Customer Name' AND value_info LIKE $customer_name_sql ESCAPE '\\\\' AND deleted='0') ",
-      'exchange' => " AND 0 ",
-      'transfer' => " AND 0 ",
-    ]);
-    dashboard_deletion_add_filter_label('Customer Name', $dashboard_filter_values['customer_name']);
-  }
+  $party_filters = [
+    'customer_name' => 'Customer Name',
+    'customer_id' => 'Customer ID',
+    'vendor_name' => 'Vendor Name',
+    'vendor_id' => 'Vendor ID',
+    'employee_name' => 'Employee Name',
+    'employee_id' => 'Employee ID',
+  ];
 
-  $dashboard_filter_values['customer_id'] = dashboard_deletion_filter_input('dashboard_filter_customer_id', 'customer_id');
-  if($dashboard_filter_values['customer_id']!=''){
-    $customer_id_sql = dashboard_deletion_filter_sql_value('%'.dashboard_deletion_filter_like_value($dashboard_filter_values['customer_id']).'%');
+  foreach($party_filters as $party_filter_key => $party_information_key){
+    $dashboard_filter_values[$party_filter_key] = dashboard_deletion_filter_input('dashboard_filter_'.$party_filter_key, $party_filter_key);
+    if($dashboard_filter_values[$party_filter_key]==''){
+      continue;
+    }
+
+    $party_filter_sql = dashboard_deletion_filter_sql_value('%'.dashboard_deletion_filter_like_value($dashboard_filter_values[$party_filter_key]).'%');
+    $party_information_key_sql = dashboard_deletion_filter_sql_value($party_information_key);
     dashboard_deletion_add_table_filter([
-      'income' => " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info='Customer ID' AND value_info LIKE $customer_id_sql ESCAPE '\\\\' AND deleted='0') ",
-      'expense' => " AND expenses.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Expense' AND key_info='Customer ID' AND value_info LIKE $customer_id_sql ESCAPE '\\\\' AND deleted='0') ",
+      'income' => " AND incomes.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Income' AND key_info=$party_information_key_sql AND value_info LIKE $party_filter_sql ESCAPE '\\\\' AND deleted='0') ",
+      'expense' => " AND expenses.id IN (SELECT reference_id FROM `additional_informations` WHERE reference_type='Expense' AND key_info=$party_information_key_sql AND value_info LIKE $party_filter_sql ESCAPE '\\\\' AND deleted='0') ",
       'exchange' => " AND 0 ",
       'transfer' => " AND 0 ",
     ]);
-    dashboard_deletion_add_filter_label('Customer ID', $dashboard_filter_values['customer_id']);
+    dashboard_deletion_add_filter_label($party_information_key, $dashboard_filter_values[$party_filter_key]);
   }
 
   $dashboard_filter_values['description'] = dashboard_deletion_filter_input('dashboard_filter_description', 'description');
@@ -571,15 +577,27 @@
                       </select>
                     </div>
 
-                    <div class="dashboard-filter-field">
-                      <label for="dashboard_filter_customer_name">Customer Name</label>
-                      <input type="text" id="dashboard_filter_customer_name" name="dashboard_filter_customer_name" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values['customer_name'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type here...">
-                    </div>
-
-                    <div class="dashboard-filter-field">
-                      <label for="dashboard_filter_customer_id">Customer ID</label>
-                      <input type="text" id="dashboard_filter_customer_id" name="dashboard_filter_customer_id" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values['customer_id'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type here...">
-                    </div>
+                    <fieldset class="dashboard-party-filters">
+                      <legend><i class="far fa-address-card"></i> Party details</legend>
+                      <p>Filter by any customer, vendor, or employee reference. Multiple fields are combined.</p>
+                      <div class="dashboard-party-filter-grid">
+                        <?php foreach(['Customer' => 'customer', 'Vendor' => 'vendor', 'Employee' => 'employee'] as $party_label => $party_key){ ?>
+                          <div class="dashboard-party-filter-card">
+                            <strong><?php echo $party_label; ?></strong>
+                            <div class="dashboard-party-filter-inputs">
+                              <div class="dashboard-filter-field">
+                                <label for="dashboard_filter_<?php echo $party_key; ?>_name">Name</label>
+                                <input type="text" id="dashboard_filter_<?php echo $party_key; ?>_name" name="dashboard_filter_<?php echo $party_key; ?>_name" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values[$party_key.'_name'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type name...">
+                              </div>
+                              <div class="dashboard-filter-field">
+                                <label for="dashboard_filter_<?php echo $party_key; ?>_id">ID</label>
+                                <input type="text" id="dashboard_filter_<?php echo $party_key; ?>_id" name="dashboard_filter_<?php echo $party_key; ?>_id" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values[$party_key.'_id'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type ID...">
+                              </div>
+                            </div>
+                          </div>
+                        <?php } ?>
+                      </div>
+                    </fieldset>
 
                     <div class="dashboard-filter-field dashboard-filter-field-wide">
                       <label for="dashboard_filter_description">Description</label>
