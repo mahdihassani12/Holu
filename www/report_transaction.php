@@ -231,18 +231,6 @@
     'employee_id' => 'Employee ID',
   ];
 
-  $dashboard_party_filter_field = dashboard_filter_input('dashboard_party_filter_field', 'customer_name');
-  if(!isset($party_filters[$dashboard_party_filter_field])){
-    $dashboard_party_filter_field = 'customer_name';
-  }
-  if(!isset($_GET['dashboard_party_filter_field'])){
-    foreach($party_filters as $party_filter_key => $party_information_key){
-      if(dashboard_filter_input('dashboard_filter_'.$party_filter_key)!=''){
-        $dashboard_party_filter_field = $party_filter_key;
-        break;
-      }
-    }
-  }
 
   foreach($party_filters as $party_filter_key => $party_information_key){
     $dashboard_filter_values[$party_filter_key] = dashboard_filter_input('dashboard_filter_'.$party_filter_key);
@@ -1012,24 +1000,39 @@
                       </div>
                     </div>
 
-                    <fieldset class="dashboard-party-filters">
-                      <legend><i class="far fa-address-card"></i> Party details</legend>
-                      <p>Choose one customer, vendor, or employee reference to filter by.</p>
-                      <div class="dashboard-party-filter-grid">
-                        <div class="dashboard-filter-field">
-                          <label for="dashboard_party_filter_field">Reference field</label>
-                          <select id="dashboard_party_filter_field" name="dashboard_party_filter_field" class="form-control">
-                            <?php foreach($party_filters as $party_filter_key => $party_information_key){ ?>
-                              <option value="<?php echo $party_filter_key; ?>" <?php echo $dashboard_party_filter_field===$party_filter_key ? 'selected' : ''; ?>><?php echo $party_information_key; ?></option>
-                            <?php } ?>
-                          </select>
+                    <div class="dashboard-filter-field dashboard-filter-field-wide">
+                      <label>Party Details</label>
+                      <div class="dashboard-party-filters">
+                        <div class="dashboard-party-options" role="group" aria-label="Choose party types">
+                          <?php foreach(['customer' => 'Customer', 'employee' => 'Employee', 'vendor' => 'Vendor'] as $party_type => $party_label){
+                            $party_is_selected = ($dashboard_filter_values[$party_type.'_name'] !== '' || $dashboard_filter_values[$party_type.'_id'] !== '');
+                          ?>
+                            <label class="dashboard-party-option" for="dashboard_party_type_<?php echo $party_type; ?>">
+                              <input type="checkbox" id="dashboard_party_type_<?php echo $party_type; ?>" class="dashboard-party-type" value="<?php echo $party_type; ?>" aria-controls="dashboard_party_fields_<?php echo $party_type; ?>" <?php echo $party_is_selected ? 'checked' : ''; ?>>
+                              <span><?php echo $party_label; ?></span>
+                            </label>
+                          <?php } ?>
                         </div>
-                        <div class="dashboard-filter-field">
-                          <label id="dashboard_party_filter_value_label" for="dashboard_party_filter_value"><?php echo $party_filters[$dashboard_party_filter_field]; ?></label>
-                          <input type="text" id="dashboard_party_filter_value" name="dashboard_filter_<?php echo $dashboard_party_filter_field; ?>" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values[$dashboard_party_filter_field], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type <?php echo strtolower($party_filters[$dashboard_party_filter_field]); ?>...">
-                        </div>
+
+                        <?php foreach(['customer' => 'Customer', 'employee' => 'Employee', 'vendor' => 'Vendor'] as $party_type => $party_label){
+                          $party_is_selected = ($dashboard_filter_values[$party_type.'_name'] !== '' || $dashboard_filter_values[$party_type.'_id'] !== '');
+                        ?>
+                          <div class="dashboard-party-filter-card" id="dashboard_party_fields_<?php echo $party_type; ?>" data-party-type="<?php echo $party_type; ?>" <?php echo $party_is_selected ? '' : 'hidden'; ?>>
+                            <strong><?php echo $party_label; ?> details</strong>
+                            <div class="dashboard-party-filter-inputs">
+                              <?php foreach(['name' => 'Name', 'id' => 'ID'] as $party_field => $party_field_label){
+                                $party_filter_key = $party_type.'_'.$party_field;
+                              ?>
+                                <div class="dashboard-filter-field">
+                                  <label for="dashboard_filter_<?php echo $party_filter_key; ?>"><?php echo $party_label.' '.$party_field_label; ?></label>
+                                  <input type="text" id="dashboard_filter_<?php echo $party_filter_key; ?>" name="dashboard_filter_<?php echo $party_filter_key; ?>" class="form-control" value="<?php echo htmlspecialchars($dashboard_filter_values[$party_filter_key], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Type <?php echo strtolower($party_label.' '.$party_field_label); ?>..." <?php echo $party_is_selected ? '' : 'disabled'; ?>>
+                                </div>
+                              <?php } ?>
+                            </div>
+                          </div>
+                        <?php } ?>
                       </div>
-                    </fieldset>
+                    </div>
 
                     <div class="dashboard-filter-field dashboard-filter-field-wide">
                       <label for="dashboard_filter_description">Description</label>
@@ -1284,6 +1287,24 @@
       }
     });
 
+
+    function updateDashboardPartyFields(checkbox){
+      var $checkbox = $(checkbox);
+      var partyType = $checkbox.val();
+      var isSelected = $checkbox.prop('checked');
+      var $fields = $('#dashboard_party_fields_' + partyType);
+
+      $checkbox.attr('aria-expanded', isSelected ? 'true' : 'false');
+      $checkbox.closest('.dashboard-party-option').toggleClass('is-selected', isSelected);
+      $fields.prop('hidden', !isSelected);
+      $fields.find(':input').prop('disabled', !isSelected);
+    }
+
+    $('.dashboard-party-type').each(function(){
+      updateDashboardPartyFields(this);
+    }).on('change', function(){
+      updateDashboardPartyFields(this);
+    });
 
     var dashboardTransactionComponents = <?php echo print_access_sub_categories(); ?>;
     var dashboardSelectedTransactionComponents = <?php echo json_encode(array_values(array_filter(explode(',', $dashboard_filter_values['transaction_components'])))); ?>;
