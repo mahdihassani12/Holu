@@ -1005,7 +1005,7 @@
                       <div class="dashboard-party-filters">
                         <div class="dashboard-party-options" role="group" aria-label="Choose party types">
                           <?php foreach(['customer' => 'Customer', 'employee' => 'Employee', 'vendor' => 'Vendor'] as $party_type => $party_label){
-                            $party_is_selected = ($dashboard_filter_values[$party_type.'_name'] !== '' || $dashboard_filter_values[$party_type.'_id'] !== '');
+                            $party_is_selected = ($party_type === 'customer' || $dashboard_filter_values[$party_type.'_name'] !== '' || $dashboard_filter_values[$party_type.'_id'] !== '');
                           ?>
                             <label class="dashboard-party-option" for="dashboard_party_type_<?php echo $party_type; ?>">
                               <input type="checkbox" id="dashboard_party_type_<?php echo $party_type; ?>" class="dashboard-party-type" value="<?php echo $party_type; ?>" aria-controls="dashboard_party_fields_<?php echo $party_type; ?>" <?php echo $party_is_selected ? 'checked' : ''; ?>>
@@ -1015,7 +1015,7 @@
                         </div>
 
                         <?php foreach(['customer' => 'Customer', 'employee' => 'Employee', 'vendor' => 'Vendor'] as $party_type => $party_label){
-                          $party_is_selected = ($dashboard_filter_values[$party_type.'_name'] !== '' || $dashboard_filter_values[$party_type.'_id'] !== '');
+                          $party_is_selected = ($party_type === 'customer' || $dashboard_filter_values[$party_type.'_name'] !== '' || $dashboard_filter_values[$party_type.'_id'] !== '');
                         ?>
                           <div class="dashboard-party-filter-card" id="dashboard_party_fields_<?php echo $party_type; ?>" data-party-type="<?php echo $party_type; ?>" <?php echo $party_is_selected ? '' : 'hidden'; ?>>
                             <strong><?php echo $party_label; ?> details</strong>

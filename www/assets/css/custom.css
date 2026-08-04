@@ -741,7 +741,9 @@ a{
 }
 
 
-.dashboard-component-selector{
+/* Keep party details and transaction components on the same bordered surface. */
+.dashboard-component-selector,
+.dashboard-party-filters{
 	background: #fff;
 	border: 1px solid #d7e8ed;
 	border-radius: 10px;
@@ -1200,14 +1202,9 @@ a{
 
 /* Customer, vendor, and employee selector shared by transaction reports. */
 .dashboard-party-filters{
-	background: #fff;
-	border: 1px solid #d7e8ed;
-	border-radius: 10px;
 	grid-column: 1 / -1;
 	margin: 0;
 	min-width: 0;
-	padding: 9px;
-	box-shadow: 0 3px 10px rgba(36, 88, 101, 0.04);
 }
 
 .dashboard-party-options{
