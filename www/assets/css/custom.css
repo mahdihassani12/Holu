@@ -1197,3 +1197,68 @@ a{
 		font-size: 22px;
 	}
 }
+
+/* Compact customer, vendor, and employee filters shared by transaction reports. */
+.dashboard-party-filters{
+	background: #f7fcfd;
+	border: 1px solid #d7e8ed;
+	border-radius: 10px;
+	grid-column: 1 / -1;
+	margin: 0;
+	min-width: 0;
+	padding: 11px 13px 13px;
+}
+
+.dashboard-party-filters legend{
+	color: #2f8f9d;
+	font-size: 12px;
+	font-weight: 900;
+	letter-spacing: .03em;
+	margin: 0;
+	padding: 0 5px;
+	width: auto;
+}
+
+.dashboard-party-filters > p{
+	color: #708891;
+	font-size: 11px;
+	margin: 0 0 9px;
+}
+
+.dashboard-party-filter-grid{
+	display: grid;
+	gap: 10px;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.dashboard-party-filter-card{
+	background: #fff;
+	border: 1px solid #e2eff2;
+	border-radius: 9px;
+	padding: 9px;
+}
+
+.dashboard-party-filter-card > strong{
+	color: #395763;
+	display: block;
+	font-size: 11px;
+	margin-bottom: 6px;
+}
+
+.dashboard-party-filter-inputs{
+	display: grid;
+	gap: 8px;
+	grid-template-columns: minmax(0, 2fr) minmax(80px, 1fr);
+}
+
+@media (max-width: 991.98px){
+	.dashboard-party-filter-grid{
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 575.98px){
+	.dashboard-party-filter-inputs{
+		grid-template-columns: 1fr;
+	}
+}
