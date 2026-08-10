@@ -4799,7 +4799,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				<div class="form-group row">
           <label class="col-sm-3 col-form-label" for="vendor_name">Vendor Name</label>
           <div class="col-sm-6">
-            <input type="text" id="vendor_name" name="vendor_name" class="form-control" placeholder="Type here..." required value="'.$default_value.'" autocomplete="off">
+            <input type="text" id="vendor_name" name="vendor_name" class="form-control" placeholder="Type here..." required value="'.$default_value.'" onkeyup="suggest_data(this, \'additional_information_vendor_name\');" autocomplete="off">
           </div>
         </div>
         ';
@@ -4811,7 +4811,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				<div class="form-group row">
           <label class="col-sm-3 col-form-label" for="vendor_id">Vendor ID</label>
           <div class="col-sm-6">
-            <input type="text" id="vendor_id" name="vendor_id" class="form-control" placeholder="Type here..." required value="'.$default_value.'" autocomplete="off">
+            <input type="text" id="vendor_id" name="vendor_id" class="form-control" placeholder="Type here..." required value="'.$default_value.'" onkeyup="suggest_data(this, \'additional_information_vendor_id\');" autocomplete="off">
           </div>
         </div>
         ';
@@ -4823,7 +4823,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				<div class="form-group row">
           <label class="col-sm-3 col-form-label" for="employee_name">Employee Name</label>
           <div class="col-sm-6">
-            <input type="text" id="employee_name" name="employee_name" class="form-control" placeholder="Type here..." required value="'.$default_value.'" autocomplete="off">
+            <input type="text" id="employee_name" name="employee_name" class="form-control" placeholder="Type here..." required value="'.$default_value.'" onkeyup="suggest_data(this, \'additional_information_employee_name\');" autocomplete="off">
           </div>
         </div>
         ';
@@ -4835,7 +4835,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				<div class="form-group row">
           <label class="col-sm-3 col-form-label" for="employee_id">Employee ID</label>
           <div class="col-sm-6">
-            <input type="text" id="employee_id" name="employee_id" class="form-control" placeholder="Type here..." required value="'.$default_value.'" autocomplete="off">
+            <input type="text" id="employee_id" name="employee_id" class="form-control" placeholder="Type here..." required value="'.$default_value.'" onkeyup="suggest_data(this, \'additional_information_employee_id\');" autocomplete="off">
           </div>
         </div>
         ';
