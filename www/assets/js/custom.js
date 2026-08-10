@@ -338,7 +338,13 @@ function suggest_data(input_field, type){
   var field_id = $(input_field).attr('id');
   $("#holu_auto_suggest_container").remove();
 
-  if(type === 'additional_information_customer_id' && input.length < 2){
+  var idSuggestionTypes = [
+    'additional_information_customer_id',
+    'additional_information_vendor_id',
+    'additional_information_employee_id'
+  ];
+
+  if(idSuggestionTypes.indexOf(type) !== -1 && input.length < 2){
     return;
   }
 

@@ -502,6 +502,26 @@
 			      	<input type="text" id="value_'.$selector.'_'.$counter.'" name="value_infos[]" class="form-control" placeholder="Type here..." autocomplete="off" onkeyup="suggest_data(this, \'additional_information_other_services\');">
 			      ';
 			    }break;
+			    case 'Vendor Name':{
+			      $input_field = '
+				<input type="text" id="value_'.$selector.'_'.$counter.'" name="value_infos[]" class="form-control" placeholder="Type here..." autocomplete="off" onkeyup="suggest_data(this, \'additional_information_vendor_name\');">
+			      ';
+			    }break;
+			    case 'Vendor ID':{
+			      $input_field = '
+				<input type="text" id="value_'.$selector.'_'.$counter.'" name="value_infos[]" class="form-control" placeholder="Type here..." autocomplete="off" onkeyup="suggest_data(this, \'additional_information_vendor_id\');">
+			      ';
+			    }break;
+			    case 'Employee Name':{
+			      $input_field = '
+				<input type="text" id="value_'.$selector.'_'.$counter.'" name="value_infos[]" class="form-control" placeholder="Type here..." autocomplete="off" onkeyup="suggest_data(this, \'additional_information_employee_name\');">
+			      ';
+			    }break;
+			    case 'Employee ID':{
+			      $input_field = '
+				<input type="text" id="value_'.$selector.'_'.$counter.'" name="value_infos[]" class="form-control" placeholder="Type here..." autocomplete="off" onkeyup="suggest_data(this, \'additional_information_employee_id\');">
+			      ';
+			    }break;
 			    default:{
 			    	$input_field = '
 			      	<input type="text" id="value_'.$selector.'_'.$counter.'" name="value_infos[]" class="form-control" placeholder="Type here...">
@@ -602,6 +622,48 @@
 							$result .= '
 								</ul>
 		      		</div>
+							';
+						}
+					}break;
+
+					case 'additional_information_vendor_name':
+					case 'additional_information_vendor_id':
+					case 'additional_information_employee_name':
+					case 'additional_information_employee_id':{
+						$suggestion_keys = [
+							'additional_information_vendor_name' => 'Vendor Name',
+							'additional_information_vendor_id' => 'Vendor ID',
+							'additional_information_employee_name' => 'Employee Name',
+							'additional_information_employee_id' => 'Employee ID'
+						];
+						$is_id_suggestion = substr($type, -3) === '_id';
+
+						if($input != "" AND (!$is_id_suggestion OR strlen($input) >= 2)){
+							$data_sq = $db->prepare(
+								"SELECT DISTINCT(value_info) FROM (SELECT * FROM additional_informations ORDER BY id DESC LIMIT 20000) AS additional_informations
+								WHERE key_info=:key_info
+								AND value_info LIKE :input
+								LIMIT 5"
+							);
+							$data_sqx = $data_sq->execute([
+								'key_info'=>$suggestion_keys[$type],
+								'input'=>'%'.$input.'%'
+							]);
+						}
+
+						if(isset($data_sq) AND $data_sq->rowCount()>0){
+							$result .= '
+							<div class="holu_auto_suggest_container" id="holu_auto_suggest_container">
+					<ul>
+							';
+							while ($data_row = $data_sq->fetch()) {
+								$result .= '
+									<li onclick="select_data(\''.$field_id.'\', \''.$data_row['value_info'].'\');">'.$data_row['value_info'].'</li>
+								';
+							}
+							$result .= '
+								</ul>
+				</div>
 							';
 						}
 					}break;
