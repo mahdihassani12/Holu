@@ -160,6 +160,17 @@ a.tip{
 .holu_auto_suggest_container ul li:hover{
 	background-color: #ced4da !important;
 }
+.holu_auto_suggest_status{
+	padding: 6px 8px !important;
+	color: #6c757d !important;
+}
+.holu_auto_suggest_error{
+	color: #dc3545 !important;
+}
+.holu_auto_suggest_container .suggestion-secondary{
+	color: #6c757d !important;
+	font-size: 0.85em !important;
+}
 
 ul.tree_view li{
 	cursor: pointer !important;

@@ -630,24 +630,33 @@
 					case 'additional_information_vendor_id':
 					case 'additional_information_employee_name':
 					case 'additional_information_employee_id':{
-						$suggestion_keys = [
-							'additional_information_vendor_name' => 'Vendor Name',
-							'additional_information_vendor_id' => 'Vendor ID',
-							'additional_information_employee_name' => 'Employee Name',
-							'additional_information_employee_id' => 'Employee ID'
-						];
+						$is_vendor = strpos($type, '_vendor_') !== false;
 						$is_id_suggestion = substr($type, -3) === '_id';
+						$name_key = $is_vendor ? 'Vendor Name' : 'Employee Name';
+						$id_key = $is_vendor ? 'Vendor ID' : 'Employee ID';
+						$name_field_id = $is_vendor ? 'vendor_name' : 'employee_name';
+						$id_field_id = $is_vendor ? 'vendor_id' : 'employee_id';
 
 						if($input != "" AND (!$is_id_suggestion OR strlen($input) >= 2)){
 							$data_sq = $db->prepare(
-								"SELECT DISTINCT(value_info) FROM (SELECT * FROM additional_informations ORDER BY id DESC LIMIT 20000) AS additional_informations
-								WHERE key_info=:key_info
-								AND value_info LIKE :input
+								"SELECT party_name.value_info AS party_name, party_id.value_info AS party_id, MAX(party_name.id) AS latest_id
+								FROM (SELECT * FROM additional_informations WHERE deleted='0' ORDER BY id DESC LIMIT 20000) AS party_name
+								INNER JOIN additional_informations AS party_id
+								ON party_id.reference_type=party_name.reference_type
+								AND party_id.reference_id=party_name.reference_id
+								AND party_id.deleted='0'
+								WHERE party_name.key_info=:name_key
+								AND party_id.key_info=:id_key
+								AND (party_name.value_info LIKE :name_input OR party_id.value_info LIKE :id_input)
+								GROUP BY party_name.value_info, party_id.value_info
+								ORDER BY latest_id DESC
 								LIMIT 5"
 							);
 							$data_sqx = $data_sq->execute([
-								'key_info'=>$suggestion_keys[$type],
-								'input'=>'%'.$input.'%'
+								'name_key'=>$name_key,
+								'id_key'=>$id_key,
+								'name_input'=>'%'.$input.'%',
+								'id_input'=>'%'.$input.'%'
 							]);
 						}
 
@@ -657,14 +666,18 @@
 					<ul>
 							';
 							while ($data_row = $data_sq->fetch()) {
+								$field_value = $is_id_suggestion ? $data_row['party_id'] : $data_row['party_name'];
+								$onclick = 'select_party_data('.json_encode($field_id).', '.json_encode($name_field_id).', '.json_encode($id_field_id).', '.json_encode($field_value).', '.json_encode($data_row['party_name']).', '.json_encode($data_row['party_id']).');';
 								$result .= '
-									<li onclick="select_data(\''.$field_id.'\', \''.$data_row['value_info'].'\');">'.$data_row['value_info'].'</li>
+									<li onclick="'.htmlspecialchars($onclick, ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($data_row['party_name'], ENT_QUOTES, 'UTF-8').' <span class="suggestion-secondary">'.htmlspecialchars($data_row['party_id'], ENT_QUOTES, 'UTF-8').'</span></li>
 								';
 							}
 							$result .= '
 								</ul>
 				</div>
 							';
+						}else{
+							$result = '<div class="holu_auto_suggest_container holu_auto_suggest_status" id="holu_auto_suggest_container">No suggestions found.</div>';
 						}
 					}break;
 
