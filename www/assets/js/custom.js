@@ -333,6 +333,8 @@ function get_income_for_accounting(){
   });
 }
 
+var holuSuggestionRequest = null;
+
 function suggest_data(input_field, type){
   var input = $(input_field).val();
   var field_id = $(input_field).attr('id');
@@ -348,7 +350,17 @@ function suggest_data(input_field, type){
     return;
   }
 
-  $.ajax({
+  if(input.length === 0){
+    return;
+  }
+
+  if(holuSuggestionRequest){
+    holuSuggestionRequest.abort();
+  }
+
+  $(input_field).after('<div class="holu_auto_suggest_container holu_auto_suggest_status" id="holu_auto_suggest_container">Loading...</div>');
+
+  holuSuggestionRequest = $.ajax({
     url:'controller_ajax.php',
     method:'post',
     data:{
@@ -361,16 +373,44 @@ function suggest_data(input_field, type){
       
     },
     success:function(result){
+      if($(input_field).val() !== input){
+        return;
+      }
+      $("#holu_auto_suggest_container").remove();
       $(input_field).after(result);
-      $(document).mouseup(function(e){
+      $(document).off('mouseup.holuSuggestions').on('mouseup.holuSuggestions', function(e){
         var container = $(".holu_auto_suggest_container");
         if (!container.is(e.target) && container.has(e.target).length === 0){
           $("#holu_auto_suggest_container").remove();
         }
       });
+    },
+    error:function(xhr, status){
+      if(status !== 'abort'){
+        $("#holu_auto_suggest_container").remove();
+        $(input_field).after('<div class="holu_auto_suggest_container holu_auto_suggest_status holu_auto_suggest_error" id="holu_auto_suggest_container">Unable to load suggestions.</div>');
+      }
+    },
+    complete:function(){
+      holuSuggestionRequest = null;
     }
     
   });
+}
+
+function select_party_data(field_id, name_field_id, id_field_id, field_value, name, id){
+  if(name_field_id && $("#"+name_field_id).length){
+    $("#"+name_field_id).val(name);
+  }
+  if(id_field_id && $("#"+id_field_id).length){
+    $("#"+id_field_id).val(id);
+  }
+
+  // Dynamically configured fields do not always have their counterpart on screen.
+  if(!$("#"+name_field_id).length && !$("#"+id_field_id).length){
+    $("#"+field_id).val(field_value);
+  }
+  $("#holu_auto_suggest_container").remove();
 }
 
 function select_data(field_id, data){
