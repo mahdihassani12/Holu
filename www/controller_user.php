@@ -371,7 +371,7 @@ if (isset($_POST['flag_request'])) {
 							<div class="item form-group">
 								<label class="control-label col-md-2 col-sm-2 col-xs-8"></label>
 								<div class="col-md-12 col-sm-12 col-xs-12">
-									<div class="col-md-12 col-sm-12 col-xs-12" style="border: 2px dashed #00b8a5; padding-left: 20px; padding-top: 3%; padding-bottom: 3%; font-weight:bold;" id="accessibility_container">
+									<div class="col-md-12 col-sm-12 col-xs-12" style="border: 2px dashed #0f9287; padding-left: 20px; padding-top: 3%; padding-bottom: 3%; font-weight:bold;" id="accessibility_container">
 
 									</div>
 								</div>
@@ -382,7 +382,7 @@ if (isset($_POST['flag_request'])) {
 							<div class="item form-group">
 								<label class="control-label col-md-2 col-sm-2 col-xs-8"></label>
 								<div class="col-md-12 col-sm-12 col-xs-12">
-									<div class="col-md-12 col-sm-12 col-xs-12" style="border: 2px dashed #00b8a5; padding-left: 20px; padding-top: 3%; padding-bottom: 3%; font-weight:bold;" id="province_accessibility_container">
+									<div class="col-md-12 col-sm-12 col-xs-12" style="border: 2px dashed #0f9287; padding-left: 20px; padding-top: 3%; padding-bottom: 3%; font-weight:bold;" id="province_accessibility_container">
 
 									</div>
 								</div>
@@ -393,7 +393,7 @@ if (isset($_POST['flag_request'])) {
 							<div class="item form-group">
 								<label class="control-label col-md-2 col-sm-2 col-xs-8"></label>
 								<div class="col-md-12 col-sm-12 col-xs-12">
-									<div class="col-md-12 col-sm-12 col-xs-12" style="border: 2px dashed #00b8a5; padding-left: 20px; padding-top: 3%; padding-bottom: 3%; font-weight:bold;" id="sub_category_accessibility_container">
+									<div class="col-md-12 col-sm-12 col-xs-12" style="border: 2px dashed #0f9287; padding-left: 20px; padding-top: 3%; padding-bottom: 3%; font-weight:bold;" id="sub_category_accessibility_container">
 
 									</div>
 								</div>

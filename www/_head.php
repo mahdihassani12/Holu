@@ -29,5 +29,7 @@
 <link href="assets/libs/select2/select2.min.css" rel="stylesheet" type="text/css" />
 
 
-<link href="assets/css/custom.css" rel="stylesheet" type="text/css" />
+<link href="assets/css/custom.css?v=<?php echo (int)filemtime(__DIR__.'/assets/css/custom.css'); ?>" rel="stylesheet" type="text/css" />
 
+
+<link href="assets/css/cashtrack-font.css" rel="stylesheet" type="text/css" />

@@ -75,7 +75,7 @@
                           ?>
                           <tr>
                             <th class="text-center"><?php echo $holu_count++; ?></th>
-                            <td><?php echo $category_row['category_type']; ?></td>
+                            <td><?php echo cashtrack_transaction_label($category_row['category_type']); ?></td>
                             <td><?php echo $category_row['category_name']; ?></td>
                             <td><?php echo $category_row['description']; ?></td>
                             <td><?php echo isset($category_row['users_id']) ? get_col('users', 'username', 'id', $category_row['users_id']) : '-'; ?></td>

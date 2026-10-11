@@ -1,0 +1,7 @@
+/* CashTrack text typography: icon elements keep their original font rules. */
+@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800;900&display=swap');
+body, h1, h2, h3, h4, h5, h6, p, button, input, textarea, select,
+label, table, th, td, .form-control, .btn,
+.header-title, .page-title, .modal-title {
+  font-family: 'Mulish', Arial, sans-serif;
+}

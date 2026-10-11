@@ -51,7 +51,7 @@
 	          <div class="form-group row">
 	            <label class="col-sm-3 col-form-label" for="description">Additional Information</label>
 	            <div class="col-sm-6">
-	              <div style="border: 1px dashed #00b8a5 !important; padding: 10px !important;">
+	              <div style="border: 1px dashed #0f9287 !important; padding: 10px !important;">
 	              	
 	              	<?php
 	              		echo get_additional_information_items(array());
@@ -124,7 +124,7 @@
 			          <div class="form-group row">
 			            <label class="col-sm-3 col-form-label" for="description">Additional Information</label>
 			            <div class="col-sm-6">
-			              <div style="border: 1px dashed #00b8a5 !important; padding: 10px !important;">
+			              <div style="border: 1px dashed #0f9287 !important; padding: 10px !important;">
 			              	
 			              	<?php
 			              		$additinal_information_items_sq = $db->query(

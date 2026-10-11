@@ -87,12 +87,8 @@ function bind_province_branch_filters(){
 }
 
 function get_random_color() {
-  var letters = '0123456789ABCDEF'.split('');
-  var color = '#';
-  for (var i = 0; i < 6; i++ ) {
-      color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
+  var colours = ['#0f9287', '#33364d', '#08786f', '#51566e', '#37aca2', '#727891', '#065e57'];
+  return colours[Math.floor(Math.random() * colours.length)];
 }
 
 function convert_chart_to_pdf(canvas_id){
@@ -136,7 +132,7 @@ function convert_chart_to_pdf(canvas_id){
   pdf.addImage($(pdfCanvas)[0], 'PNG', 0, 0);
 
   // download the pdf
-  pdf.save('FlowBook.pdf');
+  pdf.save('CashTrack.pdf');
 }
 
 function get_category_option(categories_id, category_type, target_id){
@@ -340,17 +336,8 @@ function suggest_data(input_field, type){
   var field_id = $(input_field).attr('id');
   $("#holu_auto_suggest_container").remove();
 
-  var idSuggestionTypes = [
-    'additional_information_customer_id',
-    'additional_information_vendor_id',
-    'additional_information_employee_id'
-  ];
-
-  if(idSuggestionTypes.indexOf(type) !== -1 && input.length < 2){
-    return;
-  }
-
-  if(input.length === 0){
+  if(Array.from($.trim(input)).length < 1){
+    if(holuSuggestionRequest){ holuSuggestionRequest.abort(); }
     return;
   }
 
@@ -378,6 +365,7 @@ function suggest_data(input_field, type){
       }
       $("#holu_auto_suggest_container").remove();
       $(input_field).after(result);
+      $("#holu_auto_suggest_container").css("width", $(input_field).outerWidth() + "px");
       $(document).off('mouseup.holuSuggestions').on('mouseup.holuSuggestions', function(e){
         var container = $(".holu_auto_suggest_container");
         if (!container.is(e.target) && container.has(e.target).length === 0){
@@ -399,6 +387,17 @@ function suggest_data(input_field, type){
 }
 
 function select_party_data(field_id, name_field_id, id_field_id, field_value, name, id){
+
+  $("#"+field_id).val(field_value);
+  var $form = $("#"+field_id).closest('form');
+  var partyLabels = {customer_name: 'Customer Name', customer_id: 'Customer ID', vendor_name: 'Vendor Name', vendor_id: 'Vendor ID', employee_name: 'Employee Name', employee_id: 'Employee ID'};
+  $form.find('input[name="value_infos[]"]').each(function(){
+    var selectorId = ($(this).attr('id') || '').replace(/^value_/, 'key_');
+    var key = $form.find('[id="'+selectorId+'"]').val();
+    if(key === partyLabels[name_field_id]){ $(this).val(name); }
+    if(key === partyLabels[id_field_id]){ $(this).val(id); }
+  });
+
   if(name_field_id && $("#"+name_field_id).length){
     $("#"+name_field_id).val(name);
   }
@@ -447,4 +446,13 @@ $(document).on('change', '#dashboard_party_filter_field', function(){
     .attr('placeholder', 'Type ' + fieldLabel.toLowerCase() + '...')
     .val('')
     .trigger('focus');
+});
+
+// Existing configurable additional-information rows also use registered details.
+$(document).on('input.ctReferenceData', 'input[name="value_infos[]"]', function(){
+  if((this.getAttribute('onkeyup') || '').indexOf('suggest_data') !== -1){ return; }
+  var keyId = (this.id || '').replace(/^value_/, 'key_');
+  var key = $(this).closest('form').find('[id="'+keyId+'"]').val();
+  var types = {'Customer Name':'customer_name','Customer ID':'customer_id','Vendor Name':'vendor_name','Vendor ID':'vendor_id','Employee Name':'employee_name','Employee ID':'employee_id','Package':'package','Equipment':'equipment','Other Services':'other_services'};
+  if(types[key]){ suggest_data(this, 'additional_information_' + types[key]); }
 });

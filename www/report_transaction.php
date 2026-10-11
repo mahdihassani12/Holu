@@ -128,7 +128,7 @@
         continue;
       }
 
-      $transaction_type = ucfirst($parts[1]);
+      $transaction_type = cashtrack_transaction_label(ucfirst($parts[1]));
       if(count($parts)>=4 && $parts[3]!=='' && is_numeric($parts[3])){
         $sub_category_name = get_col('sub_categories', 'sub_category_name', 'id', $parts[3]);
         if($sub_category_name!=''){
@@ -372,7 +372,7 @@
         }
       }
       dashboard_add_filter_query('dashboard_filter_transaction_type', $dashboard_filter_values['transaction_type']);
-      dashboard_add_filter_label('Transaction Type', $dashboard_filter_values['transaction_type']);
+      dashboard_add_filter_label('Transaction Type', cashtrack_transaction_label($dashboard_filter_values['transaction_type']));
     }
   }
 
@@ -839,7 +839,7 @@
             <div class="col-lg-12">
               <div class="dashboard-transaction-summary" aria-label="Transaction totals for selected date range">
                 <div class="dashboard-summary-card dashboard-summary-income">
-                  <div class="dashboard-summary-title"><i class="fa fa-arrow-down"></i> Income</div>
+                  <div class="dashboard-summary-title"><i class="fa fa-arrow-down"></i> Input</div>
                   <div class="dashboard-summary-values">
                     <span><?php echo number_format($dashboard_total_income_row['total_income_afn'] ?? 0, 2); ?> AFN</span>
                     <span><?php echo number_format($dashboard_total_income_row['total_income_usd'] ?? 0, 2); ?> USD</span>
@@ -847,7 +847,7 @@
                   </div>
                 </div>
                 <div class="dashboard-summary-card dashboard-summary-expense">
-                  <div class="dashboard-summary-title"><i class="fa fa-arrow-up"></i> Expense</div>
+                  <div class="dashboard-summary-title"><i class="fa fa-arrow-up"></i> Output</div>
                   <div class="dashboard-summary-values">
                     <span><?php echo number_format($dashboard_total_expense_row['total_expense_afn'] ?? 0, 2); ?> AFN</span>
                     <span><?php echo number_format($dashboard_total_expense_row['total_expense_usd'] ?? 0, 2); ?> USD</span>
@@ -1067,7 +1067,7 @@
                       <div class="dashboard-component-selector">
                         <div class="dashboard-component-search">
                           <i class="fa fa-search"></i>
-                          <input type="text" id="dashboard_filter_transaction_component_search" class="form-control" placeholder="Search income, expense, transfer, exchange, or child components..." autocomplete="off">
+                          <input type="text" id="dashboard_filter_transaction_component_search" class="form-control" placeholder="Search input, output, transfer, exchange, or child components..." autocomplete="off">
                         </div>
                         <div class="dashboard-component-tree" id="dashboard_filter_transaction_components_container"></div>
                         <small class="dashboard-component-help" id="dashboard_filter_transaction_components_summary">Select parent or child transaction components.</small>
@@ -1108,8 +1108,8 @@
                 </form>
               </div>
               <div class="card-box">
-                <div class="table-responsive slimscroll">
-                  <table class="table table-bordered table-sm mb-0" style="margin-bottom: 20px !important;">
+                <div class="table-responsive cashtrack-transactions-scroll">
+                  <table class="table table-bordered table-sm mb-0 cashtrack-transactions-table" style="margin-bottom: 20px !important;">
                     <thead>
                       <tr>
                         <th class="text-center">#</th>
@@ -1126,6 +1126,7 @@
                         <th>Markups</th>
                         <th>SIB Number</th>
                         <th>Added By</th>
+                        <th>Operations</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1145,10 +1146,24 @@
                             $check_number_container = htmlspecialchars($transaction_row['transaction_check_number'], ENT_QUOTES, 'UTF-8');
                           }
 
-                          if($transaction_type=='Income' && has_customer_reference_for_sib($transaction_row['transaction_additional_informations'] ?? '')){
-                            $sib_number_container = '<p>'.$transaction_row['transaction_sib_number'].'</p>';
+                          if($transaction_type=='Income'){
+                            $sib_value = htmlspecialchars((string)($transaction_row['transaction_sib_number'] ?? ''), ENT_QUOTES, 'UTF-8');
+                            $sib_number_container = '<p>'.$sib_value.'</p>';
+                            if(check_access('system_accessibility/report/report_transaction/edit_sib_number/')){
+                              $sib_id = (int)$transaction_row['transaction_id'];
+                              $sib_number_container = '<input type="text" class="form-control form-control-sm cashtrack-sib-input" id="sib_number'.$sib_id.'" name="sib_number'.$sib_id.'" value="'.$sib_value.'" placeholder="SIB number" aria-label="SIB number">';
+                              $sib_number_container .= '<button type="button" class="btn btn-primary btn-sm mt-1" onclick="edit_sib_number('.$sib_id.', &quot;save&quot;);"><i class="fas fa-save"></i> Save</button>';
+                            }
                           }
 
+                          $transaction_edit_targets = array(
+                            'Income' => array('controller_income.php', 'edit_income_form'),
+                            'Expense' => array('controller_expense.php', 'edit_expense_form'),
+                            'Exchange' => array('controller_exchange.php', 'edit_exchange_form'),
+                            'Transfer' => array('controller_transfer.php', 'edit_transfer_form')
+                          );
+                          $can_edit_report_transaction = check_access('system_accessibility/report/report_transaction/edit_transaction/') && isset($transaction_edit_targets[$transaction_type]);
+                          $can_delete_report_transaction = check_access('system_accessibility/report/report_transaction/delete_transaction/') && isset($transaction_edit_targets[$transaction_type]);
                           $transaction_description = dashboard_transaction_description($transaction_row);
                           ?>
                           <tr>
@@ -1156,7 +1171,7 @@
                             <td class="text-right"><p lang="fa" dir="rtl"><?php echo $transaction_description; ?></p></td>
                             <td><?php echo $transaction_row['transaction_amount']; ?></td>
                             <td><?php echo $transaction_row['transaction_currency']; ?></td>
-                            <td><?php echo $transaction_row['transaction_type']; ?></td>
+                            <td><?php echo cashtrack_transaction_label($transaction_row['transaction_type']); ?></td>
                             <td><?php echo $sub_category; ?></td>
                             <td><?php echo $transaction_row['transaction_date']; ?></td>
                             <td><?php echo $transaction_row['transaction_province']; ?></td>
@@ -1188,8 +1203,27 @@
                                 $transaction_row['transaction_ad_markup']
                               ); ?>
                             </td>
-                            <td class="text-center"><?php echo $sib_number_container; ?></td>
+                            <td class="text-center" id="sib_number_container<?php echo htmlspecialchars($transaction_type, ENT_QUOTES, 'UTF-8').(int)$transaction_row['transaction_id']; ?>"><?php echo $sib_number_container; ?></td>
                             <td class="text-center"><?php echo get_col('users', 'username', 'id', $transaction_row['transaction_users_id']); ?></td>
+                            <td class="text-center">
+                              <?php if($can_edit_report_transaction){
+                                $edit_target = $transaction_edit_targets[$transaction_type];
+                                $edit_arguments = array('report_transaction.php', $edit_target[0], $edit_target[1], 'general_lg', holu_encode($transaction_row['transaction_id']));
+                                $edit_onclick = 'load_modal('.implode(', ', array_map(function($argument){ return json_encode((string)$argument, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP); }, $edit_arguments)).');';
+                              ?>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="<?php echo htmlspecialchars($edit_onclick, ENT_QUOTES, 'UTF-8'); ?>"><i class="fas fa-edit"></i> Edit Transaction</button>
+                              <?php } ?>
+                              <?php if($can_delete_report_transaction){
+                                $delete_target = $transaction_edit_targets[$transaction_type];
+                                $delete_arguments = array('report_transaction.php', $delete_target[0], str_replace('edit_', 'delete_', $delete_target[1]), 'general_md', holu_encode($transaction_row['transaction_id']));
+                                $delete_onclick = 'load_modal('.implode(', ', array_map(function($argument){ return json_encode((string)$argument, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP); }, $delete_arguments)).');';
+                              ?>
+                                <button type="button" class="btn btn-danger btn-sm mt-1" onclick="<?php echo htmlspecialchars($delete_onclick, ENT_QUOTES, 'UTF-8'); ?>"><i class="fas fa-trash"></i> Delete Transaction</button>
+                              <?php } ?>
+                              <?php if(!$can_edit_report_transaction && !$can_delete_report_transaction){ ?>
+                                <span class="text-muted">—</span>
+                              <?php } ?>
+                            </td>
                           </tr>
                           <?php
                         }
@@ -1230,6 +1264,34 @@
   <div class="rightbar-overlay"></div>
   <?php include("_script.php"); ?>
   <script>
+    // Reuse the existing SIB save endpoint and its Edit/Save response.
+    function edit_sib_number(incomes_id, operation_type){
+      var $cell = $('#sib_number_containerIncome' + incomes_id);
+      if($cell.data('sib-saving')){ return; }
+      var data = {operation: 'edit_sib_number', operation_type: operation_type, incomes_id: incomes_id};
+      if(operation_type === 'save'){
+        data.sib_number = $.trim($('#sib_number' + incomes_id).val() || '');
+        if(!data.sib_number){ alert('Please enter a SIB number before saving.'); return; }
+      }
+      $cell.data('sib-saving', true);
+      $cell.find('button').prop('disabled', true);
+      $.ajax({
+        url: 'controller_ajax.php', method: 'post', data: data,
+        success: function(result){
+          if(operation_type === 'save'){
+            var savedNumber = $('<div>').html(result).find('p').first().text().trim();
+            if(savedNumber !== data.sib_number){
+              alert('The SIB number was not saved. It may already be in use. Please try another number.');
+              return;
+            }
+          }
+          $cell.html(result);
+        },
+        error: function(){ alert('Could not save or load the SIB number. Please try again.'); },
+        complete: function(){ $cell.data('sib-saving', false); $cell.find('button').prop('disabled', false); }
+      });
+    }
+
     $('#dashboard_transaction_filter_toggle').on('click', function(){
       var $panel = $('#dashboard_transaction_filter_panel');
       var isOpen = $panel.toggleClass('is-open').hasClass('is-open');

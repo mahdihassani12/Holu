@@ -46,7 +46,7 @@ if(isset($_POST['submit'])){
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>FlowBook</title>
+  <title>CashTrack</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta content="Zalmai" name="author" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -61,13 +61,14 @@ if(isset($_POST['submit'])){
   <link href="www/assets/css/custom.css" rel="stylesheet" type="text/css" />
   <style type="text/css">
     #login_form #submit{
-      background: #36b8cb;
-      border-color: #36b8cb;
+      background: #0f9287;
+      border-color: #0f9287;
     }
     .login_details a{
-      color: #36b8cb;
+      color: #0f9287;
     }
   </style>
+<link href="www/assets/css/cashtrack-font.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
   <div class="account-pages mt-5 mb-5">
@@ -76,12 +77,13 @@ if(isset($_POST['submit'])){
         <div class="col-md-8 col-lg-6 col-xl-5">
           <div class="card">
 
-            <div class="card-body p-4" style="border:2px solid #36b8cb;">
+            <div class="card-body p-4" style="border:2px solid #0f9287;">
 
               <div class="text-center w-75 m-auto">
                 <a href="/">
-                  <span class="logo-lg"><img src="www/assets/images/blue-logo.png" alt=""></span>
+                  <span class="logo-lg"><img src="www/assets/images/blue-logo.png" alt="CashTrack"><span class="cashtrack-brand-name">CashTrack</span></span>
                 </a>
+                  <div style="margin-top:12px;line-height:1.4;color:#0f9287;font-weight:700;font-size:15px;">Vira Nawawaran<br><span style="font-size:12px;font-weight:500;letter-spacing:.025em;">ISP &amp; ICT Service Provider</span></div>
 
                 <p class="text-muted mb-4 mt-3">Enter your username and password to access admin panel.</p>
                 
@@ -138,7 +140,7 @@ if(isset($_POST['submit'])){
                     </a>
                   </p>
                   <p class="text-muted">
-                    2026 &copy; All rights reserved by Benyamin Hope.
+                    2026 &copy; All rights reserved by Vira Nawawaran ISP &amp; ICT Service Provider.
                     </a>
                   </p>
                 </div> <!-- end col -->

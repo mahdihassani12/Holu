@@ -1,5 +1,6 @@
 <?php 
 include("../lib/_configuration.php");
+require_once __DIR__."/../lib/_receipt_contacts.php";
 
 if(!function_exists('get_additional_info_value')){
   function get_additional_info_value($db, $reference_type, $reference_id, $key_info){
@@ -67,17 +68,9 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
     ]);
 
     $invoices_id = $db->lastInsertId();
-    $main_office_address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University.';
-    $branch_office_address = 'Mahtab Qala Bus Stop, opposite the new road, inside Rasul Akram Mosque Alley.';
-    $finance_email = 'finance@benyaminhope.af';
-    $sales_email = 'sales@benyaminhope.af';
-    $support_email = 'support@benyaminhope.af';
-    $website = 'www.benyaminhope.af';
-    $phone = '0787506000';
-    $bank_name = 'Azizi Bank';
-    $account_name = 'Benyamin Hope IT Services';
-    $account_no_afn = '000101115085020';
-    $account_no_usd = '000101215333739';
+    $print_contacts = cashtrack_receipt_contacts($expense_row['province']);
+    $print_contacts['contacts']['Phone'] = '0748706114';
+    unset($print_contacts['bank']);
 
     $customer_name = get_additional_info_value($db, 'Expense', $expenses_id, 'Customer Name');
     $customer_id = get_additional_info_value($db, 'Expense', $expenses_id, 'Customer ID');
@@ -162,7 +155,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         }
 
         a {
-          color: #00b8a5;
+          color: #0f9287;
           text-decoration: none;
         }
 
@@ -179,7 +172,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         header {
           padding: 10px 0;
           margin-bottom: 10px;
-          border-bottom: 4px solid #194a63;
+          border-bottom: 4px solid #33364d;
         }
 
         #logo {
@@ -193,7 +186,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
         #company {
           float: left;
-          border-left: 18px solid #194a63;
+          border-left: 18px solid #33364d;
           padding-left: 10px;
         }
 
@@ -209,7 +202,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
         #client {
           padding-left: 6px;
-          border-left: 6px solid #00b8a5;
+          border-left: 6px solid #0f9287;
           float: left;
         }
 
@@ -226,12 +219,12 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         #invoice {
           float: right;
           text-align: right;
-          border-right: 6px solid #00b8a5;
+          border-right: 6px solid #0f9287;
           padding-right: 6px;
         }
 
         #invoice h1 {
-          color: #00b8a5;
+          color: #0f9287;
           font-size: 2.4em;
           line-height: 1em;
           font-weight: normal;
@@ -266,7 +259,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         }
 
         table td h3{
-          color: #00b8a5;
+          color: #0f9287;
           font-size: 1.2em;
           font-weight: normal;
           margin: 0 0 0.2em 0;
@@ -336,9 +329,9 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         }
 
         table tr.tfoot:last-child td {
-          color: #00b8a5;
+          color: #0f9287;
           font-size: 1.4em;
-          border-top: 1px solid #00b8a5; 
+          border-top: 1px solid #0f9287; 
 
         }
 
@@ -353,7 +346,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
         #notices{
           padding-left: 6px;
-          border-left: 6px solid #00b8a5;  
+          border-left: 6px solid #0f9287;  
         }
 
         #notices .notice {
@@ -362,7 +355,7 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
         .centeral{
           text-align: center !important;
-          color: #00b8a5;
+          color: #0f9287;
         }
 
         .signature tbody tr td{
@@ -391,26 +384,26 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           font-family: 'Avenir';
         }
         .reciept_head{
-            color: #194a63;
+            color: #33364d;
             font-size: 18px;
             padding: 5px 10px;
             border-radius: 5px;
             font-weight: bolder;
         }
         .thead{
-          background: #194a63 !important;
+          background: #33364d !important;
           border-right: 1px solid #fff;
-          border-top: 1px solid #194a63;
+          border-top: 1px solid #33364d;
           color: #fff;
         }
         .thead:first-child{
-          border-left: 1px solid #194a63;
+          border-left: 1px solid #33364d;
         }
         .thead:last-child{
-          border-right: 1px solid #194a63;
+          border-right: 1px solid #33364d;
         }
         .tbody{
-          border: 1px solid #194a63 !important;
+          border: 1px solid #33364d !important;
           border-top: unset !important;
           text-align: center;
         }
@@ -442,7 +435,10 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
           padding: 30px 15px;
           font-size: 13px;
           line-height: 1.35;
-          background-image: url('assets/images/footer-shape.png');
+          background-color: #33364d;
+          background-image: linear-gradient(110deg, #33364d 0%, #08786f 65%, #0f9287 100%);
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
           background-position: center center;
           background-repeat: no-repeat;
           background-size: cover;
@@ -476,51 +472,73 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
         @media print{
           table {
             -webkit-print-color-adjust: exact;
-              border: 1px solid #194a63;
+              border: 1px solid #33364d;
            }
            .thead{
               -webkit-print-color-adjust: exact;
-              background: #194a63 !important;
+              background: #33364d !important;
               border-right: 1px solid #fff;
-              border-top: 1px solid #194a63;
+              border-top: 1px solid #33364d;
             }
             .thead:first-child{
               -webkit-print-color-adjust: exact;
-              border-left: 1px solid #194a63;
+              border-left: 1px solid #33364d;
             }
             .thead:last-child{
               -webkit-print-color-adjust: exact;
-              border-right: 1px solid #194a63;
+              border-right: 1px solid #33364d;
             }
             .tbody{
               -webkit-print-color-adjust: exact;
-              border: 1px solid #194a63 !important;
+              border: 1px solid #33364d !important;
               border-top: unset !important;
             }
             .reciept_head{
               -webkit-print-color-adjust: exact;
-              color: #194a63;
+              color: #33364d;
             }
             * {
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
         }
-        </style>
+        
+        .vira-company-subtitle {
+          display: block;
+          margin-top: 3px;
+          font-size: 0.52em;
+          font-weight: 600;
+          line-height: 1.35;
+          letter-spacing: 0.025em;
+          color: #0f9287;
+          white-space: normal;
+        }
+.header_details #company h1 { font-size:28px; line-height:1.15; letter-spacing:-.5px; color:#33364d; }
+.vira-company-subtitle { font-size:12px; letter-spacing:1px; margin:6px 0 10px; color:#08786f; }
+
+        .vira-print-contact-footer { position: static; padding: 16px 18px; margin-top: 14px; background: linear-gradient(110deg,#33364d,#08786f); color: #fff; break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .vira-print-contact-heading { margin:0 0 10px; font-size:17px; color:#fff; line-height:1.3; }
+        .vira-print-contact-heading span { font-size:11px; font-weight:500; letter-spacing:1px; margin-left:8px; }
+        .vira-print-contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px 20px; }
+        .vira-print-contact-item { font-size:11px; line-height:1.55; min-width:0; overflow-wrap:anywhere; }
+        @media screen and (max-width:600px) { .vira-print-contact-grid { grid-template-columns:1fr; } }
+</style>
         <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-      </head>
+      <link href="assets/css/cashtrack-font.css" rel="stylesheet" type="text/css" />
+<link href="assets/css/cashtrack-print.css?v=2" rel="stylesheet" type="text/css" />
+</head>
       <body>
         <input type="hidden" id="invoices_id" value="<?php echo $invoices_id; ?>">
         <header class="clearfix">
           <section class="header_details">
 
             <div id="logo">
-                <img src="assets/images/blue-logo.png">
+                <img src="assets/images/blue-logo.png" alt="CashTrack">
             </div>
 
             <div id="company">
                 <h1>
-                  Benyamin Hope
+                  Vira Nawawaran<span class="vira-company-subtitle">ISP &amp; ICT Service Provider</span>
                 </h1>
                 <h3>
                   <strong><?php echo $doc_header; ?></strong>
@@ -556,58 +574,12 @@ if(isset($_GET['expenses_id']) AND !empty($_GET['expenses_id'])){
 
           <br/>
             
-          <section class="footer">
-            <div class="footer-row">
-              <div class="footer-item">
-                <span class="footer-icon">
-                  <!-- Phone -->
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M22 16.92V21a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h4.09a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.62a2 2 0 0 1-.45 2.11L9.09 9.91a16 16 0 0 0 6 6l1.46-1.23a2 2 0 0 1 2.11-.45c.84.29 1.72.5 2.62.62A2 2 0 0 1 22 16.92z"/>
-                  </svg>
-                </span>
-                +93 (0)<?php echo $phone; ?>
-              </div>
-
-              <div class="footer-item">
-                <span class="footer-icon">
-                  <!-- Email -->
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M4 4h16v16H4z"/>
-                    <path d="M22 6l-10 7L2 6"/>
-                  </svg>
-                </span>
-                <?php echo $finance_email; ?>
-              </div>
-
-              <div class="footer-item">
-                <span class="footer-icon">
-                  <!-- Website / Globe -->
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M2 12h20"/>
-                    <path d="M12 2a15 15 0 0 1 0 20a15 15 0 0 1 0-20"/>
-                  </svg>
-                </span>
-                <?php echo $website; ?>
-              </div>
-              <div class="footer-item address">
-                <span class="footer-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M12 21s-6-4.35-6-10a6 6 0 1 1 12 0c0 5.65-6 10-6 10z"/>
-                    <circle cx="12" cy="11" r="2.5"/>
-                  </svg>
-                </span>
-                <strong>Main Office: </strong> <?php echo $main_office_address; ?>
-              </div>
-              <div class="footer-item address">
-                <span class="footer-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M12 21s-6-4.35-6-10a6 6 0 1 1 12 0c0 5.65-6 10-6 10z"/>
-                    <circle cx="12" cy="11" r="2.5"/>
-                  </svg>
-                </span>
-                <strong>Branch Office Dasht-e-Barchi: </strong> <?php echo $branch_office_address; ?>
-              </div>
+          <section class="footer vira-print-contact-footer">
+            <h3 class="vira-print-contact-heading">Contact Details</h3>
+            <div class="vira-print-contact-grid">
+              <?php foreach($print_contacts['contacts'] as $label => $value){ ?>
+                <div class="vira-print-contact-item"><strong><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?>:</strong> <?php echo htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); ?></div>
+              <?php } ?>
             </div>
           </section>
           

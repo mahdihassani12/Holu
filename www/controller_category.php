@@ -37,8 +37,8 @@
 	            <div class="col-sm-6">
 	              <select id="category_type" name="category_type" class="form-control" required>
 	              	<option selected hidden value="">Select an option</option>
-	              	<option value="Income">Income</option>
-	              	<option value="Expense">Expense</option>
+	              	<option value="Income">Input</option>
+	              	<option value="Expense">Output</option>
 	              </select>
 	            </div>
 	          </div>
@@ -99,8 +99,8 @@
 			            <div class="col-sm-6">
 			              <select id="category_type" name="category_type" class="form-control" required>
 			              	<option selected hidden value="">Select an option</option>
-			              	<option <?php echo $category_row['category_type']=="Income"?"selected":""; ?> value="Income">Income</option>
-			              	<option <?php echo $category_row['category_type']=="Expense"?"selected":""; ?> value="Expense">Expense</option>
+			              	<option <?php echo $category_row['category_type']=="Income"?"selected":""; ?> value="Income">Input</option>
+			              	<option <?php echo $category_row['category_type']=="Expense"?"selected":""; ?> value="Expense">Output</option>
 			              </select>
 			            </div>
 			          </div>

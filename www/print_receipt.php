@@ -1,5 +1,6 @@
 <?php 
 include("../lib/_configuration.php");
+require_once __DIR__."/../lib/_receipt_contacts.php";
 
 if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
 
@@ -45,17 +46,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
     ]);
 
     $invoices_id = $db->lastInsertId();
-    $main_office_address = 'Gol-e-Sorkh Square, Parwan 2, Street 16, Alley opposite Salam University.';
-    $branch_office_address = 'Mahtab Qala Bus Stop, opposite the new road, inside Rasul Akram Mosque Alley.';
-    $finance_email = 'billing@benyaminhope.af';
-    $sales_email = 'sales@benyaminhope.af';
-    $support_email = 'support@benyaminhope.af';
-    $finance_phone = '0787506000';
-    $website = 'www.benyaminhope.af';
-    $bank_name = 'Azizi Bank';
-    $account_name = 'Benyamin Hope IT Services';
-    $account_no_afn = '000101115085020';
-    $account_no_usd = '000101215333739';
+    $receipt_contact_profile = cashtrack_receipt_contacts($income_row['province']);
 
     $customer_name_sq = $db->prepare(
       "SELECT value_info 
@@ -330,7 +321,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         }
 
         a {
-          color: #00b8a5;
+          color: #0f9287;
           text-decoration: none;
         }
 
@@ -347,7 +338,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         header {
           padding: 10px 0;
           margin-bottom: 10px;
-          border-bottom: 4px solid #194a63;
+          border-bottom: 4px solid #33364d;
         }
 
         #logo {
@@ -379,7 +370,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
 
         #client {
           padding: 0 10px;
-          border-left: 1px solid #194a63;
+          border-left: 1px solid #33364d;
           float: left;
           line-height: 1.6;
         }
@@ -410,12 +401,12 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         #invoice {
           float: right;
           text-align: right;
-          border-right: 6px solid #00b8a5;
+          border-right: 6px solid #0f9287;
           padding-right: 6px;
         }
 
         #invoice h1 {
-          color: #00b8a5;
+          color: #0f9287;
           font-size: 2.4em;
           line-height: 1em;
           font-weight: normal;
@@ -431,7 +422,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           border-collapse: collapse;
           border-spacing: 0;
           margin-bottom: 0px;
-          border: 1px solid #194a63;
+          border: 1px solid #33364d;
         }
 
         table th,
@@ -451,7 +442,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         }
 
         table td h3{
-          color: #00b8a5;
+          color: #0f9287;
           font-size: 1.2em;
           font-weight: normal;
           margin: 0 0 0.2em 0;
@@ -516,9 +507,9 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         }
 
         table tr.tfoot:last-child td {
-          color: #00b8a5;
+          color: #0f9287;
           font-size: 1.4em;
-          border-top: 1px solid #00b8a5; 
+          border-top: 1px solid #0f9287; 
 
         }
 
@@ -533,7 +524,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
 
         #notices{
           padding-left: 6px;
-          border-left: 6px solid #00b8a5;  
+          border-left: 6px solid #0f9287;  
         }
 
         #notices .notice {
@@ -542,7 +533,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
 
         .centeral{
           text-align: center !important;
-          color: #00b8a5;
+          color: #0f9287;
         }
 
         @font-face {
@@ -565,7 +556,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           font-family: 'Avenir';
         }
         .sign{
-          color: #194a63;
+          color: #33364d;
           font-weight: bolder;
           font-size: 18px;
           display: block;
@@ -578,7 +569,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           line-height: 1.1;
           margin-bottom: 8px;
           font-weight: bold;
-          color: #194a63;
+          color: #33364d;
         }
 
         .footer-item{
@@ -594,7 +585,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
           top: 6px;
           width: 8px;
           height: 8px;
-          background: #194a63;
+          background: #33364d;
           transform: rotate(45deg);
           border-radius: 1px;
           print-color-adjust: exact;
@@ -602,7 +593,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         }
 
         .thead{
-          background: #194a63 !important;
+          background: #33364d !important;
           border-right: 1px solid #fff;
           color: #fff;
           -webkit-print-color-adjust: exact;
@@ -610,10 +601,10 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         }
 
         .thead:last-child{
-          border-right: 1px solid #194a63;
+          border-right: 1px solid #33364d;
         }
         .tbody{
-          border: 1px solid #194a63 !important;
+          border: 1px solid #33364d !important;
           border-top: unset !important;
           text-align: center;
         }
@@ -631,47 +622,90 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
         }
 
         .header_details > div:first-child {
-          border-left: 18px solid #194a63;
+          border-left: 18px solid #33364d;
           padding-left: 10px
         }
         
         @media print{
           table {
-              border: 1px solid #194a63;
+              border: 1px solid #33364d;
               -webkit-print-color-adjust: exact;
            }
            .thead{
               -webkit-print-color-adjust: exact;
-              background: #194a63 !important;
+              background: #33364d !important;
               border-right: 1px solid #fff;
             }
             .thead:last-child{
               -webkit-print-color-adjust: exact;
-                border-right: 1px solid #194a63;
+                border-right: 1px solid #33364d;
               }
             .tbody{
               -webkit-print-color-adjust: exact;
-              border: 1px solid #194a63 !important;
+              border: 1px solid #33364d !important;
               border-top: unset !important;
             }
             .sign{
               -webkit-print-color-adjust: exact;
-              color: #194a63;
+              color: #33364d;
             }
             * {
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
         }
-        </style>
+
+        /* CashTrack footer: plain logo-colour gradient for screen and print. */
+        #bank_details {
+          background: #33364d;
+          background-image: linear-gradient(110deg, #33364d 0%, #08786f 65%, #0f9287 100%);
+          padding: 20px 15px;
+          color: #fff;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        #bank_details #client { border-left-color: rgba(255,255,255,.45); }
+        #bank_details .footer-title, #bank_details .sign { color: #fff; }
+        #bank_details .footer-item::before { background: #fff; }
+        
+        .vira-company-subtitle {
+          display: block;
+          margin-top: 3px;
+          font-size: 0.52em;
+          font-weight: 600;
+          line-height: 1.35;
+          letter-spacing: 0.025em;
+          color: #0f9287;
+          white-space: normal;
+        }
+
+        h2.name.company-name { font-size: 28px; line-height: 1.15; letter-spacing: -0.5px; color: #33364d; }
+        .vira-company-subtitle { font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 6px 0 12px; color: #08786f; }
+        .header_details { align-items: flex-start; gap: 18px; }
+        .header_details > div:first-child { border-left-width: 5px; padding-left: 14px; min-width: 0; }
+        #logo { flex-shrink: 0; }
+        #bank_details { padding: 18px; gap: 20px; break-inside: avoid; }
+        .receipt-footer-column { min-width: 0; line-height: 1.55; }
+        .receipt-contact-column { flex: 1.5; }
+        .receipt-bank-column { flex: 1; border-left: 1px solid rgba(255,255,255,.4); padding-left: 18px; }
+        #bank_details .footer-title { font-size: 19px; line-height: 1.25; margin-bottom: 10px; }
+        .receipt-province { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; color: #fff; }
+        #bank_details .footer-item { padding: 0; margin-bottom: 4px; font-size: 11px; overflow-wrap: anywhere; }
+        #bank_details .footer-item::before { display: none; }
+        .receipt-signature { margin-top: 18px; border-bottom: 1px solid rgba(255,255,255,.5); padding-bottom: 22px; }
+        .receipt-signature .sign { font-size: 13px; text-align: left; margin: 0; }
+        @media screen and (max-width: 600px) { #bank_details { flex-direction: column; } .receipt-bank-column { border-left: 0; border-top: 1px solid rgba(255,255,255,.4); padding: 14px 0 0; } h2.name.company-name { font-size: 24px; } }
+</style>
         <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-      </head>
+      <link href="assets/css/cashtrack-font.css" rel="stylesheet" type="text/css" />
+<link href="assets/css/cashtrack-print.css?v=2" rel="stylesheet" type="text/css" />
+</head>
       <body>
         <input type="hidden" id="invoices_id" value="<?php echo $invoices_id; ?>">
         <header class="clearfix">
             <section class="header_details">
               <div>
-                <h2 class="name company-name">Benyamin Hope</h2>
+                <h2 class="name company-name">Vira Nawawaran<span class="vira-company-subtitle">ISP &amp; ICT Service Provider</span></h2>
                 <h2 class="name"><?php echo $doc_header; ?></h2>
                 <div class="date">Number: <?php echo $bill_number; ?></div>
                 <div class="date">Date: <?php echo $bill_date; ?></div>
@@ -683,7 +717,7 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
               </div>
 
               <div id="logo">
-                <img src="assets/images/blue-logo.png">
+                <img src="assets/images/blue-logo.png" alt="CashTrack">
               </div>
             </section>
         </header>
@@ -693,26 +727,19 @@ if(isset($_GET['incomes_id']) AND !empty($_GET['incomes_id'])){
 
           <div id="bank_details" class="clearfix">
 
-            <div id="client">
-              <div class="footer-title"><strong>Contact Details</strong></div>
-              <div class="footer-item"><strong>Phone:</strong> <?php echo $finance_phone; ?></div>
-              <div class="footer-item"><strong>Sales Email:</strong> <?php echo $sales_email; ?></div>
-              <div class="footer-item"><strong>Finance Email:</strong> <?php echo $finance_email; ?></div>
-              <div class="footer-item"><strong>Support Email:</strong> <?php echo $support_email; ?></div>
-              <div class="footer-item"><strong>Website:</strong> <?php echo $website; ?></div>
-              <div class="footer-item"><strong>Main Office:</strong> <?php echo $main_office_address; ?></div>
-              <div class="footer-item"><strong>Branch Office Dasht-e-Barchi:</strong> <?php echo $branch_office_address; ?></div>
+            <div class="receipt-footer-column receipt-contact-column">
+              <div class="footer-title">Contact Details <span class="receipt-province"><?php echo htmlspecialchars($receipt_contact_profile['label'], ENT_QUOTES, 'UTF-8'); ?></span></div>
+              <?php foreach($receipt_contact_profile['contacts'] as $label => $value){ ?>
+                <div class="footer-item"><strong><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?>:</strong> <?php echo htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); ?></div>
+              <?php } ?>
             </div>
-
-            <div id="client">
-              <div class="footer-title"><strong>Bank Account Details</strong></div>
-              <div class="footer-item"><strong>Bank Name:</strong> <?php echo $bank_name; ?></div>
-              <div class="footer-item"><strong>Account Name:</strong> <?php echo $account_name; ?></div>
-              <div class="footer-item"><strong>Account No-AFN:</strong> <?php echo $account_no_afn; ?></div>
-              <div class="footer-item"><strong>Account No-USD:</strong> <?php echo $account_no_usd; ?></div>
-              <div>
-                <strong class="sign">Receipt Signature</strong>
-              </div>
+            <div class="receipt-footer-column receipt-bank-column">
+              <div class="footer-title">Bank Account Details</div>
+              <?php foreach($receipt_contact_profile['bank'] as $label => $value){ ?>
+                <div class="footer-item"><strong><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?>:</strong> <?php echo htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); ?></div>
+              <?php } ?>
+              <?php if(empty($receipt_contact_profile['bank'])){ ?><div class="footer-item">Bank details are not configured for this province.</div><?php } ?>
+              <div class="receipt-signature"><strong class="sign">Receipt Signature</strong></div>
             </div>
           </div>
 

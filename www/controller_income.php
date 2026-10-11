@@ -1,8 +1,42 @@
 <?php
 
   include("../lib/_configuration.php");
+  // Enforce delete permission for both confirmation and direct POST requests.
+  $cashtrack_delete_request =
+    (($_POST['flag_request'] ?? '') === 'modal' && ($_POST['modal'] ?? '') === 'delete_income_form') ||
+    (($_POST['flag_request'] ?? '') === 'operation' && ($_POST['flag_operation'] ?? '') === 'delete_income');
+  if($cashtrack_delete_request &&
+     !check_access('system_accessibility/transaction/income/delete_income/') &&
+     !check_access('system_accessibility/report/report_transaction/delete_transaction/')){
+    http_response_code(403);
+    echo '<div class="p-3">You do not have permission to delete this transaction.</div>';
+    exit();
+  }
+
   include_once("_attachment_preview.php");
 
+
+  // Both existing transaction edit access and report edit access are checked server-side.
+  $cashtrack_edit_request =
+    (($_POST['flag_request'] ?? '') === 'modal' && ($_POST['modal'] ?? '') === 'edit_income_form') ||
+    (($_POST['flag_request'] ?? '') === 'operation' && ($_POST['flag_operation'] ?? '') === 'edit_income');
+  if($cashtrack_edit_request &&
+     !check_access('system_accessibility/transaction/income/edit_income/') &&
+     !check_access('system_accessibility/report/report_transaction/edit_transaction/')){
+    http_response_code(403);
+    echo '<div class="p-3">You do not have permission to edit this transaction.</div>';
+    exit();
+  }
+
+  // Validate registered details before any transaction write or edition tracking.
+  if(($_POST['flag_request'] ?? '') === 'operation' && in_array($_POST['flag_operation'] ?? '', array('add_income','edit_income','approve_tms_income_request'), true)){
+    try{ ct_reference_validate_transaction('Income', $_POST['flag_operation']); }
+    catch(RuntimeException $error){
+      http_response_code(422);
+      echo '<!doctype html><html><body><p>'.ct_reference_escape($error instanceof PDOException ? 'Reference Data is temporarily unavailable. Please try again.' : $error->getMessage()).'</p><button onclick="history.back()">Back to transaction</button></body></html>';
+      exit();
+    }
+  }
   if(isset($_POST['flag_request'])){
   	
   	$flag_request	= holu_escape($_POST['flag_request']);
@@ -20,7 +54,7 @@
         ?>
 
         <div class="modal-header">
-	        <h4 class="modal-title"><i class="fa fa-plus"></i> Add Income</h4>
+	        <h4 class="modal-title"><i class="fa fa-plus"></i> Add Input</h4>
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	          <span aria-hidden="true">&times;</span>
 	        </button>
@@ -70,7 +104,7 @@
             </div>
 
             <div class="form-group row">
-              <label class="col-sm-3 col-form-label" for="income_date">Income Date</label>
+              <label class="col-sm-3 col-form-label" for="income_date">Input Date</label>
               <div class="col-sm-6">
                 <input type="text" id="income_date" name="income_date" class="form-control date_picker" placeholder="Pick a date..." required value="<?php echo date("Y-m-d"); ?>">
               </div>
@@ -159,7 +193,7 @@
 		        ?>
 
 		        <div class="modal-header">
-			        <h4 class="modal-title"><i class="fas fa-edit"></i> Edit Income</h4>
+			        <h4 class="modal-title"><i class="fas fa-edit"></i> Edit Input</h4>
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			          <span aria-hidden="true">&times;</span>
 			        </button>
@@ -197,7 +231,7 @@
                 </div>
 
                 <div class="form-group row">
-                  <label class="col-sm-3 col-form-label" for="income_date">Income Date</label>
+                  <label class="col-sm-3 col-form-label" for="income_date">Input Date</label>
                   <div class="col-sm-6">
                     <input type="text" id="income_date" name="income_date" class="form-control date_picker" placeholder="Pick a date..." required value="<?php echo $income_row['income_date'];?>">
                   </div>
@@ -396,7 +430,7 @@
 		        ?>
 
 		        <div class="modal-header">
-			        <h4 class="modal-title"><i class="fa fa-plus"></i> Add Income</h4>
+			        <h4 class="modal-title"><i class="fa fa-plus"></i> Add Input</h4>
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			          <span aria-hidden="true">&times;</span>
 			        </button>
@@ -444,7 +478,7 @@
 		            </div>
 
 		            <div class="form-group row">
-		              <label class="col-sm-3 col-form-label" for="income_date">Income Date</label>
+		              <label class="col-sm-3 col-form-label" for="income_date">Input Date</label>
 		              <div class="col-sm-6">
 		                <input type="text" id="income_date" name="income_date" class="form-control date_picker" placeholder="Pick a date..." required value="<?php echo date("Y-m-d"); ?>">
 		              </div>
@@ -565,7 +599,7 @@
 	        ?>
 
 	        <div class="modal-header">
-		        <h4 class="modal-title"><i class="fas fa-trash"></i> Delete Income</h4>
+		        <h4 class="modal-title"><i class="fas fa-trash"></i> Delete Input</h4>
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		          <span aria-hidden="true">&times;</span>
 		        </button>
@@ -635,7 +669,7 @@
           </div>
 
 	        	<div class="form-group row">
-	            <label class="col-sm-3 col-form-label" for="income_date">Income Date</label>
+	            <label class="col-sm-3 col-form-label" for="income_date">Input Date</label>
 	            <div class="col-sm-3">
 	              <input type="text" id="from_income_date" name="from_income_date" class="form-control date_picker" placeholder="From">
 	            </div>

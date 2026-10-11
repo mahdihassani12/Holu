@@ -704,7 +704,7 @@
                             <td class="text-right"><p lang="fa" dir="rtl"><?php echo $transaction_row['transaction_description']; ?></p></td>
                             <td><?php echo $transaction_row['transaction_amount']; ?></td>
                             <td><?php echo $transaction_row['transaction_currency']; ?></td>
-                            <td><?php echo $transaction_row['transaction_type']; ?></td>
+                            <td><?php echo cashtrack_transaction_label($transaction_row['transaction_type']); ?></td>
                             <td><?php echo $sub_category; ?></td>
                             <td><?php echo $transaction_row['transaction_date']; ?></td>
                             <td><?php echo $transaction_row['transaction_province']; ?></td>

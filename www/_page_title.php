@@ -2,7 +2,7 @@
   <div class="page-title-box">
     <div class="page-title-left">
       <ol class="breadcrumb m-0">
-        <li class="breadcrumb-item">FlowBook</li>
+        <li class="breadcrumb-item">CashTrack</li>
         <?php
         foreach ($holu_page_paths as $holu_page_path) {
         	?>

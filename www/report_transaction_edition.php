@@ -311,7 +311,7 @@
           ${$transaction_key.'_filtering_data'} .= " AND 0 ";
         }
       }
-      transaction_edition_add_filter_label('Transaction Type', $dashboard_filter_values['transaction_type']);
+      transaction_edition_add_filter_label('Transaction Type', cashtrack_transaction_label($dashboard_filter_values['transaction_type']));
     }
   }
 
@@ -672,7 +672,7 @@
                       <div class="dashboard-component-selector">
                         <div class="dashboard-component-search">
                           <i class="fa fa-search"></i>
-                          <input type="text" id="dashboard_filter_transaction_component_search" class="form-control" placeholder="Search income, expense, transfer, exchange, or child components..." autocomplete="off">
+                          <input type="text" id="dashboard_filter_transaction_component_search" class="form-control" placeholder="Search input, output, transfer, exchange, or child components..." autocomplete="off">
                         </div>
                         <div class="dashboard-component-tree" id="dashboard_filter_transaction_components_container"></div>
                         <small class="dashboard-component-help" id="dashboard_filter_transaction_components_summary">Select parent or child transaction components.</small>
@@ -746,15 +746,15 @@
                                 if(sizeof($old_data_item_array)>1){
                                   switch (str_replace('`', '', $old_data_item_array[0])) {
                                     case 'Sub Category':{
-                                      $old_data .= '<b>'.str_replace('`', '', $old_data_item_array[0]).':</b> '.get_col('sub_categories', 'sub_category_name', 'id', str_replace('`', '', $old_data_item_array[1])).'<br/>';
+                                      $old_data .= '<b>'.cashtrack_transaction_label(str_replace('`', '', $old_data_item_array[0])).':</b> '.get_col('sub_categories', 'sub_category_name', 'id', str_replace('`', '', $old_data_item_array[1])).'<br/>';
                                     }break;
 
                                     case 'Logistic Cash':{
-                                      $old_data .= '<b>'.str_replace('`', '', $old_data_item_array[0]).':</b> '.get_col('logistic_cashes', 'name', 'id', str_replace('`', '', $old_data_item_array[1])).'<br/>';
+                                      $old_data .= '<b>'.cashtrack_transaction_label(str_replace('`', '', $old_data_item_array[0])).':</b> '.get_col('logistic_cashes', 'name', 'id', str_replace('`', '', $old_data_item_array[1])).'<br/>';
                                     }break;
 
                                     default:{
-                                      $old_data .= '<b>'.str_replace('`', '', $old_data_item_array[0]).':</b> '.str_replace('`', '', $old_data_item_array[1]).'<br/>';
+                                      $old_data .= '<b>'.cashtrack_transaction_label(str_replace('`', '', $old_data_item_array[0])).':</b> '.str_replace('`', '', $old_data_item_array[1]).'<br/>';
                                     }break;
                                   }
 
@@ -770,15 +770,15 @@
                                 if(sizeof($new_data_item_array)>1){
                                   switch (str_replace('`', '', $new_data_item_array[0])) {
                                     case 'Sub Category':{
-                                      $new_data .= '<b>'.str_replace('`', '', $new_data_item_array[0]).':</b> '.get_col('sub_categories', 'sub_category_name', 'id', str_replace('`', '', $new_data_item_array[1])).'<br/>';
+                                      $new_data .= '<b>'.cashtrack_transaction_label(str_replace('`', '', $new_data_item_array[0])).':</b> '.get_col('sub_categories', 'sub_category_name', 'id', str_replace('`', '', $new_data_item_array[1])).'<br/>';
                                     }break;
 
                                     case 'Logistic Cash':{
-                                      $new_data .= '<b>'.str_replace('`', '', $new_data_item_array[0]).':</b> '.get_col('logistic_cashes', 'name', 'id', str_replace('`', '', $new_data_item_array[1])).'<br/>';
+                                      $new_data .= '<b>'.cashtrack_transaction_label(str_replace('`', '', $new_data_item_array[0])).':</b> '.get_col('logistic_cashes', 'name', 'id', str_replace('`', '', $new_data_item_array[1])).'<br/>';
                                     }break;
 
                                     default:{
-                                      $new_data .= '<b>'.str_replace('`', '', $new_data_item_array[0]).':</b> '.str_replace('`', '', $new_data_item_array[1]).'<br/>';
+                                      $new_data .= '<b>'.cashtrack_transaction_label(str_replace('`', '', $new_data_item_array[0])).':</b> '.str_replace('`', '', $new_data_item_array[1]).'<br/>';
                                     }break;
                                   }
                                 }
@@ -812,7 +812,7 @@
                             echo '
                               <tr>
                                 <th class="text-center">'.($holu_count++).'</th>
-                                <td>'.$transaction_edition_row['reference_type'].'</td><td>'.get_col('users', 'username', 'id', $transaction_edition_row['users_id']).'</td>
+                                <td>'.cashtrack_transaction_label($transaction_edition_row['reference_type']).'</td><td>'.get_col('users', 'username', 'id', $transaction_edition_row['users_id']).'</td>
                                 <td>'.$transaction_edition_row['insertion_date'].'</td>
                                 <td>'.$transaction_edition_row['insertion_time'].'</td>
                                 <td class="text-center">

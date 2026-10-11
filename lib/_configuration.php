@@ -5,6 +5,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	date_default_timezone_set('Asia/Kabul');
 	
 	include("_db.php");
+	require_once __DIR__.'/_reference_data.php';
 	include("lib/Zebra_Pagination.php");
 
 	// instantiate the pagination object
@@ -13,7 +14,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
   $pagination->reverse(false);
 
 	//general_attributes
-	$holu_system_name = "FlowBook";
+	$holu_system_name = "CashTrack";
 
 	$holu_date = date("Y-m-d");
 
@@ -89,7 +90,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				array(
 					"type" => "operation",
 					"url" => "",
-					"label" => "10 Highest Expenses",
+					"label" => "10 Highest Outputs",
 					"icon" => '',
 					"location" => "ten_highest_expenses/",
 					"path" => "system_accessibility/home/ten_highest_expenses/",
@@ -107,7 +108,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				array(
 					"type" => "operation",
 					"url" => "",
-					"label" => "Monthly Income",
+					"label" => "Monthly Input",
 					"icon" => '',
 					"location" => "monthly_income/",
 					"path" => "system_accessibility/home/monthly_income/",
@@ -116,7 +117,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				array(
 					"type" => "operation",
 					"url" => "",
-					"label" => "Monthly Expense",
+					"label" => "Monthly Output",
 					"icon" => '',
 					"location" => "monthly_expense/",
 					"path" => "system_accessibility/home/monthly_expense/",
@@ -135,7 +136,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				array(
 					"type" => "sidebar",
 					"url" => "list_income.php",
-					"label" => "Income",
+					"label" => "Input",
 					"icon" => '',
 					"location" => "income/",
 					"path" => "system_accessibility/transaction/income/",
@@ -143,7 +144,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 						array(
 							"type" => "operation",
 							"url" => "",
-							"label" => "View Income",
+							"label" => "View Input",
 							"icon" => '',
 							"location" => "view_income/",
 							"path" => "system_accessibility/transaction/income/view_income",
@@ -152,7 +153,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 						array(
 							"type" => "operation",
 							"url" => "",
-							"label" => "Add Income",
+							"label" => "Add Input",
 							"icon" => '',
 							"location" => "add_income/",
 							"path" => "system_accessibility/transaction/income/add_income",
@@ -161,7 +162,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 						array(
 							"type" => "operation",
 							"url" => "",
-							"label" => "Edit Income",
+							"label" => "Edit Input",
 							"icon" => '',
 							"location" => "edit_income/",
 							"path" => "system_accessibility/transaction/income/edit_income",
@@ -170,7 +171,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 						array(
 							"type" => "operation",
 							"url" => "",
-							"label" => "Delete Income",
+							"label" => "Delete Input",
 							"icon" => '',
 							"location" => "delete_income/",
 							"path" => "system_accessibility/transaction/income/delete_income",
@@ -253,7 +254,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				array(
 					"type" => "sidebar",
 					"url" => "list_expense.php",
-					"label" => "Expense",
+					"label" => "Output",
 					"icon" => '',
 					"location" => "expense/",
 					"path" => "system_accessibility/transaction/expense/",
@@ -261,7 +262,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 						array(
 							"type" => "operation",
 							"url" => "",
-							"label" => "View Expense",
+							"label" => "View Output",
 							"icon" => '',
 							"location" => "view_expense/",
 							"path" => "system_accessibility/transaction/expense/view_expense",
@@ -270,7 +271,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 						array(
 							"type" => "operation",
 							"url" => "",
-							"label" => "Add Expense",
+							"label" => "Add Output",
 							"icon" => '',
 							"location" => "add_expense/",
 							"path" => "system_accessibility/transaction/expense/add_expense",
@@ -279,7 +280,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 						array(
 							"type" => "operation",
 							"url" => "",
-							"label" => "Edit Expense",
+							"label" => "Edit Output",
 							"icon" => '',
 							"location" => "edit_expense/",
 							"path" => "system_accessibility/transaction/expense/edit_expense",
@@ -288,7 +289,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 						array(
 							"type" => "operation",
 							"url" => "",
-							"label" => "Delete Expense",
+							"label" => "Delete Output",
 							"icon" => '',
 							"location" => "delete_expense/",
 							"path" => "system_accessibility/transaction/expense/delete_expense",
@@ -705,6 +706,15 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 							"path" => "system_accessibility/report/report_transaction/edit_transaction/",
 							"subs" => array(),
 						),
+                        array(
+                            "type" => "operation",
+                            "url" => "",
+                            "label" => "Delete Transaction",
+                            "icon" => "",
+                            "location" => "delete_transaction/",
+                            "path" => "system_accessibility/report/report_transaction/delete_transaction/",
+                            "subs" => array(),
+                        ),
 						array(
 							"type" => "operation",
 							"url" => "",
@@ -872,6 +882,13 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			"location" => "management/",
 			"path" => "system_accessibility/management/",
 			"subs" => array(
+                array("type"=>"sidebar", "url"=>"reference_data.php", "label"=>"Reference Data", "icon"=>"", "location"=>"reference_data/", "path"=>"system_accessibility/management/reference_data/", "subs"=>array(
+                    array("type"=>"operation","url"=>"","label"=>"View Reference Data","icon"=>"","location"=>"view/","path"=>"system_accessibility/management/reference_data/view/","subs"=>array()),
+                    array("type"=>"operation","url"=>"","label"=>"Add Reference Data","icon"=>"","location"=>"add/","path"=>"system_accessibility/management/reference_data/add/","subs"=>array()),
+                    array("type"=>"operation","url"=>"","label"=>"Edit Reference Data","icon"=>"","location"=>"edit/","path"=>"system_accessibility/management/reference_data/edit/","subs"=>array()),
+                    array("type"=>"operation","url"=>"","label"=>"Activate/Deactivate Reference Data","icon"=>"","location"=>"status/","path"=>"system_accessibility/management/reference_data/status/","subs"=>array())
+                )),
+
 				array(
 					"type" => "sidebar",
 					"url" => "list_category.php",
@@ -1273,16 +1290,22 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		return $currency_options;
 	}
 
+
+	// Display names only: stored transaction types remain Income and Expense.
+	function cashtrack_transaction_label($label){
+		return strtr((string)$label, array('Incomes'=>'Inputs', 'Expenses'=>'Outputs', 'Income'=>'Input', 'Expense'=>'Output', 'incomes'=>'inputs', 'expenses'=>'outputs', 'income'=>'input', 'expense'=>'output'));
+	}
+
 	function get_transaction_type_option($transaction_type){
 		global $holu_transaction_types;
 		$transaction_type_options = "";
 		if($transaction_type=="0"){
 			foreach ($holu_transaction_types as $holu_transaction_type) {
-				$transaction_type_options .= '<option value="'.$holu_transaction_type.'">'.$holu_transaction_type.'</option>';
+				$transaction_type_options .= '<option value="'.$holu_transaction_type.'">'.cashtrack_transaction_label($holu_transaction_type).'</option>';
 			}
 		}else{
 			foreach ($holu_transaction_types as $holu_transaction_type) {
-				$transaction_type_options .= '<option '.(($holu_transaction_type==$transaction_type)?'selected':'').' value="'.$holu_transaction_type.'">'.$holu_transaction_type.'</option>';
+				$transaction_type_options .= '<option '.(($holu_transaction_type==$transaction_type)?'selected':'').' value="'.$holu_transaction_type.'">'.cashtrack_transaction_label($holu_transaction_type).'</option>';
 			}
 		}
 		return $transaction_type_options;
@@ -1320,7 +1343,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			case 'income':
 				return 'I';
 			case 'expense':
-				return 'X';
+				return 'O';
 			case 'exchange':
 				return 'E';
 				return 'P';
@@ -1437,6 +1460,16 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			$variants[] = 'Kabul-AQ';
 		}
 		return $variants;
+	}
+
+	function get_dashboard_default_province(){
+		global $holu_provinces;
+		foreach($holu_provinces as $province){
+			if(check_access('province_accessibility/'.$province.'/')==1){
+				return $province;
+			}
+		}
+		return '';
 	}
 
 	function get_province_option($province){
@@ -1689,10 +1722,8 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 	}
 
 	function get_random_color() {
-	  $part1 = str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
-	  $part2 = str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
-	  $part3 = str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
-	    return '#'.$part1 . $part2 . $part3;
+      $colours = array('#0f9287', '#33364d', '#08786f', '#51566e', '#37aca2', '#727891', '#065e57');
+      return $colours[mt_rand(0, count($colours) - 1)];
 	}
 
 	function holu_escape($input){
@@ -1925,9 +1956,9 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 
 			}
 			$income_category_access_points .= ']';
-			$access_points .= '{ "id": "sub_category_accessibility/income/", "text": "Income", "children": '.$income_category_access_points.' },';
+			$access_points .= '{ "id": "sub_category_accessibility/income/", "text": "Input", "children": '.$income_category_access_points.' },';
 		}else{
-			$access_points .= '{ "id": "sub_category_accessibility/income/", "text": "Income"},';
+			$access_points .= '{ "id": "sub_category_accessibility/income/", "text": "Input"},';
 		}
 
 		$expense_category_sq = $db->prepare("SELECT * FROM `categories`
@@ -1960,9 +1991,9 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 				
 			}
 			$expense_category_access_points .= ']';
-			$access_points .= '{ "id": "sub_category_accessibility/expense/", "text": "Expense", "children": '.$expense_category_access_points.' },';
+			$access_points .= '{ "id": "sub_category_accessibility/expense/", "text": "Output", "children": '.$expense_category_access_points.' },';
 		}else{
-			$access_points .= '{ "id": "sub_category_accessibility/expense/", "text": "Expense"},';
+			$access_points .= '{ "id": "sub_category_accessibility/expense/", "text": "Output"},';
 		}
 
 		$exchange_category_sq = $db->prepare("SELECT * FROM `categories`
@@ -2631,7 +2662,8 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 			}
 		}
 		$result = rtrim($result, ",");
-		return $result;
+		// An empty access list must produce valid SQL without granting access.
+		return $result !== "" ? $result : "NULL";
 	}
 
 	function set_province_branch_portion($province_column, $branch_column){
@@ -2766,7 +2798,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		if($result!=""){
 			$result = rtrim($result, ",");
 		}else{
-			$result = '\'\'';
+			$result = "NULL";
 		}
 		$result = rtrim($result, ",");
 		return $result;
@@ -2796,7 +2828,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		if($result!=""){
 			$result = rtrim($result, ",");
 		}else{
-			$result = '\'\'';
+			$result = "NULL";
 		}
 
 		$result = rtrim($result, ",");
@@ -3891,7 +3923,7 @@ if(isset($_SESSION['holu_users_id']) AND isset($_SESSION['holu_username'])){
 		}
 		$key = str_replace('_', ' ', $key);
 		$key = preg_replace('/\s+/', ' ', $key);
-		return ucwords($key);
+		return cashtrack_transaction_label(ucwords($key));
 	}
 
 	function holu_transaction_info_display_value($key, $value){

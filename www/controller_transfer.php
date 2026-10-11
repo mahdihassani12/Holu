@@ -1,6 +1,18 @@
 <?php
 
   include("../lib/_configuration.php");
+  // Enforce delete permission for both confirmation and direct POST requests.
+  $cashtrack_delete_request =
+    (($_POST['flag_request'] ?? '') === 'modal' && ($_POST['modal'] ?? '') === 'delete_transfer_form') ||
+    (($_POST['flag_request'] ?? '') === 'operation' && ($_POST['flag_operation'] ?? '') === 'delete_transfer');
+  if($cashtrack_delete_request &&
+     !check_access('system_accessibility/transaction/transfer/delete_transfer/') &&
+     !check_access('system_accessibility/report/report_transaction/delete_transaction/')){
+    http_response_code(403);
+    echo '<div class="p-3">You do not have permission to delete this transaction.</div>';
+    exit();
+  }
+
   include_once("_attachment_preview.php");
 
   function transfer_is_accessible_to_user($transfer_id){
@@ -27,6 +39,18 @@
   	return ($transfer_access_sq->rowCount()>0);
   }
 
+
+  // Both existing transaction edit access and report edit access are checked server-side.
+  $cashtrack_edit_request =
+    (($_POST['flag_request'] ?? '') === 'modal' && ($_POST['modal'] ?? '') === 'edit_transfer_form') ||
+    (($_POST['flag_request'] ?? '') === 'operation' && ($_POST['flag_operation'] ?? '') === 'edit_transfer');
+  if($cashtrack_edit_request &&
+     !check_access('system_accessibility/transaction/transfer/edit_transfer/') &&
+     !check_access('system_accessibility/report/report_transaction/edit_transaction/')){
+    http_response_code(403);
+    echo '<div class="p-3">You do not have permission to edit this transaction.</div>';
+    exit();
+  }
   if(isset($_POST['flag_request'])){
   	
   	$flag_request	= holu_escape($_POST['flag_request']);

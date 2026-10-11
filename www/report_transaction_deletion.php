@@ -298,7 +298,7 @@
           ${$transaction_key.'_filtering_data'} .= " AND 0 ";
         }
       }
-      dashboard_deletion_add_filter_label('Transaction Type', $dashboard_filter_values['transaction_type']);
+      dashboard_deletion_add_filter_label('Transaction Type', cashtrack_transaction_label($dashboard_filter_values['transaction_type']));
     }
   }
 
@@ -645,7 +645,7 @@
                       <div class="dashboard-component-selector">
                         <div class="dashboard-component-search">
                           <i class="fa fa-search"></i>
-                          <input type="text" id="dashboard_filter_transaction_component_search" class="form-control" placeholder="Search income, expense, transfer, exchange, or child components..." autocomplete="off">
+                          <input type="text" id="dashboard_filter_transaction_component_search" class="form-control" placeholder="Search input, output, transfer, exchange, or child components..." autocomplete="off">
                         </div>
                         <div class="dashboard-component-tree" id="dashboard_filter_transaction_components_container"></div>
                         <small class="dashboard-component-help" id="dashboard_filter_transaction_components_summary">Select parent or child transaction components.</small>
@@ -733,7 +733,7 @@
                             echo '
                               <tr>
                                 <th class="text-center">'.($holu_count++).'</th>
-                                <td>'.$transaction_deletion_row['reference_type'].'</td><td>'.get_col('users', 'username', 'id', $transaction_deletion_row['users_id']).'</td>
+                                <td>'.cashtrack_transaction_label($transaction_deletion_row['reference_type']).'</td><td>'.get_col('users', 'username', 'id', $transaction_deletion_row['users_id']).'</td>
                                 <td>'.$transaction_deletion_row['insertion_date'].'</td>
                                 <td>'.$transaction_deletion_row['insertion_time'].'</td>
                                 <td class="text-center" id="markupsTransaction_Deletion'.$transaction_deletion_row['id'].'">

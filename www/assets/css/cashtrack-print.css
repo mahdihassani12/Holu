@@ -1,0 +1,62 @@
+/* Shared Input, Output and Transfer print layout: A5 landscape, default scale. */
+@page { size: A5 landscape; margin: 0; }
+@media print {
+  html { margin: 0 !important; padding: 0 !important; background: #fff; }
+  body { box-sizing: border-box; width: auto !important; margin: 0 !important; padding: 4mm !important; font-size: 10px !important; line-height: 1.3; }
+  *, *::before, *::after { box-sizing: border-box; }
+  header { padding: 0 0 2mm !important; margin: 0 0 2mm !important; border-bottom-width: 2px !important; }
+  .header_details { margin-top: 0 !important; gap: 10px !important; align-items: flex-start !important; }
+  .header_details > div:first-child { border-left-width: 4px !important; padding-left: 10px !important; }
+  .header_details #company h1, h2.name.company-name { font-size: 21px !important; margin: 0 !important; line-height: 1.15 !important; }
+  .vira-company-subtitle { font-size: 10px !important; margin: 3px 0 6px !important; letter-spacing: .6px !important; }
+  .header_details #company h3, h2.name { font-size: 12px !important; margin: 2px 0 !important; line-height: 1.3 !important; }
+  .date, .address { font-size: 10px !important; line-height: 1.3 !important; }
+  #logo img { height: 48px !important; width: auto !important; }
+  #company { float: none !important; }
+  main > br { display: none !important; }
+  table { width: 100% !important; margin: 0 0 2mm !important; border-collapse: collapse; }
+  table th, table td { padding: 4px 5px !important; font-size: 10px !important; line-height: 1.3 !important; }
+  table td h3, table th h3 { font-size: 11px !important; margin: 0 !important; }
+  table tr { break-inside: avoid; }
+  .signature { margin-top: 3mm !important; }
+  .signature tbody tr td { height: 16mm !important; padding: 5px !important; }
+  .signature .reciept_head { font-size: 11px !important; }
+  .vira-print-contact-footer { position: static !important; margin-top: 3mm !important; padding: 3mm !important; break-inside: avoid; }
+  .vira-print-contact-heading { font-size: 13px !important; margin: 0 0 5px !important; }
+  .vira-print-contact-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 4px 14px !important; }
+  .vira-print-contact-item { font-size: 9px !important; line-height: 1.4 !important; }
+  #bank_details { display: flex !important; flex-direction: row !important; margin: 3mm 0 0 !important; padding: 3mm !important; gap: 12px !important; break-inside: avoid; }
+  #bank_details .footer-title { font-size: 13px !important; margin-bottom: 5px !important; }
+  #bank_details .footer-item { font-size: 9px !important; line-height: 1.4 !important; margin-bottom: 3px !important; }
+  .receipt-bank-column { border-top: 0 !important; border-left: 1px solid rgba(255,255,255,.4) !important; padding: 0 0 0 12px !important; }
+  .receipt-province { font-size: 9px !important; margin-top: 2px !important; }
+  .receipt-signature { margin-top: 8px !important; padding-bottom: 12px !important; }
+  .receipt-signature .sign { font-size: 10px !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* Use the A5 page height, rather than leaving the lower third empty. */
+@media print {
+  body { min-height: 146mm !important; display: flex !important; flex-direction: column !important; font-size: 11px !important; }
+  header { flex: 0 0 auto; padding-bottom: 3mm !important; margin-bottom: 3mm !important; }
+  main { display: flex; flex-direction: column; flex: 1 0 auto; }
+  main > table:first-of-type { flex: 1 0 auto; min-height: 24mm; }
+  .header_details #company h1, h2.name.company-name { font-size: 24px !important; }
+  .vira-company-subtitle { font-size: 11px !important; margin-bottom: 8px !important; }
+  .header_details #company h3, h2.name { font-size: 13px !important; }
+  .date, .address { font-size: 11px !important; }
+  #logo img { height: 55px !important; }
+  table th, table td { font-size: 11px !important; padding: 6px !important; }
+  .signature { flex: 0 0 auto !important; }
+  .signature tbody tr td { height: 19mm !important; }
+  .signature .reciept_head { font-size: 12px !important; }
+  #bank_details, .vira-print-contact-footer { flex: 0 0 auto; margin-top: 3mm !important; padding: 4mm !important; }
+  #bank_details .footer-title, .vira-print-contact-heading { font-size: 15px !important; }
+  #bank_details .footer-item, .vira-print-contact-item { font-size: 10.5px !important; line-height: 1.5 !important; }
+  .vira-print-contact-grid { gap: 6px 16px !important; }
+  .receipt-signature { margin-top: 12px !important; padding-bottom: 18px !important; }
+  .receipt-signature .sign { font-size: 11px !important; }
+}
+
+/* Center the Input receipt signature within its bank details column. */
+.receipt-signature .sign { text-align: center !important; }

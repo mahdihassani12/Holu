@@ -42,7 +42,7 @@
 <script src="assets/js/pages/gallery.init.js"></script>
 
 <!-- Additional js -->
-<script src="assets/js/custom.js"></script>
+<script src="assets/js/custom.js?v=<?php echo (int)filemtime(__DIR__.'/assets/js/custom.js'); ?>"></script>
 <script>
   if (typeof window.get_branch_option !== 'function') {
     window.get_branch_option = function(province, branch, target_id){

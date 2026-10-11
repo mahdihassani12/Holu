@@ -1141,7 +1141,7 @@
 //                             <td class="text-right"><p lang="fa" dir="rtl"><?php echo $transaction_description; ? ></p></td>
 //                             <td><?php echo $transaction_row['transaction_amount']; ? ></td>
 //                             <td><?php echo $transaction_row['transaction_currency']; ? ></td>
-//                             <td><?php echo $transaction_row['transaction_type']; ? ></td>
+//                             <td><?php echo cashtrack_transaction_label($transaction_row['transaction_type']); ? ></td>
 //                             <td><?php echo $sub_category; ? ></td>
 //                             <td><?php echo $transaction_row['transaction_date']; ? ></td>
 //                             <td><?php echo $transaction_row['transaction_province']; ? ></td>
@@ -1220,7 +1220,7 @@
 //                       <?php echo number_format($total_income_row['total_income_irt'] ?? 0, 2); ? > IRT</span>
 //                   </div>
 //
-//                   <div class="alert alert-danger text-center">Expense: <span class="badge badge-danger"><?php echo number_format($total_expense_row['total_expense_afn'] ?? 0, 2); ? > AFN</span> - <span class="badge badge-danger"><?php echo number_format($total_expense_row['total_expense_usd'] ?? 0, 2); ? > USD</span> - <span class="badge badge-danger"><?php echo number_format($total_expense_row['total_expense_irt'] ?? 0, 2); ? > IRT</span>
+//                   <div class="alert alert-danger text-center">Output: <span class="badge badge-danger"><?php echo number_format($total_expense_row['total_expense_afn'] ?? 0, 2); ? > AFN</span> - <span class="badge badge-danger"><?php echo number_format($total_expense_row['total_expense_usd'] ?? 0, 2); ? > USD</span> - <span class="badge badge-danger"><?php echo number_format($total_expense_row['total_expense_irt'] ?? 0, 2); ? > IRT</span>
 //                   </div>
 //
 //                   <div class="alert alert-warning text-center">Exchange: <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_afn'] ?? 0, 2); ? > AFN to <?php echo number_format($total_exchange_row['total_to_usd'] ?? 0, 2); ? > USD</span> - <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_usd'] ?? 0, 2); ? > USD to <?php echo number_format($total_exchange_row['total_to_afn'] ?? 0, 2); ? > AFN</span> - <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_afn2'] ?? 0, 2); ? > AFN to <?php echo number_format($total_exchange_row['total_to_irt'] ?? 0, 2); ? > IRT</span> - <span class="badge badge-warning"><?php echo number_format($total_exchange_row['total_from_irt'] ?? 0, 2); ? > IRT to <?php echo number_format($total_exchange_row['total_to_afn2'] ?? 0, 2); ? > AFN</span>

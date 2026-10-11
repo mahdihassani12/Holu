@@ -1,6 +1,6 @@
 <?php
   include("../lib/_configuration.php");
-  $holu_page_paths = ["Reports", "Report of TMS Income Request"];
+  $holu_page_paths = ["Reports", "Report of TMS Input Request"];
 
   $filter_portion1 = '';
   $filter_portion2 = '';
@@ -180,7 +180,7 @@
               <div class="card-box card-box-header">
 
                 <h4 class="header-title">
-                  <?php echo get_table_header('fa fa-list', 'List of TMS Income Requests', $tms_income_request_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
+                  <?php echo get_table_header('fa fa-list', 'List of TMS Input Requests', $tms_income_request_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
                 </h4>
 
                 <?php
@@ -230,7 +230,7 @@
                                   <?php
                                   if(check_access("system_accessibility/request/report_tms_income_request/approve_tms_income_request/")==1 AND $tms_income_request_row['income_request_approvals_id']==null){
                                   ?>
-                                  <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_income.php', 'approve_tms_income_request_form', 'general_lg', '<?php echo holu_encode($tms_income_request_row['id'].'###'.$tms_income_request_row['request_type']); ?>');"><i class="fas fa-circle"></i> Approve TMS Income Request</a>
+                                  <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_income.php', 'approve_tms_income_request_form', 'general_lg', '<?php echo holu_encode($tms_income_request_row['id'].'###'.$tms_income_request_row['request_type']); ?>');"><i class="fas fa-circle"></i> Approve TMS Input Request</a>
                                   <?php
                                   }
                                   ?>

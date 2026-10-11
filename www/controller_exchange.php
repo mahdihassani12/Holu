@@ -1,7 +1,31 @@
 <?php
 
   include("../lib/_configuration.php");
+  // Enforce delete permission for both confirmation and direct POST requests.
+  $cashtrack_delete_request =
+    (($_POST['flag_request'] ?? '') === 'modal' && ($_POST['modal'] ?? '') === 'delete_exchange_form') ||
+    (($_POST['flag_request'] ?? '') === 'operation' && ($_POST['flag_operation'] ?? '') === 'delete_exchange');
+  if($cashtrack_delete_request &&
+     !check_access('system_accessibility/transaction/exchange/delete_exchange/') &&
+     !check_access('system_accessibility/report/report_transaction/delete_transaction/')){
+    http_response_code(403);
+    echo '<div class="p-3">You do not have permission to delete this transaction.</div>';
+    exit();
+  }
 
+
+
+  // Both existing transaction edit access and report edit access are checked server-side.
+  $cashtrack_edit_request =
+    (($_POST['flag_request'] ?? '') === 'modal' && ($_POST['modal'] ?? '') === 'edit_exchange_form') ||
+    (($_POST['flag_request'] ?? '') === 'operation' && ($_POST['flag_operation'] ?? '') === 'edit_exchange');
+  if($cashtrack_edit_request &&
+     !check_access('system_accessibility/transaction/exchange/edit_exchange/') &&
+     !check_access('system_accessibility/report/report_transaction/edit_transaction/')){
+    http_response_code(403);
+    echo '<div class="p-3">You do not have permission to edit this transaction.</div>';
+    exit();
+  }
   if(isset($_POST['flag_request'])){
   	
   	$flag_request	= holu_escape($_POST['flag_request']);

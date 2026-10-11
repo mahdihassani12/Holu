@@ -1,13 +1,8 @@
 'use strict';
 
 window.chartColors = {
-	red: 'rgb(255, 99, 132)',
-	orange: 'rgb(255, 159, 64)',
-	yellow: 'rgb(255, 205, 86)',
-	green: 'rgb(75, 192, 192)',
-	blue: 'rgb(54, 162, 235)',
-	purple: 'rgb(153, 102, 255)',
-	grey: 'rgb(201, 203, 207)'
+ red: '#33364d', orange: '#08786f', yellow: '#37aca2', green: '#0f9287',
+ blue: '#065e57', purple: '#51566e', grey: '#727891'
 };
 
 (function(global) {

@@ -1,8 +1,8 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-6">
-      2019 &copy; All rights reserved by 
-      <a href="http://www.benyaminhope.af" target=" _ ">Benyamin Hope information.</a> 
+    <div class="col-12">
+      2026 &copy; All rights reserved by 
+      <a href="https://www.facebook.com/viranawawaran" target="_blank" rel="noopener noreferrer">Vira Nawawaran ISP &amp; ICT Service Provider</a> 
     </div>
   </div>
 </div>

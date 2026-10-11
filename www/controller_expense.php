@@ -1,8 +1,42 @@
 <?php
 
   include("../lib/_configuration.php");
+  // Enforce delete permission for both confirmation and direct POST requests.
+  $cashtrack_delete_request =
+    (($_POST['flag_request'] ?? '') === 'modal' && ($_POST['modal'] ?? '') === 'delete_expense_form') ||
+    (($_POST['flag_request'] ?? '') === 'operation' && ($_POST['flag_operation'] ?? '') === 'delete_expense');
+  if($cashtrack_delete_request &&
+     !check_access('system_accessibility/transaction/expense/delete_expense/') &&
+     !check_access('system_accessibility/report/report_transaction/delete_transaction/')){
+    http_response_code(403);
+    echo '<div class="p-3">You do not have permission to delete this transaction.</div>';
+    exit();
+  }
+
   include_once("_attachment_preview.php");
 
+
+  // Both existing transaction edit access and report edit access are checked server-side.
+  $cashtrack_edit_request =
+    (($_POST['flag_request'] ?? '') === 'modal' && ($_POST['modal'] ?? '') === 'edit_expense_form') ||
+    (($_POST['flag_request'] ?? '') === 'operation' && ($_POST['flag_operation'] ?? '') === 'edit_expense');
+  if($cashtrack_edit_request &&
+     !check_access('system_accessibility/transaction/expense/edit_expense/') &&
+     !check_access('system_accessibility/report/report_transaction/edit_transaction/')){
+    http_response_code(403);
+    echo '<div class="p-3">You do not have permission to edit this transaction.</div>';
+    exit();
+  }
+
+  // Validate registered details before any transaction write or edition tracking.
+  if(($_POST['flag_request'] ?? '') === 'operation' && in_array($_POST['flag_operation'] ?? '', array('add_expense','edit_expense'), true)){
+    try{ ct_reference_validate_transaction('Expense', $_POST['flag_operation']); }
+    catch(RuntimeException $error){
+      http_response_code(422);
+      echo '<!doctype html><html><body><p>'.ct_reference_escape($error instanceof PDOException ? 'Reference Data is temporarily unavailable. Please try again.' : $error->getMessage()).'</p><button onclick="history.back()">Back to transaction</button></body></html>';
+      exit();
+    }
+  }
   if(isset($_POST['flag_request'])){
   	
   	$flag_request	= holu_escape($_POST['flag_request']);
@@ -20,7 +54,7 @@
         ?>
 
         <div class="modal-header">
-	        <h4 class="modal-title"><i class="fa fa-plus"></i> Add Expense</h4>
+	        <h4 class="modal-title"><i class="fa fa-plus"></i> Add Output</h4>
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	          <span aria-hidden="true">&times;</span>
 	        </button>
@@ -70,7 +104,7 @@
             </div>
 
             <div class="form-group row">
-              <label class="col-sm-3 col-form-label" for="expense_date">Expense Date</label>
+              <label class="col-sm-3 col-form-label" for="expense_date">Output Date</label>
               <div class="col-sm-6">
                 <input type="text" id="expense_date" name="expense_date" class="form-control date_picker" placeholder="Pick a date..." required>
               </div>
@@ -153,7 +187,7 @@
 		        ?>
 
 		        <div class="modal-header">
-			        <h4 class="modal-title"><i class="fas fa-edit"></i> Edit Expense</h4>
+			        <h4 class="modal-title"><i class="fas fa-edit"></i> Edit Output</h4>
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			          <span aria-hidden="true">&times;</span>
 			        </button>
@@ -189,7 +223,7 @@
                 </div>
 
                 <div class="form-group row">
-                  <label class="col-sm-3 col-form-label" for="expense_date">Expense Date</label>
+                  <label class="col-sm-3 col-form-label" for="expense_date">Output Date</label>
                   <div class="col-sm-6">
                     <input type="text" id="expense_date" name="expense_date" class="form-control date_picker" placeholder="Pick a date..." required value="<?php echo $expense_row['expense_date'];?>">
                   </div>
@@ -273,7 +307,7 @@
 	        ?>
 
 	        <div class="modal-header">
-		        <h4 class="modal-title"><i class="fas fa-trash"></i> Delete Expense</h4>
+		        <h4 class="modal-title"><i class="fas fa-trash"></i> Delete Output</h4>
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		          <span aria-hidden="true">&times;</span>
 		        </button>
@@ -342,7 +376,7 @@
           </div>
 
 	        	<div class="form-group row">
-	            <label class="col-sm-3 col-form-label" for="expense_date">Expense Date</label>
+	            <label class="col-sm-3 col-form-label" for="expense_date">Output Date</label>
 	            <div class="col-sm-3">
 	              <input type="text" id="from_expense_date" name="from_expense_date" class="form-control date_picker" placeholder="From">
 	            </div>

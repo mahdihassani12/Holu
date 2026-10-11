@@ -1,6 +1,6 @@
 <?php
   include("../lib/_configuration.php");
-  $holu_page_paths = ["Transaction", "Expense"];
+  $holu_page_paths = ["Transaction", "Output"];
 
   set_filtering_data('expense_province');
   set_filtering_data('expense_branch');
@@ -64,7 +64,7 @@
               <div class="card-box card-box-header">
 
                 <h4 class="header-title">
-                  <?php echo get_table_header('fa fa-list', 'List of Expenses', $expense_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
+                  <?php echo get_table_header('fa fa-list', 'List of Outputs', $expense_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
                 </h4>
 
                 <?php
@@ -78,7 +78,7 @@
                 <?php
                 if(check_access("system_accessibility/transaction/expense/add_expense")){
                 ?>
-                <button type="button" class="btn waves-effect waves-light adder_button" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_expense.php', 'add_expense_form', 'general_lg', '0');"><i class="fa fa-plus"></i> Add Expense</button>
+                <button type="button" class="btn waves-effect waves-light adder_button" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_expense.php', 'add_expense_form', 'general_lg', '0');"><i class="fa fa-plus"></i> Add Output</button>
                 <?php
                 }
                 ?>
@@ -160,7 +160,7 @@
                                   <?php
                                   if(check_access("system_accessibility/transaction/expense/edit_expense")==1){
                                   ?>
-                                  <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_expense.php', 'edit_expense_form', 'general_lg', '<?php echo holu_encode($expense_row['id']); ?>');"><i class="fas fa-edit"></i> Edit Expense</a>
+                                  <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_expense.php', 'edit_expense_form', 'general_lg', '<?php echo holu_encode($expense_row['id']); ?>');"><i class="fas fa-edit"></i> Edit Output</a>
                                   <?php
                                   }
                                   ?>
@@ -168,7 +168,7 @@
                                   <?php
                                   if(check_access("system_accessibility/transaction/expense/delete_expense")==1){
                                   ?>
-                                  <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_expense.php', 'delete_expense_form', 'general_md', '<?php echo holu_encode($expense_row['id']); ?>');"><i class="fas fa-trash"></i> Delete Expense</a>
+                                  <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_expense.php', 'delete_expense_form', 'general_md', '<?php echo holu_encode($expense_row['id']); ?>');"><i class="fas fa-trash"></i> Delete Output</a>
                                   <?php
                                   }
                                   ?>

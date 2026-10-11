@@ -1,6 +1,6 @@
 <?php
   include("../lib/_configuration.php");
-  $holu_page_paths = ["Transaction", "Income"];
+  $holu_page_paths = ["Transaction", "Input"];
 
   set_filtering_data('income_province');
   set_filtering_data('income_branch');
@@ -66,7 +66,7 @@
                 <div class="card-box card-box-header">
 
                   <h4 class="header-title">
-                    <?php echo get_table_header('fa fa-list', 'List of Incomes', $income_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
+                    <?php echo get_table_header('fa fa-list', 'List of Inputs', $income_sq->rowCount(), $record, $holu_filtering_array ) ; ?>
                   </h4>
 
                   <?php
@@ -84,7 +84,7 @@
                   <?php
                   if(check_access("system_accessibility/transaction/income/add_income")){
                   ?>
-                  <button type="button" class="btn waves-effect waves-light adder_button" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_income.php', 'add_income_form', 'general_lg', '0');"><i class="fa fa-plus"></i> Add Income</button>
+                  <button type="button" class="btn waves-effect waves-light adder_button" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_income.php', 'add_income_form', 'general_lg', '0');"><i class="fa fa-plus"></i> Add Input</button>
                   <?php
                   }
                   ?>
@@ -139,7 +139,7 @@
                                     <?php
                                     if(check_access("system_accessibility/transaction/income/edit_income")){
                                     ?>
-                                    <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_income.php', 'edit_income_form', 'general_lg', '<?php echo holu_encode($income_row['id']); ?>');"><i class="fas fa-edit"></i> Edit Income</a>
+                                    <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_income.php', 'edit_income_form', 'general_lg', '<?php echo holu_encode($income_row['id']); ?>');"><i class="fas fa-edit"></i> Edit Input</a>
                                     <?php
                                     }
                                     ?>
@@ -147,7 +147,7 @@
                                     <?php
                                     if(check_access("system_accessibility/transaction/income/delete_income")){
                                     ?>
-                                    <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_income.php', 'delete_income_form', 'general_md', '<?php echo holu_encode($income_row['id']); ?>');"><i class="fas fa-trash"></i> Delete Income</a>
+                                    <a class="dropdown-item" onclick="load_modal('<?php echo $_SERVER['PHP_SELF']; ?>', 'controller_income.php', 'delete_income_form', 'general_md', '<?php echo holu_encode($income_row['id']); ?>');"><i class="fas fa-trash"></i> Delete Input</a>
                                     <?php
                                     }
                                     ?>

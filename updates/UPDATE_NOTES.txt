@@ -1,0 +1,29 @@
+Cashtrack update
+
+1. Back up your current files and database.
+2. Replace the application files with this updated package. Keep your live lib/_db.php configuration and live uploads/backups. Do not import either bundled database dump.
+3. In Set Accessibility > Reports > Transactions, enable Delete Transaction for the users who need it. Existing transaction-specific delete permissions still work on their own transaction pages. Refresh the user's session after changing permissions.
+4. New output check numbers begin with O- (for example O-KBL-MIOF-00000856).
+5. To change existing saved X- output numbers, run updates/output-check-prefix.sql once in phpMyAdmin after taking a database backup. It keeps every other part of the number and skips conflicting numbers. Review any remaining rows returned by the script. Historical audit snapshots and backups remain unchanged.
+
+Changes:
+- Edit and Delete actions in the transaction report. Delete uses the existing confirmation, soft deletion and deletion history.
+- Delete permissions checked at confirmation and submission for Input, Output, Exchange and Transfer.
+- SIB values available for every Input, with editing limited to Edit SIB Number permission. Excel exports include them too.
+- SIB edit endpoint enforces the same permission.
+- No table or column changes.
+
+Validation: PHP 8.3 syntax checks passed for all 8 changed PHP files. 24 delete-permission tests passed for confirmation and direct submissions. Output number generation verified. Report action/modal targets and all-input SIB/Excel checks passed. No live database or browser session was available; database changes were not run.
+
+Branding: Updated company name throughout login, password recovery, footer, receipts and vouchers. Printed headings use two lines for the full name. Existing Facebook links retain their original destination. All earlier transaction updates are included.
+
+Input receipt contacts: selected automatically using the input's saved province. Kabul and Ghazni contacts come from Contact Details.docx. Both Kabul and Ghazni use the supplied Ghazanfar account and SWIFT code. No support email is printed because none was supplied. Unconfigured provinces never inherit another province's bank details. Future contact edits can be made in lib/_receipt_contacts.php without database changes. Company headings now use Vira Nawawaran with ISP & ICT Service Provider beneath it.
+Validation: both province templates rendered with PHP fixtures and contact isolation checks passed. PHP syntax verified. A browser print preview was not available here.
+
+Output and Transfer prints: updated province contacts, sales and finance emails, website, and phone 0748706114. Output uses its saved province; Transfer uses the source province, matching its existing invoice province. No bank details are shown on either print. Input receipts retain their own phone numbers and bank details.
+
+Province labels removed from output and transfer contact headings. Automatic province contact selection remains active. This full package includes all updates from this session.
+
+Latest print update: all three print templates include assets/css/cashtrack-print.css for compact A5 landscape printing, with no margins and default scale. Print backgrounds enabled. Long content may still require extra pages. PHP checks passed; browser pagination was not verified.
+
+Latest page-fit update: larger print text and spacing, page-height layout for A5 landscape, and centered Input receipt signature in the bank details column. All updates included. Actual printer pagination remains unverified.

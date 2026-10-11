@@ -543,19 +543,13 @@
             $transaction_row['transaction__sub_categories'] = $transaction_row['transaction_sub_categories_id']!="" ? get_col('sub_categories', 'sub_category_name', 'id', $transaction_row['transaction_sub_categories_id']) : '';
             $transaction_sib_number = $transaction_row['transaction_sib_number'];
             $transaction_description = excel_transaction_description($transaction_row, $province, $branch);
-            if(
-              $transaction_row['transaction_type'] === 'Income' &&
-              !has_customer_reference_for_sib($transaction_row['transaction_additional_informations'] ?? '')
-            ){
-              $transaction_sib_number = '';
-            }
 
             $writer->addRow([
               $count++,
               $transaction_description,
               $transaction_row['transaction_amount'],
               $transaction_row['transaction_currency'],
-              $transaction_row['transaction_type'],
+              cashtrack_transaction_label($transaction_row['transaction_type']),
               $transaction_row['transaction__sub_categories'],
               $transaction_row['transaction_date'],
               $transaction_row['transaction_province'],
@@ -663,19 +657,13 @@
 
             $transaction_sub_category = $transaction_row['transaction_sub_categories_id']!="" ? get_col('sub_categories', 'sub_category_name', 'id', $transaction_row['transaction_sub_categories_id']) : '';
             $transaction_sib_number = $transaction_row['transaction_sib_number'];
-            if(
-              $transaction_row['transaction_type'] === 'Income' &&
-              !has_customer_reference_for_sib($transaction_row['transaction_additional_informations'] ?? '')
-            ){
-              $transaction_sib_number = '';
-            }
 
             $writer->addRow([
               $count++,
               excel_transaction_description($transaction_row),
               $transaction_row['transaction_amount'],
               $transaction_row['transaction_currency'],
-              $transaction_row['transaction_type'],
+              cashtrack_transaction_label($transaction_row['transaction_type']),
               $transaction_sub_category,
               $transaction_row['transaction_date'],
               $transaction_row['transaction_province'],

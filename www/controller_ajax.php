@@ -336,6 +336,11 @@
 			}break;
 
 			case "edit_sib_number": {
+                if(!check_access('system_accessibility/report/report_transaction/edit_sib_number/')){
+                    http_response_code(403);
+                    echo 'You do not have permission to edit SIB numbers.';
+                    exit();
+                }
 				$incomes_id = holu_escape($_POST['incomes_id']);
 				$operation_type = holu_escape($_POST['operation_type']);
 				if($operation_type=="edit"){
@@ -560,221 +565,9 @@
 				
 			}break;
 
-			case "suggest_data": {
-				$input = holu_escape($_POST['input']);
-				$field_id = holu_escape($_POST['field_id']);
-				$type = holu_escape($_POST['type']);
-
-				$result = '';
-
-				switch ($type) {
-					case 'additional_information_customer_name':{
-						$data_sq = $db->prepare(
-							"SELECT DISTINCT(value_info) FROM (SELECT * FROM additional_informations ORDER BY id DESC LIMIT 20000) AS additional_informations
-							WHERE key_info='Customer Name'
-							AND value_info LIKE :input
-							LIMIT 5"
-						);
-						$data_sqx = $data_sq->execute([
-							'input'=>'%'.$input.'%'
-						]);
-
-						if($data_sq->rowCount()>0 AND $input!=""){
-							$result .= '
-							<div class="holu_auto_suggest_container" id="holu_auto_suggest_container">
-		      			<ul>
-							';
-							while ($data_row = $data_sq->fetch()) {
-								$result .= '
-									<li onclick="select_data(\''.$field_id.'\', \''.$data_row['value_info'].'\');">'.$data_row['value_info'].'</li>
-								';
-							}
-							$result .= '
-								</ul>
-		      		</div>
-							';
-						}
-					}break;
-
-					case 'additional_information_customer_id':{
-						if(strlen($input)>=2){
-							$data_sq = $db->prepare(
-								"SELECT DISTINCT(value_info) FROM (SELECT * FROM additional_informations ORDER BY id DESC LIMIT 20000) AS additional_informations 
-								WHERE key_info='Customer ID'
-								AND value_info LIKE :input
-								LIMIT 5"
-							);
-							$data_sqx = $data_sq->execute([
-								'input'=>'%'.$input.'%'
-							]);
-						}
-
-						if(isset($data_sq) AND $data_sq->rowCount()>0){
-							$result .= '
-							<div class="holu_auto_suggest_container" id="holu_auto_suggest_container">
-		      			<ul>
-							';
-							while ($data_row = $data_sq->fetch()) {
-								$result .= '
-									<li onclick="select_data(\''.$field_id.'\', \''.$data_row['value_info'].'\');">'.$data_row['value_info'].'</li>
-								';
-							}
-							$result .= '
-								</ul>
-		      		</div>
-							';
-						}
-					}break;
-
-					case 'additional_information_vendor_name':
-					case 'additional_information_vendor_id':
-					case 'additional_information_employee_name':
-					case 'additional_information_employee_id':{
-						$is_vendor = strpos($type, '_vendor_') !== false;
-						$is_id_suggestion = substr($type, -3) === '_id';
-						$name_key = $is_vendor ? 'Vendor Name' : 'Employee Name';
-						$id_key = $is_vendor ? 'Vendor ID' : 'Employee ID';
-						$name_field_id = $is_vendor ? 'vendor_name' : 'employee_name';
-						$id_field_id = $is_vendor ? 'vendor_id' : 'employee_id';
-
-						if($input != "" AND (!$is_id_suggestion OR strlen($input) >= 2)){
-							$data_sq = $db->prepare(
-								"SELECT party_name.value_info AS party_name, party_id.value_info AS party_id, MAX(party_name.id) AS latest_id
-								FROM (SELECT * FROM additional_informations WHERE deleted='0' ORDER BY id DESC LIMIT 20000) AS party_name
-								INNER JOIN additional_informations AS party_id
-								ON party_id.reference_type=party_name.reference_type
-								AND party_id.reference_id=party_name.reference_id
-								AND party_id.deleted='0'
-								WHERE party_name.key_info=:name_key
-								AND party_id.key_info=:id_key
-								AND (party_name.value_info LIKE :name_input OR party_id.value_info LIKE :id_input)
-								GROUP BY party_name.value_info, party_id.value_info
-								ORDER BY latest_id DESC
-								LIMIT 5"
-							);
-							$data_sqx = $data_sq->execute([
-								'name_key'=>$name_key,
-								'id_key'=>$id_key,
-								'name_input'=>'%'.$input.'%',
-								'id_input'=>'%'.$input.'%'
-							]);
-						}
-
-						if(isset($data_sq) AND $data_sq->rowCount()>0){
-							$result .= '
-							<div class="holu_auto_suggest_container" id="holu_auto_suggest_container">
-					<ul>
-							';
-							while ($data_row = $data_sq->fetch()) {
-								$field_value = $is_id_suggestion ? $data_row['party_id'] : $data_row['party_name'];
-								$onclick = 'select_party_data('.json_encode($field_id).', '.json_encode($name_field_id).', '.json_encode($id_field_id).', '.json_encode($field_value).', '.json_encode($data_row['party_name']).', '.json_encode($data_row['party_id']).');';
-								$result .= '
-									<li onclick="'.htmlspecialchars($onclick, ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($data_row['party_name'], ENT_QUOTES, 'UTF-8').' <span class="suggestion-secondary">'.htmlspecialchars($data_row['party_id'], ENT_QUOTES, 'UTF-8').'</span></li>
-								';
-							}
-							$result .= '
-								</ul>
-				</div>
-							';
-						}else{
-							$result = '<div class="holu_auto_suggest_container holu_auto_suggest_status" id="holu_auto_suggest_container">No suggestions found.</div>';
-						}
-					}break;
-
-					case 'additional_information_package':{
-						$data_sq = $db->prepare(
-							"SELECT DISTINCT(value_info) FROM (SELECT * FROM additional_informations ORDER BY id DESC LIMIT 20000) AS additional_informations 
-							WHERE key_info='Package'
-							AND value_info LIKE :input
-							LIMIT 5"
-						);
-						$data_sqx = $data_sq->execute([
-							'input'=>'%'.$input.'%'
-						]);
-
-						if($data_sq->rowCount()>0 AND $input!=""){
-							$result .= '
-							<div class="holu_auto_suggest_container" id="holu_auto_suggest_container">
-		      			<ul>
-							';
-							while ($data_row = $data_sq->fetch()) {
-								$result .= '
-									<li onclick="select_data(\''.$field_id.'\', \''.$data_row['value_info'].'\');">'.$data_row['value_info'].'</li>
-								';
-							}
-							$result .= '
-								</ul>
-		      		</div>
-							';
-						}
-					}break;
-
-					case 'additional_information_equipment':{
-						$data_sq = $db->prepare(
-							"SELECT DISTINCT(value_info) FROM (SELECT * FROM additional_informations ORDER BY id DESC LIMIT 20000) AS additional_informations 
-							WHERE key_info='Equipment'
-							AND value_info LIKE :input
-							LIMIT 5"
-						);
-						$data_sqx = $data_sq->execute([
-							'input'=>'%'.$input.'%'
-						]);
-
-						if($data_sq->rowCount()>0 AND $input!=""){
-							$result .= '
-							<div class="holu_auto_suggest_container" id="holu_auto_suggest_container">
-		      			<ul>
-							';
-							while ($data_row = $data_sq->fetch()) {
-								$result .= '
-									<li onclick="select_data(\''.$field_id.'\', \''.$data_row['value_info'].'\');">'.$data_row['value_info'].'</li>
-								';
-							}
-							$result .= '
-								</ul>
-		      		</div>
-							';
-						}
-					}break;
-
-					case 'additional_information_other_services':{
-						$data_sq = $db->prepare(
-							"SELECT DISTINCT(value_info) FROM (SELECT * FROM additional_informations ORDER BY id DESC LIMIT 20000) AS additional_informations 
-							WHERE key_info='Other Services'
-							AND value_info LIKE :input
-							LIMIT 5"
-						);
-						$data_sqx = $data_sq->execute([
-							'input'=>'%'.$input.'%'
-						]);
-
-						if($data_sq->rowCount()>0 AND $input!=""){
-							$result .= '
-							<div class="holu_auto_suggest_container" id="holu_auto_suggest_container">
-		      			<ul>
-							';
-							while ($data_row = $data_sq->fetch()) {
-								$result .= '
-									<li onclick="select_data(\''.$field_id.'\', \''.$data_row['value_info'].'\');">'.$data_row['value_info'].'</li>
-								';
-							}
-							$result .= '
-								</ul>
-		      		</div>
-							';
-						}
-					}break;
-					
-					default:{
-
-					}break;
-				}
-
-				
-				
-				echo $result;
-				
-			}break;
+            case "suggest_data": {
+                echo ct_reference_suggestions($_POST['input'] ?? '', $_POST['field_id'] ?? '', $_POST['type'] ?? '');
+            }break;
 
 			case "load_data_for_report_component": {
 				$result = '';
@@ -1081,12 +874,12 @@
 
             $result = '
           	<li>
-              <b onclick="load_data_for_report_component(\'Income\', \'\');">Income: </b>
+              <b onclick="load_data_for_report_component(\'Income\', \'\');">Input: </b>
               <span class="badge badge-success">'.$total_income_row['total_afn_income'].' AFN</span> - <span class="badge badge-success">'.$total_income_row['total_usd_income'].' USD</span> - <span class="badge badge-success">'.$total_income_row['total_irt_income'].' IRT</span>
               <ul class="tree_view" id="IncomeContainer"></ul>
             </li>
             <li>
-              <b onclick="load_data_for_report_component(\'Expense\', \'\');">Expense: </b>
+              <b onclick="load_data_for_report_component(\'Expense\', \'\');">Output: </b>
               <span class="badge badge-danger">'.$total_expense_row['total_afn_expense'].' AFN</span> - <span class="badge badge-danger">'.$total_expense_row['total_usd_expense'].' USD</span> - <span class="badge badge-danger">'.$total_expense_row['total_irt_expense'].' IRT</span>
               <ul class="tree_view" id="ExpenseContainer"></ul>
             </li>
@@ -1744,6 +1537,12 @@
 			}break;
 
 			case 'get_dashboard_highest_expenses_field':{
+                $dashboard_province = get_dashboard_default_province();
+                if($dashboard_province===''){
+                    echo '<div class="alert alert-info mb-0">No accessible provinces are available. Add a province in Management to start using this widget.</div>';
+                    break;
+                }
+
 
 				$result = '';
 
@@ -1752,7 +1551,7 @@
             <div class="col-sm-12">
               <select id="highest_expense_province" name="highest_expense_province" class="form-control" required onchange="sync_dashboard_branch_filter(this.value, \'highest_expense_branch\', get_dashboard_highest_expenses_table);">
                 <option selected hidden value="">Select an option</option>
-                '.get_province_option($holu_provinces[0]).'
+                '.get_province_option($dashboard_province).'
               </select>
             </div>
           </div>
@@ -1760,7 +1559,7 @@
           <div class="form-group row">
             <div class="col-sm-12">
               <select id="highest_expense_branch" name="highest_expense_branch" class="form-control" required onchange="get_dashboard_highest_expenses_table();">
-                '.get_branch_option($holu_provinces[0], '0', true).'
+                '.get_branch_option($dashboard_province, '0', true).'
               </select>
             </div>
           </div>
@@ -2187,6 +1986,12 @@
 			}break;
 
 			case 'get_dashboard_monthly_income_field':{
+                $dashboard_province = get_dashboard_default_province();
+                if($dashboard_province===''){
+                    echo '<div class="alert alert-info mb-0">No accessible provinces are available. Add a province in Management to start using this widget.</div>';
+                    break;
+                }
+
 
 				$result = '';
 
@@ -2198,7 +2003,7 @@
 		            <div class="col-sm-12">
 		              <select id="monthly_income_province" name="monthly_income_province" class="form-control" required onchange="sync_dashboard_branch_filter(this.value, \'monthly_income_branch\', get_dashboard_monthly_income_line);">
 		                <option selected hidden value="">Select an option</option>
-		                '.get_province_option($holu_provinces[0]).'
+		                '.get_province_option($dashboard_province).'
 		              </select>
 		            </div>
 		          </div>
@@ -2206,7 +2011,7 @@
 		          <div class="form-group row">
 		            <div class="col-sm-12">
 		              <select id="monthly_income_branch" name="monthly_income_branch" class="form-control" required onchange="get_dashboard_monthly_income_line();">
-		                '.get_branch_option($holu_provinces[0], '0', true).'
+		                '.get_branch_option($dashboard_province, '0', true).'
 		              </select>
 		            </div>
 		          </div>
@@ -2246,6 +2051,10 @@
 
     // ✅ Sanitize inputs
     $province = holu_escape($_POST['monthly_income_province'] ?? '');
+    if($province===''){
+        break;
+    }
+
     $currency = holu_escape($_POST['monthly_income_currency'] ?? '');
     $branch = holu_escape($_POST['monthly_income_branch'] ?? '0');
 
@@ -2326,7 +2135,7 @@
             data: {
                 labels: [' . $month_labels_js . '],
                 datasets: [{
-                    label: "Total Income",
+                    label: "Total Input",
                     backgroundColor: window.chartColors.blue,
                     borderColor: window.chartColors.blue,
                     borderWidth: 3,
@@ -2349,6 +2158,12 @@
 break;
 
 			case 'get_dashboard_monthly_expense_field':{
+                $dashboard_province = get_dashboard_default_province();
+                if($dashboard_province===''){
+                    echo '<div class="alert alert-info mb-0">No accessible provinces are available. Add a province in Management to start using this widget.</div>';
+                    break;
+                }
+
 
 				$result = '';
 
@@ -2360,7 +2175,7 @@ break;
 		            <div class="col-sm-12">
 		              <select id="monthly_expense_province" name="monthly_expense_province" class="form-control" required onchange="sync_dashboard_branch_filter(this.value, \'monthly_expense_branch\', get_dashboard_monthly_expense_line);">
 		                <option selected hidden value="">Select an option</option>
-		                '.get_province_option($holu_provinces[0]).'
+		                '.get_province_option($dashboard_province).'
 		              </select>
 		            </div>
 		          </div>
@@ -2368,7 +2183,7 @@ break;
 		          <div class="form-group row">
 		            <div class="col-sm-12">
 		              <select id="monthly_expense_branch" name="monthly_expense_branch" class="form-control" required onchange="get_dashboard_monthly_expense_line();">
-		                '.get_branch_option($holu_provinces[0], '0', true).'
+		                '.get_branch_option($dashboard_province, '0', true).'
 		              </select>
 		            </div>
 		          </div>
@@ -2408,6 +2223,10 @@ break;
 
     // ✅ Sanitize inputs
     $province = holu_escape($_POST['monthly_expense_province'] ?? '');
+    if($province===''){
+        break;
+    }
+
     $currency = holu_escape($_POST['monthly_expense_currency'] ?? '');
     $branch = holu_escape($_POST['monthly_expense_branch'] ?? '0');
 
@@ -2488,7 +2307,7 @@ break;
             data: {
                 labels: [' . $month_labels_js . '],
                 datasets: [{
-                    label: "Total Expense",
+                    label: "Total Output",
                     backgroundColor: window.chartColors.red,
                     borderColor: window.chartColors.red,
                     borderWidth: 3,
@@ -2511,6 +2330,12 @@ break;
 break;
 
 			case 'get_dashboard_monthly_exchange_field':{
+                $dashboard_province = get_dashboard_default_province();
+                if($dashboard_province===''){
+                    echo '<div class="alert alert-info mb-0">No accessible provinces are available. Add a province in Management to start using this widget.</div>';
+                    break;
+                }
+
 
 				$result = '';
 
@@ -2522,7 +2347,7 @@ break;
 		            <div class="col-sm-12">
 		              <select id="monthly_exchange_province" name="monthly_exchange_province" class="form-control" required onchange="sync_dashboard_branch_filter(this.value, \'monthly_exchange_branch\', get_dashboard_monthly_exchange_line);">
 		                <option selected hidden value="">Select an option</option>
-		                '.get_province_option($holu_provinces[0]).'
+		                '.get_province_option($dashboard_province).'
 		              </select>
 		            </div>
 		          </div>
@@ -2530,7 +2355,7 @@ break;
 		          <div class="form-group row">
 		            <div class="col-sm-12">
 		              <select id="monthly_exchange_branch" name="monthly_exchange_branch" class="form-control" required onchange="get_dashboard_monthly_exchange_line();">
-		                '.get_branch_option($holu_provinces[0], '0', true).'
+		                '.get_branch_option($dashboard_province, '0', true).'
 		              </select>
 		            </div>
 		          </div>
@@ -2569,6 +2394,10 @@ break;
     $total_exchanges = [];
 
     $province = holu_escape($_POST['monthly_exchange_province'] ?? '');
+    if($province===''){
+        break;
+    }
+
     $currency = holu_escape($_POST['monthly_exchange_currency'] ?? '');
     $branch = holu_escape($_POST['monthly_exchange_branch'] ?? '0');
 
@@ -2668,6 +2497,12 @@ break;
 break;
 
 			case 'get_dashboard_monthly_transfer_field':{
+                $dashboard_province = get_dashboard_default_province();
+                if($dashboard_province===''){
+                    echo '<div class="alert alert-info mb-0">No accessible provinces are available. Add a province in Management to start using this widget.</div>';
+                    break;
+                }
+
 
 				$result = '';
 
@@ -2679,7 +2514,7 @@ break;
 		            <div class="col-sm-12">
 		              <select id="monthly_transfer_province" name="monthly_transfer_province" class="form-control" required onchange="sync_dashboard_branch_filter(this.value, \'monthly_transfer_branch\', get_dashboard_monthly_transfer_line);">
 		                <option selected hidden value="">Select an option</option>
-		                '.get_province_option($holu_provinces[0]).'
+		                '.get_province_option($dashboard_province).'
 		              </select>
 		            </div>
 		          </div>
@@ -2687,7 +2522,7 @@ break;
 		          <div class="form-group row">
 		            <div class="col-sm-12">
 		              <select id="monthly_transfer_branch" name="monthly_transfer_branch" class="form-control" required onchange="get_dashboard_monthly_transfer_line();">
-		                '.get_branch_option($holu_provinces[0], '0', true).'
+		                '.get_branch_option($dashboard_province, '0', true).'
 		              </select>
 		            </div>
 		          </div>
@@ -2726,6 +2561,10 @@ break;
     $total_transfers = [];
 
     $province = holu_escape($_POST['monthly_transfer_province'] ?? '');
+    if($province===''){
+        break;
+    }
+
     $currency = holu_escape($_POST['monthly_transfer_currency'] ?? '');
     $branch = holu_escape($_POST['monthly_transfer_branch'] ?? '0');
 

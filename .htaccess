@@ -1,0 +1,5 @@
+# Default page
+DirectoryIndex index.php index.html
+
+# Disable directory listing
+Options -Indexes

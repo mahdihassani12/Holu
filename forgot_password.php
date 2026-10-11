@@ -72,7 +72,7 @@ if (isset($_POST['submit'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password Recovery - FlowBook</title>
+    <title>Password Recovery - CashTrack</title>
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!-- App favicon -->
@@ -84,6 +84,7 @@ if (isset($_POST['submit'])) {
     <link href="www/assets/additional/bootoast/bootoast.css" rel="stylesheet" type="text/css" />
     <!-- Jquery Toast css -->
     <link href="www/assets/css/custom.css" rel="stylesheet" type="text/css" />
+<link href="www/assets/css/cashtrack-font.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
     <div class="account-pages mt-5 mb-5">
@@ -92,12 +93,13 @@ if (isset($_POST['submit'])) {
             <div class="col-md-8 col-lg-6 col-xl-5">
               <div class="card">
 
-                <div class="card-body p-4" style="border:3px solid #36b8cb;">
+                <div class="card-body p-4" style="border:3px solid #0f9287;">
 
                   <div class="text-center w-80 m-auto">
                     <a href="index-2.html">
-                      <span class="logo-lg"><img src="www/assets/images/blue-logo.png" alt=""></span>
+                      <span class="logo-lg"><img src="www/assets/images/blue-logo.png" alt="CashTrack"><span class="cashtrack-brand-name">CashTrack</span></span>
                     </a>
+                  <div style="margin-top:12px;line-height:1.4;color:#0f9287;font-weight:700;font-size:15px;">Vira Nawawaran<br><span style="font-size:12px;font-weight:500;letter-spacing:.025em;">ISP &amp; ICT Service Provider</span></div>
 
                   </div>
 
@@ -105,7 +107,7 @@ if (isset($_POST['submit'])) {
 
                   <div class="row mt-3">
                     <div class="col-12 text-center">
-                      <p class="text-muted">2026 &copy; All rights reserved by Benyamin Hope. </p>
+                      <p class="text-muted">2026 &copy; All rights reserved by Vira Nawawaran ISP &amp; ICT Service Provider. </p>
                       <p class="text-muted"  class="text-primary font-weight-medium ml-1">Developed by <span class="text-primary font-weight-medium ml-1">Mahdi Hassani</span></p>
                     </div> <!-- end col -->
                   </div>

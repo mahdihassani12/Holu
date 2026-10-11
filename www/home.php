@@ -62,7 +62,7 @@ if ($online_users_sq) {
       font-size: 6rem;
     }
     .online-users-card {
-      background: linear-gradient(135deg, #0f766e 0%, #1d4ed8 100%);
+      background: linear-gradient(135deg, #08786f 0%, #33364d 100%);
       color: #fff;
       border: 0;
       overflow: hidden;
@@ -82,7 +82,7 @@ if ($online_users_sq) {
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background: #22c55e;
+      background: #0f9287;
       display: inline-block;
       box-shadow: 0 0 0 rgba(34, 197, 94, 0.7);
       animation: onlinePulse 2s infinite;
@@ -261,7 +261,7 @@ if ($online_users_sq) {
             <div class="col-lg-12">
               <div class="card-box card-box-header">
 
-                <h4 class="header-title">10 Highest Expenses</h4>
+                <h4 class="header-title">10 Highest Outputs</h4>
 
               </div>
               <div class="card-box">
@@ -295,7 +295,7 @@ if ($online_users_sq) {
             <div class="col-lg-4">
               <div class="card-box card-box-header">
 
-                <h4 class="header-title">Income in Province</h4>
+                <h4 class="header-title">Input in Province</h4>
 
               </div>
               <div class="card-box" id="container_income_in_province_donut" style="height: 300px !important;">
@@ -311,7 +311,7 @@ if ($online_users_sq) {
             <div class="col-lg-4">
               <div class="card-box card-box-header">
 
-                <h4 class="header-title">Expense in Province</h4>
+                <h4 class="header-title">Output in Province</h4>
 
               </div>
               <div class="card-box" id="container_expense_in_province_donut" style="height: 300px !important;">
@@ -383,7 +383,7 @@ if ($online_users_sq) {
             <div class="col-lg-12">
               <div class="card-box card-box-header">
 
-                <h4 class="header-title">Monthly Income</h4>
+                <h4 class="header-title">Monthly Input</h4>
 
               </div>
               <div class="card-box" style="height: 280px !important;" id="monthly_income">
@@ -404,7 +404,7 @@ if ($online_users_sq) {
             <div class="col-lg-12">
               <div class="card-box card-box-header">
 
-                <h4 class="header-title">Monthly Expense</h4>
+                <h4 class="header-title">Monthly Output</h4>
 
               </div>
               <div class="card-box" style="height: 280px !important;" id="monthly_expense">

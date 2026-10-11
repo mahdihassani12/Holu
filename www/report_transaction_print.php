@@ -296,7 +296,7 @@
                             echo '
                               <tr>
                                 <th class="text-center">'.($holu_count++).'</th>
-                                <td>'.$transaction_print_row['reference_type'].'</td><td>'.get_col('users', 'username', 'id', $transaction_print_row['users_id']).'</td>
+                                <td>'.cashtrack_transaction_label($transaction_print_row['reference_type']).'</td><td>'.get_col('users', 'username', 'id', $transaction_print_row['users_id']).'</td>
                                 <td>'.$transaction_print_row['insertion_date'].'</td>
                                 <td>'.$transaction_print_row['insertion_time'].'</td>
                                 <td class="text-center">
